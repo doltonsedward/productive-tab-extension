@@ -152,7 +152,7 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
   animation: slideIn 0.3s ease;
-  cursor: grab; /* Tambahan biar kursor berubah jadi tangan pas hover */
+  cursor: grab;
 }
 
 .todo-item.completed {
@@ -180,6 +180,52 @@ body {
 
 .todo-item.over {
   border-top: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+/* --- FITUR HIDE COMPLETED --- */
+.todo-item.hidden {
+  display: none !important;
+}
+
+.toggle-hide {
+  cursor: pointer;
+  opacity: 0.6;
+  margin-left: 8px;
+  font-size: 0.75rem;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.toggle-hide:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.todo-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.todo-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.todo-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.todo-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.todo-actions button {
+  opacity: 0.3;
+}
+
+.todo-item:hover .todo-actions button {
+  opacity: 1;
 }
 
 .todo-text {
@@ -250,32 +296,35 @@ body {
 }
 
 .edit-btn:hover {
-  background: rgba(255, 193, 7, 0.3); /* Warna kuning transparan pas disentuh */
+  background: rgba(255, 193, 7, 0.3);
 }
 
 /* Gaya untuk area tombol Save/Copy */
-.export-actions {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 15px;
-  padding-top: 15px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
 .export-btn {
-  padding: 8px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 6px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.05);
-  color: white;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 300;
   transition: all 0.3s ease;
 }
 
 .export-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.export-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .disabled-btn {

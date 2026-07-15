@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Data
   let todos = loadTodos();
+  let isHidden = false;
 
   // Event: hanya Enter pada input
   todoInput.addEventListener("keypress", (e) => {
@@ -17,11 +18,12 @@ document.addEventListener("DOMContentLoaded", () => {
   function addTodo() {
     const text = todoInput.value.trim();
     if (!text) return;
-    todos.unshift({
+    todos.push({
       id: Date.now(),
       text,
       completed: false,
     });
+
     saveTodos();
     renderTodos();
     todoInput.value = "";
@@ -49,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
     todoList.innerHTML = todos
       .map(
         (t, index) => `
-      <div class="todo-item${t.completed ? " completed" : ""}" draggable="true" data-index="${index}">
+      <div class="todo-item${t.completed ? " completed" : ""}${t.completed && isHidden ? " hidden" : ""}" draggable="true" data-index="${index}">
         <div class="todo-text">${escapeHtml(t.text)}</div>
           <div class="todo-actions">
             <button class="complete-btn" data-id="${t.id}" title="${
@@ -90,7 +92,28 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.addEventListener("click", () => deleteTodo(Number(btn.dataset.id))),
       );
     const completed = todos.filter((t) => t.completed).length;
-    todoStats.textContent = `${todos.length} tugas · ${completed} selesai`;
+    // --- GANTI BAGIAN todoStats DENGAN INI ---
+    const completedCount = todos.filter((t) => t.completed).length;
+    let statsHtml = `${todos.length} tugas · ${completedCount} selesai`;
+
+    // Kalau ada tugas yang selesai, munculin tombol pil-nya
+    if (completedCount > 0) {
+      statsHtml += ` <span id="toggleHideBtn" class="toggle-hide" title="Sembunyikan/Tampilkan">
+        ${isHidden ? "Tampilkan" : "Sembunyikan"}
+      </span>`;
+    }
+
+    // Pakai innerHTML karena kita masukin elemen <span>
+    todoStats.innerHTML = statsHtml;
+
+    // Pasang deteksi klik untuk tombol pil-nya
+    const toggleBtn = document.getElementById("toggleHideBtn");
+    if (toggleBtn) {
+      toggleBtn.addEventListener("click", () => {
+        isHidden = !isHidden;
+        renderTodos();
+      });
+    }
   }
 
   function updateTimeAndGreeting() {
