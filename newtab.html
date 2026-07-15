@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Tab</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="background-overlay"></div>
+
+    <div class="container">
+      <div class="time-section">
+        <div class="time" id="time"></div>
+      </div>
+
+      <div class="greeting" id="greeting"></div>
+
+      <div class="todo-section">
+        <div class="todo-input-container">
+          <input
+            type="text"
+            class="todo-input"
+            id="todoInput"
+            placeholder="What is your main focus for today?..."
+            maxlength="100"
+          />
+        </div>
+
+        <div class="todo-list" id="todoList"></div>
+
+        <div class="todo-stats" id="todoStats">0 tugas · 0 selesai</div>
+      </div>
+    </div>
+
+    <script src="newtab.js"></script>
+  </body>
+</html>

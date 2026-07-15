@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Todo New Tab",
+  "version": "1.0",
+  "description": "New tab page dengan todo list - seperti Momentum",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "permissions": ["scripting", "activeTab", "storage"]
+}
