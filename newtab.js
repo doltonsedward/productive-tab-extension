@@ -235,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (cancelledTodos.length > 0) {
         cancelledTodos.forEach((t) => {
-          markdownText += `- [-] ${t.text}\n`;
+          markdownText += `- ${t.text}\n`;
         });
       } else {
         markdownText += `*(Tidak ada tugas yang dibatalkan)*\n`;
