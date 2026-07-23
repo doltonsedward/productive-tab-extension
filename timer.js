@@ -11,6 +11,7 @@ const trackTaskTime = document.getElementById("trackTaskTime");
 const pauseTaskTrackBtn = document.getElementById("pauseTaskTrackBtn");
 const stopTaskTrackBtn = document.getElementById("stopTaskTrackBtn");
 const completeTaskTrackBtn = document.getElementById("completeTaskTrackBtn");
+const restartTaskTrackBtn = document.getElementById("restartTaskTrackBtn");
 
 function formatTime(sec) {
   const h = String(Math.floor(sec / 3600)).padStart(2, "0");
@@ -76,6 +77,12 @@ if (stopTaskTrackBtn)
   stopTaskTrackBtn.addEventListener("click", () => stopTracking(false));
 if (completeTaskTrackBtn)
   completeTaskTrackBtn.addEventListener("click", () => stopTracking(true));
+if (restartTaskTrackBtn) {
+  restartTaskTrackBtn.addEventListener("click", () => {
+    taskElapsedSeconds = 0;
+    trackTaskTime.textContent = formatTime(taskElapsedSeconds);
+  });
+}
 
 // ==========================================
 // 2. GLOBAL TIMER & STOPWATCH WIDGET
