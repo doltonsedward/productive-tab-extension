@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function renderTodos() {
     if (!todos.length) {
       todoStats.textContent = "0 tugas · 0 selesai";
+      todoList.innerHTML = "";
       return;
     }
     todoList.innerHTML = todos
@@ -54,13 +55,12 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="todo-item${t.completed ? " completed" : ""}${t.completed && isHidden ? " hidden" : ""}" draggable="true" data-index="${index}">
         <div class="todo-text">${escapeHtml(t.text)}</div>
           <div class="todo-actions">
+            <!-- Tombol Track Stopwatch Task -->
+            <button class="track-btn" data-id="${t.id}" title="Track waktu tugas">⏱️</button>
             <button class="complete-btn" data-id="${t.id}" title="${
               t.completed ? "Tandai belum selesai" : "Tandai selesai"
             }">${t.completed ? "↩" : "✓"}</button>
-            
-            <!-- Tambahan tombol edit -->
             <button class="edit-btn" data-id="${t.id}" title="Edit tugas">✎</button>
-            
             <button class="delete-btn" data-id="${
               t.id
             }" title="Hapus tugas">✕</button>
@@ -76,6 +76,13 @@ document.addEventListener("DOMContentLoaded", () => {
       item.addEventListener("dragleave", dragLeave);
       item.addEventListener("drop", dragDrop);
     });
+    todoList
+      .querySelectorAll(".track-btn")
+      .forEach((btn) =>
+        btn.addEventListener("click", () =>
+          startTaskTracking(Number(btn.dataset.id)),
+        ),
+      );
     todoList
       .querySelectorAll(".edit-btn")
       .forEach((btn) =>

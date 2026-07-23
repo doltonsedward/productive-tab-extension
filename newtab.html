@@ -48,8 +48,67 @@
           </button>
         </div>
       </div>
+
+      <!-- Floating Global Timer/Stopwatch Widget (Pojok Kanan Bawah) -->
+      <div id="globalTimerWidget" class="global-timer-widget">
+        <div id="timerPanel" class="timer-panel hidden">
+          <div class="timer-tabs">
+            <button id="tabStopwatch" class="tab-btn active">Stopwatch</button>
+            <button id="tabTimer" class="tab-btn">Timer</button>
+          </div>
+
+          <div id="displayGlobalTime" class="glass-timer-display">00:00:00</div>
+
+          <div id="timerInputGroup" class="timer-input-group hidden">
+            <input
+              type="number"
+              id="timerMinutes"
+              placeholder="Menit"
+              min="1"
+              max="180"
+            />
+          </div>
+
+          <div class="timer-controls">
+            <button id="startGlobalTimerBtn" class="glass-btn">Start</button>
+            <button id="resetGlobalTimerBtn" class="glass-btn icon-only">
+              ↺
+            </button>
+          </div>
+        </div>
+        <button
+          id="toggleTimerPanelBtn"
+          class="timer-fab"
+          title="Timer & Stopwatch"
+        >
+          ⏱️
+        </button>
+      </div>
+
+      <!-- Modal Pop-up Tracking Task (Glassmorphic) -->
+      <div id="taskTrackModal" class="modal-overlay hidden">
+        <div class="glass-modal-content">
+          <span class="track-badge">Task Tracking</span>
+          <h4 id="trackTaskTitle" class="track-task-title">---</h4>
+          <div id="trackTaskTime" class="glass-timer-display large">
+            00:00:00
+          </div>
+
+          <div class="modal-actions">
+            <button id="pauseTaskTrackBtn" class="glass-btn">Pause</button>
+            <button id="stopTaskTrackBtn" class="glass-btn danger">
+              Stop (Simpan Waktu)
+            </button>
+            <button id="completeTaskTrackBtn" class="glass-btn success">
+              Stop & Selesai ✓
+            </button>
+          </div>
+        </div>
+        `
+      </div>
     </div>
 
     <script src="newtab.js"></script>
+    <script src="timer.js"></script>
   </body>
 </html>
