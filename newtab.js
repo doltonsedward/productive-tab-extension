@@ -216,21 +216,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const copyMdBtn = document.getElementById("copyMdBtn");
   if (copyMdBtn) {
     copyMdBtn.addEventListener("click", () => {
-      // Ambil tanggal hari ini (format DD/MM/YYYY)
       const dateStr = new Date().toLocaleDateString("en-GB");
 
-      // Bikin format teksnya
-      let markdownText = `## Todo list for ${dateStr}\n\n`;
-      todos.forEach((t) => {
-        markdownText += `- [${t.completed ? "x" : " "}] ${t.text}\n`;
-      });
+      const completedTodos = todos.filter((t) => t.completed);
+      const cancelledTodos = todos.filter((t) => !t.completed);
 
-      // Salin ke clipboard
+      let markdownText = `### Todo list for ${dateStr}\n\n`;
+
+      if (completedTodos.length > 0) {
+        completedTodos.forEach((t) => {
+          markdownText += `- [x] ${t.text}\n`;
+        });
+      } else {
+        markdownText += `*(Tidak ada tugas yang selesai)*\n`;
+      }
+
+      markdownText += `\n#### Cancelled\n\n`;
+
+      if (cancelledTodos.length > 0) {
+        cancelledTodos.forEach((t) => {
+          markdownText += `- [-] ${t.text}\n`;
+        });
+      } else {
+        markdownText += `*(Tidak ada tugas yang dibatalkan)*\n`;
+      }
+
       navigator.clipboard.writeText(markdownText).then(() => {
         const originalText = copyMdBtn.textContent;
         copyMdBtn.textContent = "✅ Tersalin!";
 
-        // Balikin teks tombol setelah 2 detik
         setTimeout(() => {
           copyMdBtn.textContent = originalText;
         }, 2000);
