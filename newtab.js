@@ -16,6 +16,18 @@ function saveTodos() {
   localStorage.setItem("todos", JSON.stringify(todos));
 }
 
+function loadIsHidden() {
+  try {
+    return localStorage.getItem("isHidden") === "true";
+  } catch {
+    return false;
+  }
+}
+
+function saveIsHidden() {
+  localStorage.setItem("isHidden", isHidden);
+}
+
 function loadMilestone() {
   try {
     const data = JSON.parse(localStorage.getItem("milestone"));
@@ -352,6 +364,7 @@ function renderTodos() {
   if (toggleBtn) {
     toggleBtn.addEventListener("click", () => {
       isHidden = !isHidden;
+      saveIsHidden();
       renderTodos();
     });
   }
@@ -485,6 +498,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   todos = loadTodos();
   milestone = loadMilestone();
+  isHidden = loadIsHidden();
 
   if (todoInput) {
     todoInput.addEventListener("keypress", (e) => {
