@@ -17,6 +17,11 @@
       <div class="greeting" id="greeting"></div>
 
       <div class="todo-section">
+        <!-- Milestone Habit Container -->
+        <div id="milestoneContainer" class="milestone-container">
+          <!-- Rendered dynamically by JS -->
+        </div>
+
         <div class="todo-input-container">
           <input
             type="text"
@@ -110,6 +115,28 @@
             <button id="completeTaskTrackBtn" class="glass-btn success">
               Stop & Selesai ✓
             </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Schedule Google Calendar -->
+      <div id="gcalModal" class="modal-overlay hidden">
+        <div class="glass-modal-content">
+          <span class="track-badge">📅 Schedule to Google Calendar</span>
+          <h4 id="gcalTaskTitle" class="track-task-title">---</h4>
+          <div class="gcal-form-group">
+            <label for="gcalDate">Tanggal & Waktu Mula:</label>
+            <input type="datetime-local" id="gcalDate" class="gcal-input" />
+          </div>
+          <div class="gcal-form-group">
+            <label for="gcalDuration">Durasi (Menit):</label>
+            <input type="number" id="gcalDuration" class="gcal-input" value="30" min="15" step="15" />
+          </div>
+
+          <div class="modal-actions">
+            <button id="openGcalBtn" class="glass-btn success">🚀 Open in Google Calendar</button>
+            <button id="saveTaskScheduleBtn" class="glass-btn">💾 Simpan Tanggal Saja</button>
+            <button id="closeGcalBtn" class="glass-btn danger">Batal</button>
           </div>
         </div>
       </div>

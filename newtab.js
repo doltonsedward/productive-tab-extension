@@ -1,6 +1,9 @@
 let todos = [];
 let isHidden = false;
 
+// State Milestone Habit Tracker
+let milestone = null;
+
 function loadTodos() {
   try {
     return JSON.parse(localStorage.getItem("todos") || "[]");
@@ -11,6 +14,52 @@ function loadTodos() {
 
 function saveTodos() {
   localStorage.setItem("todos", JSON.stringify(todos));
+}
+
+function loadMilestone() {
+  try {
+    const data = JSON.parse(localStorage.getItem("milestone"));
+    if (!data) return null;
+    return checkMilestoneDayGap(data);
+  } catch {
+    return null;
+  }
+}
+
+function saveMilestone() {
+  if (milestone) {
+    localStorage.setItem("milestone", JSON.stringify(milestone));
+  } else {
+    localStorage.removeItem("milestone");
+  }
+}
+
+// Logic Evaluasi Strikes dan Missed Days
+function checkMilestoneDayGap(data) {
+  if (!data || data.failed || !data.lastCheckedDate) return data;
+
+  const todayStr = new Date().toISOString().split("T")[0];
+  const lastDate = new Date(data.lastCheckedDate + "T00:00:00");
+  const todayDate = new Date(todayStr + "T00:00:00");
+  
+  const diffTime = todayDate - lastDate;
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 1) {
+    // Kemarin sudah check in, hari ini giliran check in lagi.
+  } else if (diffDays === 2) {
+    // Lewat 1 hari tanpa check-in -> Warning / 1 Strike!
+    if (data.strikes < 1) {
+      data.strikes = 1;
+    }
+  } else if (diffDays >= 3) {
+    // Lewat 2+ hari tanpa check-in -> Fail total! Reset streak ke 0
+    data.strikes = 2;
+    data.failed = true;
+  }
+
+  saveMilestone();
+  return data;
 }
 
 function escapeHtml(text) {
@@ -44,7 +93,168 @@ function editTodo(id) {
   }
 }
 
-// --- FUNGSI RENDER UTAMA ---
+// Format Tampilan Tag Tanggal Jadwal (e.g., 📅 04 Aug 15:00)
+function formatScheduleTag(dateStr) {
+  if (!dateStr) return "";
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return "";
+    const dateFormatted = d.toLocaleDateString("id-ID", {
+      day: "2-digit",
+      month: "short",
+    });
+    const timeFormatted = d.toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+    return `<span class="task-schedule-tag" title="Tersedul: ${dateStr}">📅 ${dateFormatted} ${timeFormatted}</span>`;
+  } catch {
+    return "";
+  }
+}
+
+// --- FUNGSI RENDER MILESTONE BANNER ---
+function renderMilestone() {
+  const container = document.getElementById("milestoneContainer");
+  if (!container) return;
+
+  if (!milestone) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 4px 0;">
+        <button id="setupMilestoneBtn" class="setup-milestone-link">
+          🏆 Setup Milestone / Target Habit
+        </button>
+      </div>
+    `;
+    const btn = document.getElementById("setupMilestoneBtn");
+    if (btn) btn.addEventListener("click", promptCreateMilestone);
+    return;
+  }
+
+  const todayStr = new Date().toISOString().split("T")[0];
+  const isCheckedToday = milestone.lastCheckedDate === todayStr;
+  const progressPercent = Math.min(100, Math.round((milestone.currentStreak / milestone.targetDays) * 100));
+
+  let cardClass = "milestone-card";
+  let statusBadge = `<span class="milestone-badge fire">🔥 ${milestone.currentStreak} Hari</span>`;
+  let strikeBadge = "";
+
+  if (milestone.failed) {
+    cardClass += " failed";
+    statusBadge = `<span class="milestone-badge strike-fail">🚨 GAGAL</span>`;
+    strikeBadge = `<span class="milestone-badge strike-fail">2 Strike</span>`;
+  } else if (milestone.strikes === 1) {
+    cardClass += " warning";
+    strikeBadge = `<span class="milestone-badge strike-warn">⚠️ 1 Strike</span>`;
+  }
+
+  container.innerHTML = `
+    <div class="${cardClass}">
+      <div class="milestone-header">
+        <div class="milestone-title">
+          🏆 ${escapeHtml(milestone.title)}
+        </div>
+        <div class="milestone-badges">
+          ${statusBadge}
+          ${strikeBadge}
+        </div>
+      </div>
+
+      <div class="milestone-progress-bar">
+        <div class="milestone-progress-fill" style="width: ${progressPercent}%;"></div>
+      </div>
+
+      <div class="milestone-footer">
+        <span>Hari ${milestone.currentStreak}/${milestone.targetDays} (${progressPercent}%)</span>
+        <div class="milestone-footer-actions">
+          ${
+            milestone.failed
+              ? `<button id="resetMilestoneBtn" class="milestone-btn">↺ Mulai Ulang</button>`
+              : `<button id="checkinMilestoneBtn" class="milestone-btn checkin-btn" ${isCheckedToday ? "disabled" : ""}>
+                  ${isCheckedToday ? "✓ Done" : "🔥 Check-in"}
+                </button>`
+          }
+          <button id="editMilestoneBtn" class="milestone-btn" title="Edit Milestone">⚙️</button>
+          <button id="deleteMilestoneBtn" class="milestone-btn delete-milestone-btn" title="Hapus Milestone">✕</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const checkinBtn = document.getElementById("checkinMilestoneBtn");
+  if (checkinBtn && !isCheckedToday && !milestone.failed) {
+    checkinBtn.addEventListener("click", checkInMilestone);
+  }
+
+  const resetBtn = document.getElementById("resetMilestoneBtn");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", promptCreateMilestone);
+  }
+
+  const editBtn = document.getElementById("editMilestoneBtn");
+  if (editBtn) {
+    editBtn.addEventListener("click", promptEditMilestoneOptions);
+  }
+
+  const deleteBtn = document.getElementById("deleteMilestoneBtn");
+  if (deleteBtn) {
+    deleteBtn.addEventListener("click", deleteMilestone);
+  }
+}
+
+function promptCreateMilestone() {
+  const title = prompt("Nama Milestone / Target Habit kamu (misal: Habit Menulis):", milestone?.title || "Habit Menulis");
+  if (!title || !title.trim()) return;
+
+  const target = prompt("Target Berapa Hari? (misal: 30):", milestone?.targetDays || "30");
+  const targetDays = parseInt(target, 10);
+  if (isNaN(targetDays) || targetDays <= 0) return;
+
+  milestone = {
+    title: title.trim(),
+    targetDays,
+    currentStreak: 0,
+    strikes: 0,
+    lastCheckedDate: null,
+    failed: false,
+  };
+
+  saveMilestone();
+  renderMilestone();
+}
+
+function checkInMilestone() {
+  if (!milestone || milestone.failed) return;
+
+  const todayStr = new Date().toISOString().split("T")[0];
+  if (milestone.lastCheckedDate === todayStr) return;
+
+  milestone.currentStreak += 1;
+  milestone.lastCheckedDate = todayStr;
+
+  // Jika sebelumnya ada strike tapi berhasil checkin hari ini, strike dibersihkan
+  milestone.strikes = 0;
+
+  saveMilestone();
+  renderMilestone();
+}
+
+function deleteMilestone() {
+  if (!confirm(`Hapus milestone "${milestone.title}"?\nProgress akan hilang permanen.`)) return;
+  milestone = null;
+  saveMilestone();
+  renderMilestone();
+}
+
+function promptEditMilestoneOptions() {
+  const choice = confirm(`Milestone: ${milestone.title}\nStreak: ${milestone.currentStreak} Hari\n\nKlik OK untuk Edit/Reset target, atau CANCEL untuk batal.`);
+  if (choice) {
+    promptCreateMilestone();
+  }
+}
+
+// --- FUNGSI RENDER UTAMA TODO ---
 function renderTodos() {
   const todoList = document.getElementById("todoList");
   const todoStats = document.getElementById("todoStats");
@@ -61,8 +271,14 @@ function renderTodos() {
     .map(
       (t, index) => `
     <div class="todo-item${t.completed ? " completed" : ""}${t.completed && isHidden ? " hidden" : ""}" draggable="true" data-index="${index}">
-      <div class="todo-text">${escapeHtml(t.text)}</div>
+      <div class="todo-text">
+        ${escapeHtml(t.text)}
+        ${formatScheduleTag(t.scheduledDate)}
+      </div>
         <div class="todo-actions">
+          <!-- Tombol Google Calendar -->
+          <button class="cal-btn" data-id="${t.id}" title="Jadwalkan ke Google Calendar">📅</button>
+
           <!-- Tombol Track Stopwatch Task -->
           <button class="track-btn" data-id="${t.id}" title="Track waktu tugas">⏱️</button>
           
@@ -88,7 +304,12 @@ function renderTodos() {
     item.addEventListener("drop", dragDrop);
   });
 
-  // Tombol ⏱️ memanggil fungsi startTaskTracking yang ada di timer.js
+  // Tombol 📅 Google Calendar Modal
+  todoList.querySelectorAll(".cal-btn").forEach((btn) =>
+    btn.addEventListener("click", () => openGcalModal(Number(btn.dataset.id)))
+  );
+
+  // Tombol ⏱️ Track Task Stopwatch
   todoList.querySelectorAll(".track-btn").forEach((btn) =>
     btn.addEventListener("click", () => {
       if (typeof startTaskTracking === "function") {
@@ -134,6 +355,85 @@ function renderTodos() {
       renderTodos();
     });
   }
+}
+
+// --- MODAL GOOGLE CALENDAR LOGIC ---
+let selectedGcalTaskId = null;
+
+function openGcalModal(taskId) {
+  const task = todos.find((t) => t.id === taskId);
+  if (!task) return;
+
+  selectedGcalTaskId = taskId;
+  const gcalModal = document.getElementById("gcalModal");
+  const gcalTaskTitle = document.getElementById("gcalTaskTitle");
+  const gcalDate = document.getElementById("gcalDate");
+
+  if (!gcalModal || !gcalTaskTitle || !gcalDate) return;
+
+  gcalTaskTitle.textContent = task.text;
+
+  // Setup default date/time jika belum ada
+  if (task.scheduledDate) {
+    gcalDate.value = task.scheduledDate;
+  } else {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 15);
+    // Format YYYY-MM-THH:mm untuk input datetime-local
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const mins = String(now.getMinutes()).padStart(2, "0");
+    gcalDate.value = `${year}-${month}-${day}T${hours}:${mins}`;
+  }
+
+  gcalModal.classList.remove("hidden");
+}
+
+function closeGcalModal() {
+  const gcalModal = document.getElementById("gcalModal");
+  if (gcalModal) gcalModal.classList.add("hidden");
+  selectedGcalTaskId = null;
+}
+
+function saveTaskSchedule(dateVal) {
+  if (!selectedGcalTaskId) return;
+  const task = todos.find((t) => t.id === selectedGcalTaskId);
+  if (task) {
+    task.scheduledDate = dateVal;
+    saveTodos();
+    renderTodos();
+  }
+}
+
+function launchGoogleCalendar() {
+  if (!selectedGcalTaskId) return;
+  const task = todos.find((t) => t.id === selectedGcalTaskId);
+  const gcalDate = document.getElementById("gcalDate");
+  const gcalDuration = document.getElementById("gcalDuration");
+
+  if (!task || !gcalDate || !gcalDate.value) {
+    alert("Silakan pilih tanggal dan waktu terlebih dahulu.");
+    return;
+  }
+
+  const dateVal = gcalDate.value;
+  const durationMins = parseInt(gcalDuration?.value || "30", 10);
+
+  saveTaskSchedule(dateVal);
+
+  const startDate = new Date(dateVal);
+  const endDate = new Date(startDate.getTime() + durationMins * 60000);
+
+  const toGCalTime = (d) => d.toISOString().replace(/-|:|\.\d\d\d/g, "");
+  const dates = `${toGCalTime(startDate)}/${toGCalTime(endDate)}`;
+  const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+    task.text
+  )}&dates=${dates}&details=${encodeURIComponent("Tugas dari Productive Tab")}`;
+
+  window.open(url, "_blank");
+  closeGcalModal();
 }
 
 // --- FUNGSI DRAG AND DROP ---
@@ -184,6 +484,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const greetingEl = document.getElementById("greeting");
 
   todos = loadTodos();
+  milestone = loadMilestone();
 
   if (todoInput) {
     todoInput.addEventListener("keypress", (e) => {
@@ -238,6 +539,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Bind Event Modal Google Calendar
+  const openGcalBtn = document.getElementById("openGcalBtn");
+  const saveTaskScheduleBtn = document.getElementById("saveTaskScheduleBtn");
+  const closeGcalBtn = document.getElementById("closeGcalBtn");
+
+  if (openGcalBtn) openGcalBtn.addEventListener("click", launchGoogleCalendar);
+  if (saveTaskScheduleBtn) {
+    saveTaskScheduleBtn.addEventListener("click", () => {
+      const gcalDate = document.getElementById("gcalDate");
+      if (gcalDate && gcalDate.value) {
+        saveTaskSchedule(gcalDate.value);
+      }
+      closeGcalModal();
+    });
+  }
+  if (closeGcalBtn) closeGcalBtn.addEventListener("click", closeGcalModal);
+
   // --- COPY KE OBSIDIAN ---
   const copyMdBtn = document.getElementById("copyMdBtn");
   if (copyMdBtn) {
@@ -247,7 +565,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const completedTodos = todos.filter((t) => t.completed);
       const cancelledTodos = todos.filter((t) => !t.completed);
 
-      // Helper kecil buat format detik ke text (misal: 1h 15m 04s atau 05m 12s)
+      // Helper kecil buat format detik ke text
       const formatDuration = (sec) => {
         if (!sec || sec <= 0) return "";
         const h = Math.floor(sec / 3600);
@@ -264,10 +582,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
       let markdownText = `### Todo list for ${dateStr}\n\n`;
 
+      if (milestone) {
+        const statusStr = milestone.failed
+          ? "🚨 FAILED"
+          : milestone.strikes > 0
+          ? "⚠️ 1 STRIKE WARNING"
+          : `🔥 ${milestone.currentStreak}-day streak`;
+        markdownText += `🏆 **Milestone:** ${milestone.title} — Day ${milestone.currentStreak}/${milestone.targetDays} (${statusStr})\n\n`;
+      }
+
       if (completedTodos.length > 0) {
         completedTodos.forEach((t) => {
           const duration = formatDuration(t.elapsedTime);
-          markdownText += `- [x] ${t.text}${duration}\n`;
+          const sched = t.scheduledDate ? ` [📅 ${t.scheduledDate.replace("T", " ")}]` : "";
+          markdownText += `- [x] ${t.text}${sched}${duration}\n`;
         });
       } else {
         markdownText += `*(Tidak ada tugas yang selesai)*\n`;
@@ -278,7 +606,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (cancelledTodos.length > 0) {
         cancelledTodos.forEach((t) => {
           const duration = formatDuration(t.elapsedTime);
-          markdownText += `- ${t.text}${duration}\n`;
+          const sched = t.scheduledDate ? ` [📅 ${t.scheduledDate.replace("T", " ")}]` : "";
+          markdownText += `- ${t.text}${sched}${duration}\n`;
         });
       } else {
         markdownText += `*(Tidak ada tugas yang dibatalkan)*\n`;
@@ -296,6 +625,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Init UI
+  renderMilestone();
   renderTodos();
   updateTimeAndGreeting();
   setInterval(updateTimeAndGreeting, 1000);
