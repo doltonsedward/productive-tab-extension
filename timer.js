@@ -90,7 +90,10 @@ function stopTracking(shouldComplete = false) {
   const todo = todos.find((t) => t.id === activeTrackingTodoId);
   if (todo) {
     todo.elapsedTime = finalSeconds;
-    if (shouldComplete) todo.completed = true;
+    if (shouldComplete) {
+      todo.completed = true;
+      if (typeof checkAllTodosCompleted === "function") checkAllTodosCompleted();
+    }
     if (typeof saveTodos === "function") saveTodos();
     if (typeof renderTodos === "function") renderTodos();
   }

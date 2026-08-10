@@ -14,8 +14,9 @@ body {
   font-family: "Sora", "Poppins", Arial, Helvetica, sans-serif;
   background: #181c24 url("bg.png") no-repeat center center fixed;
   background-size: cover;
-  min-height: 100vh;
-  overflow-y: auto;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
   position: relative;
 }
 
@@ -26,48 +27,45 @@ body {
   width: 100%;
   height: 100%;
   background:
-    radial-gradient(
-      circle at 20% 50%,
+    radial-gradient(circle at 20% 50%,
       rgba(0, 255, 135, 0.05) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 80% 20%,
+      transparent 50%),
+    radial-gradient(circle at 80% 20%,
       rgba(0, 255, 255, 0.05) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 40% 80%,
+      transparent 50%),
+    radial-gradient(circle at 40% 80%,
       rgba(0, 255, 135, 0.03) 0%,
-      transparent 50%
-    );
+      transparent 50%);
   z-index: 1;
 }
 
 .container {
   position: relative;
   z-index: 2;
-  min-height: 100vh;
+  height: 100vh;
+  max-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   color: white;
   text-align: center;
-  padding: 20px;
+  padding: 16px 20px;
   gap: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .time {
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 8rem;
+  font-size: 7.5rem;
   font-weight: 600;
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
   letter-spacing: -4px;
 }
 
 .date {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   opacity: 0.9;
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
   font-weight: 300;
@@ -75,8 +73,8 @@ body {
 
 .greeting {
   font-family: "Poppins", sans-serif;
-  font-size: 2.2rem;
-  margin-bottom: 24px;
+  font-size: 2rem;
+  margin-bottom: 16px;
   opacity: 0.95;
   text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
   font-weight: 300;
@@ -141,9 +139,9 @@ body {
 }
 
 .todo-list {
-  max-height: 250px;
+  max-height: 200px;
   overflow-y: auto;
-  margin-top: 15px;
+  margin-top: 12px;
 }
 
 .todo-item {
@@ -469,14 +467,17 @@ body {
   flex: 0 0 32px;
   padding: 0;
 }
+
 .glass-btn.danger:hover {
   background: rgba(244, 67, 54, 0.3);
   border-color: rgba(244, 67, 54, 0.5);
 }
+
 .glass-btn.success {
   background: rgba(0, 255, 135, 0.15);
   border-color: rgba(0, 255, 135, 0.3);
 }
+
 .glass-btn.success:hover {
   background: rgba(0, 255, 135, 0.3);
 }
@@ -559,6 +560,7 @@ body {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -569,6 +571,7 @@ body {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -654,6 +657,10 @@ body {
   background: linear-gradient(90deg, rgba(244, 67, 54, 0.8), rgba(255, 87, 34, 0.6), rgba(244, 67, 54, 0.4));
 }
 
+.milestone-card.completed::before {
+  background: linear-gradient(90deg, #ffd700, #ff9800, #00ff87, #ffd700);
+}
+
 .milestone-card.warning {
   border-color: rgba(255, 193, 7, 0.35);
   background: rgba(255, 193, 7, 0.05);
@@ -662,6 +669,12 @@ body {
 .milestone-card.failed {
   border-color: rgba(244, 67, 54, 0.4);
   background: rgba(244, 67, 54, 0.06);
+}
+
+.milestone-card.completed {
+  border-color: rgba(255, 215, 0, 0.45);
+  background: rgba(255, 215, 0, 0.07);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.15);
 }
 
 .milestone-header {
@@ -806,8 +819,15 @@ body {
 }
 
 @keyframes subtlePulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 255, 135, 0); }
-  50% { box-shadow: 0 0 10px 2px rgba(0, 255, 135, 0.15); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 255, 135, 0);
+  }
+
+  50% {
+    box-shadow: 0 0 10px 2px rgba(0, 255, 135, 0.15);
+  }
 }
 
 .setup-milestone-link {
@@ -899,3 +919,120 @@ body {
   box-shadow: 0 0 8px rgba(33, 150, 243, 0.15);
 }
 
+/* --- Completed Milestone Badge & Progress --- */
+.milestone-badge.completed-badge {
+  background: rgba(255, 215, 0, 0.2);
+  color: #ffe082;
+  border-color: rgba(255, 215, 0, 0.4);
+  font-weight: 600;
+}
+
+.milestone-card.completed .milestone-progress-fill {
+  background: linear-gradient(90deg, #ffd700, #ff9800, #00ff87);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+/* ==========================================
+   TOAST NOTIFICATION STYLES
+   ========================================== */
+.toast-container {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+  width: 90%;
+  max-width: 480px;
+}
+
+.toast {
+  pointer-events: auto;
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 12px;
+  background: #111827;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 255, 135, 0.3);
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 500;
+  line-height: 1.45;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  animation: toastSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.toast.toast-success {
+  border-color: rgba(0, 255, 135, 0.6);
+  background: rgba(10, 30, 20, 0.95);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 255, 135, 0.35);
+  color: #e6fffa;
+}
+
+.toast.toast-info {
+  border-color: rgba(33, 150, 243, 0.6);
+  background: rgba(10, 25, 40, 0.95);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(33, 150, 243, 0.35);
+  color: #e3f2fd;
+}
+
+.toast.toast-celebrate {
+  border-color: rgba(255, 215, 0, 0.8);
+  background: rgba(38, 30, 10, 0.96);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 215, 0, 0.5);
+  color: #fff8e1;
+  font-weight: 600;
+}
+
+.toast.toast-warning {
+  border-color: rgba(255, 193, 7, 0.7);
+  background: rgba(38, 30, 10, 0.95);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(255, 193, 7, 0.35);
+  color: #fffde7;
+}
+
+.toast.toast-danger {
+  border-color: rgba(244, 67, 54, 0.7);
+  background: rgba(40, 15, 15, 0.95);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(244, 67, 54, 0.35);
+  color: #ffebee;
+}
+
+.toast.hiding {
+  animation: toastSlideOut 0.3s ease forwards;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toastSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+}

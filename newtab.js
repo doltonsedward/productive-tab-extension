@@ -28,10 +28,71 @@ function saveIsHidden() {
   localStorage.setItem("isHidden", isHidden);
 }
 
+// --- TOAST NOTIFICATION HELPER ---
+function showToast(message, type = "success", duration = 4000) {
+  let container = document.getElementById("toastContainer");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "toastContainer";
+    container.className = "toast-container";
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement("div");
+  toast.className = `toast toast-${type}`;
+  toast.innerHTML = `<span>${message}</span>`;
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("hiding");
+    setTimeout(() => {
+      if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 300);
+  }, duration);
+}
+
+// 15 Short, Mind-Bending Random Reflection Questions for Day N
+const RANDOM_QUESTIONS = [
+  "What assumption did you make today that might be wrong?",
+  "If today was a chapter in your book, what would its title be?",
+  "What habit today will your future self thank you for?",
+  "Are you reacting to your day, or actively shaping it?",
+  "What is something you learned today that shifted your perspective?",
+  "What's one thing you did today purely for your own joy?",
+  "What unspoken rule are you following that you never agreed to?",
+  "If you had 1 extra hour with zero obligations, how would you spend it?",
+  "What's the smallest change that would give you the biggest peace of mind?",
+  "Are you spending your energy on what truly matters to you?",
+  "What's one belief you held last year that you've outgrown?",
+  "What would you attempt today if failure was impossible?",
+  "What hard truth did you embrace recently that made you stronger?",
+  "What's one noise in your life you need to turn down?",
+  "What made you feel genuinely grateful or smile today?"
+];
+
+function getDayCheckinQuote(streak, targetDays, title) {
+  if (streak >= targetDays) {
+    return `🏆 CONGRATULATIONS! You completed all ${targetDays} days of '${title}'! 🎉`;
+  }
+  if (streak === 1) {
+    return `🚀 Great start! Day 1 completed. Consistency begins now!`;
+  }
+  if (streak === 2) {
+    return `🔥 Momentum building! Day 2 completed. Keep it going!`;
+  }
+  if (streak === 3) {
+    return `⚡ Day 3 done! 3 days in a row — your habit is forming!`;
+  }
+
+  const q = RANDOM_QUESTIONS[Math.floor(Math.random() * RANDOM_QUESTIONS.length)];
+  return `💪 Day ${streak}/${targetDays} checked in! 🤔 ${q}`;
+}
+
 function loadMilestone() {
   try {
-    const data = JSON.parse(localStorage.getItem("milestone"));
-    if (!data) return null;
+    const raw = localStorage.getItem("milestone");
+    if (!raw) return null;
+    const data = JSON.parse(raw);
     return checkMilestoneDayGap(data);
   } catch {
     return null;
@@ -46,31 +107,56 @@ function saveMilestone() {
   }
 }
 
+function checkMilestoneNotice() {
+  try {
+    const notice = localStorage.getItem("milestoneNotice");
+    if (notice) {
+      localStorage.removeItem("milestoneNotice");
+      setTimeout(() => {
+        showToast(notice, "warning", 6000);
+      }, 500);
+    }
+  } catch (e) {}
+}
+
 // Logic Evaluasi Strikes dan Missed Days
 function checkMilestoneDayGap(data) {
-  if (!data || data.failed || !data.lastCheckedDate) return data;
+  if (!data) return null;
+
+  // Jika milestone sudah TAMAT / COMPLETED (hfinal reached):
+  if (data.completed) {
+    return data;
+  }
 
   const todayStr = new Date().toISOString().split("T")[0];
-  const lastDate = new Date(data.lastCheckedDate + "T00:00:00");
+  const referenceDateStr = data.lastCheckedDate || data.createdDate || todayStr;
+  const lastDate = new Date(referenceDateStr + "T00:00:00");
   const todayDate = new Date(todayStr + "T00:00:00");
   
   const diffTime = todayDate - lastDate;
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-  if (diffDays === 1) {
-    // Kemarin sudah check in, hari ini giliran check in lagi.
+  if (diffDays === 0 || diffDays === 1) {
+    // Today or yesterday checked in
   } else if (diffDays === 2) {
-    // Lewat 1 hari tanpa check-in -> Warning / 1 Strike!
+    // Missed 1 day -> Warning / 1 Strike!
     if (data.strikes < 1) {
       data.strikes = 1;
     }
   } else if (diffDays >= 3) {
-    // Lewat 2+ hari tanpa check-in -> Fail total! Reset streak ke 0
-    data.strikes = 2;
-    data.failed = true;
+    // Missed 2+ days -> Auto-Delete Milestone!
+    try {
+      localStorage.setItem(
+        "milestoneNotice",
+        `🗑️ Milestone "${data.title}" was auto-deleted for missing 2 consecutive days.`
+      );
+    } catch (e) {}
+
+    localStorage.removeItem("milestone");
+    return null;
   }
 
-  saveMilestone();
+  localStorage.setItem("milestone", JSON.stringify(data));
   return data;
 }
 
@@ -80,11 +166,22 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
+function checkAllTodosCompleted() {
+  if (todos.length > 0 && todos.every((t) => t.completed)) {
+    showToast("🎉 All tasks completed for today! Awesome work!", "success", 4500);
+  }
+}
+
 function toggleTodo(id) {
   const todo = todos.find((t) => t.id === id);
-  if (todo) todo.completed = !todo.completed;
-  saveTodos();
-  renderTodos();
+  if (todo) {
+    todo.completed = !todo.completed;
+    saveTodos();
+    renderTodos();
+    if (todo.completed) {
+      checkAllTodosCompleted();
+    }
+  }
 }
 
 function deleteTodo(id) {
@@ -97,7 +194,7 @@ function editTodo(id) {
   const todo = todos.find((t) => t.id === id);
   if (!todo) return;
 
-  const newText = prompt("Ubah tugas kamu:", todo.text);
+  const newText = prompt("Edit your task:", todo.text);
   if (newText !== null && newText.trim() !== "") {
     todo.text = newText.trim();
     saveTodos();
@@ -111,16 +208,16 @@ function formatScheduleTag(dateStr) {
   try {
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return "";
-    const dateFormatted = d.toLocaleDateString("id-ID", {
+    const dateFormatted = d.toLocaleDateString("en-US", {
       day: "2-digit",
       month: "short",
     });
-    const timeFormatted = d.toLocaleTimeString("id-ID", {
+    const timeFormatted = d.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: false,
     });
-    return `<span class="task-schedule-tag" title="Tersedul: ${dateStr}">📅 ${dateFormatted} ${timeFormatted}</span>`;
+    return `<span class="task-schedule-tag" title="Scheduled: ${dateStr}">📅 ${dateFormatted} ${timeFormatted}</span>`;
   } catch {
     return "";
   }
@@ -135,7 +232,7 @@ function renderMilestone() {
     container.innerHTML = `
       <div style="text-align: center; padding: 4px 0;">
         <button id="setupMilestoneBtn" class="setup-milestone-link">
-          🏆 Setup Milestone / Target Habit
+          🏆 Setup Milestone / Habit Target
         </button>
       </div>
     `;
@@ -149,16 +246,30 @@ function renderMilestone() {
   const progressPercent = Math.min(100, Math.round((milestone.currentStreak / milestone.targetDays) * 100));
 
   let cardClass = "milestone-card";
-  let statusBadge = `<span class="milestone-badge fire">🔥 ${milestone.currentStreak} Hari</span>`;
+  let statusBadge = `<span class="milestone-badge fire">🔥 ${milestone.currentStreak} Days</span>`;
   let strikeBadge = "";
 
-  if (milestone.failed) {
+  if (milestone.completed) {
+    cardClass += " completed";
+    statusBadge = `<span class="milestone-badge completed-badge">🏆 COMPLETED (${milestone.targetDays}/${milestone.targetDays} Days)</span>`;
+  } else if (milestone.failed) {
     cardClass += " failed";
-    statusBadge = `<span class="milestone-badge strike-fail">🚨 GAGAL</span>`;
-    strikeBadge = `<span class="milestone-badge strike-fail">2 Strike</span>`;
+    statusBadge = `<span class="milestone-badge strike-fail">🚨 FAILED</span>`;
+    strikeBadge = `<span class="milestone-badge strike-fail">2 Strikes</span>`;
   } else if (milestone.strikes === 1) {
     cardClass += " warning";
-    strikeBadge = `<span class="milestone-badge strike-warn">⚠️ 1 Strike</span>`;
+    strikeBadge = `<span class="milestone-badge strike-warn">⚠️ 1 Strike (1 Day Missed)</span>`;
+  }
+
+  let actionButtonsHtml = "";
+  if (milestone.completed) {
+    actionButtonsHtml = `<button class="milestone-btn checkin-btn" disabled style="background: rgba(255, 215, 0, 0.2); border-color: rgba(255, 215, 0, 0.4); color: #ffe082;">🏆 Target Completed!</button>`;
+  } else if (milestone.failed) {
+    actionButtonsHtml = `<button id="resetMilestoneBtn" class="milestone-btn">↺ Restart</button>`;
+  } else {
+    actionButtonsHtml = `<button id="checkinMilestoneBtn" class="milestone-btn checkin-btn" ${isCheckedToday ? "disabled" : ""}>
+        ${isCheckedToday ? "✓ Done" : "🔥 Check-in"}
+      </button>`;
   }
 
   container.innerHTML = `
@@ -178,24 +289,18 @@ function renderMilestone() {
       </div>
 
       <div class="milestone-footer">
-        <span>Hari ${milestone.currentStreak}/${milestone.targetDays} (${progressPercent}%)</span>
+        <span>Day ${milestone.currentStreak}/${milestone.targetDays} (${progressPercent}%)</span>
         <div class="milestone-footer-actions">
-          ${
-            milestone.failed
-              ? `<button id="resetMilestoneBtn" class="milestone-btn">↺ Mulai Ulang</button>`
-              : `<button id="checkinMilestoneBtn" class="milestone-btn checkin-btn" ${isCheckedToday ? "disabled" : ""}>
-                  ${isCheckedToday ? "✓ Done" : "🔥 Check-in"}
-                </button>`
-          }
-          <button id="editMilestoneBtn" class="milestone-btn" title="Edit Milestone">⚙️</button>
-          <button id="deleteMilestoneBtn" class="milestone-btn delete-milestone-btn" title="Hapus Milestone">✕</button>
+          ${actionButtonsHtml}
+          <button id="editMilestoneBtn" class="milestone-btn" title="Edit / Reset Target">⚙️</button>
+          <button id="deleteMilestoneBtn" class="milestone-btn delete-milestone-btn" title="Delete Milestone">✕</button>
         </div>
       </div>
     </div>
   `;
 
   const checkinBtn = document.getElementById("checkinMilestoneBtn");
-  if (checkinBtn && !isCheckedToday && !milestone.failed) {
+  if (checkinBtn && !isCheckedToday && !milestone.failed && !milestone.completed) {
     checkinBtn.addEventListener("click", checkInMilestone);
   }
 
@@ -216,51 +321,65 @@ function renderMilestone() {
 }
 
 function promptCreateMilestone() {
-  const title = prompt("Nama Milestone / Target Habit kamu (misal: Habit Menulis):", milestone?.title || "Habit Menulis");
+  const title = prompt("Name your Milestone / Habit Target (e.g. Daily Writing):", milestone?.title || "Daily Writing");
   if (!title || !title.trim()) return;
 
-  const target = prompt("Target Berapa Hari? (misal: 30):", milestone?.targetDays || "30");
+  const target = prompt("Target Days? (e.g. 30):", milestone?.targetDays || "30");
   const targetDays = parseInt(target, 10);
   if (isNaN(targetDays) || targetDays <= 0) return;
+
+  const todayStr = new Date().toISOString().split("T")[0];
 
   milestone = {
     title: title.trim(),
     targetDays,
     currentStreak: 0,
     strikes: 0,
+    createdDate: todayStr,
     lastCheckedDate: null,
     failed: false,
+    completed: false,
   };
 
   saveMilestone();
   renderMilestone();
+  showToast(`🏆 Milestone "${milestone.title}" (${targetDays} days) created! Ready to build consistency?`, "success");
 }
 
 function checkInMilestone() {
-  if (!milestone || milestone.failed) return;
+  if (!milestone || milestone.failed || milestone.completed) return;
 
   const todayStr = new Date().toISOString().split("T")[0];
   if (milestone.lastCheckedDate === todayStr) return;
 
   milestone.currentStreak += 1;
   milestone.lastCheckedDate = todayStr;
-
-  // Jika sebelumnya ada strike tapi berhasil checkin hari ini, strike dibersihkan
   milestone.strikes = 0;
+
+  if (milestone.currentStreak >= milestone.targetDays) {
+    milestone.completed = true;
+    milestone.completedDate = todayStr;
+  }
 
   saveMilestone();
   renderMilestone();
+
+  const toastMsg = getDayCheckinQuote(milestone.currentStreak, milestone.targetDays, milestone.title);
+  const toastType = milestone.completed ? "celebrate" : "success";
+  showToast(toastMsg, toastType, milestone.completed ? 8000 : 5000);
 }
 
 function deleteMilestone() {
-  if (!confirm(`Hapus milestone "${milestone.title}"?\nProgress akan hilang permanen.`)) return;
+  if (!confirm(`Delete milestone "${milestone.title}"?\nProgress will be permanently lost.`)) return;
+  const oldTitle = milestone.title;
   milestone = null;
   saveMilestone();
   renderMilestone();
+  showToast(`🗑️ Milestone "${oldTitle}" has been deleted.`, "warning", 3000);
 }
 
 function promptEditMilestoneOptions() {
-  const choice = confirm(`Milestone: ${milestone.title}\nStreak: ${milestone.currentStreak} Hari\n\nKlik OK untuk Edit/Reset target, atau CANCEL untuk batal.`);
+  const choice = confirm(`Milestone: ${milestone.title}\nStreak: ${milestone.currentStreak} Days\n\nClick OK to Edit/Reset target, or CANCEL to stay.`);
   if (choice) {
     promptCreateMilestone();
   }
@@ -640,6 +759,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Init UI
   renderMilestone();
+  checkMilestoneNotice();
   renderTodos();
   updateTimeAndGreeting();
   setInterval(updateTimeAndGreeting, 1000);
