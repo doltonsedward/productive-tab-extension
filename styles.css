@@ -375,7 +375,7 @@ body {
   text-align: left;
 }
 
-/* --- FITUR HIDE COMPLETED --- */
+/* --- HIDE COMPLETED FEATURE --- */
 .todo-item.hidden {
   display: none !important;
 }
@@ -472,7 +472,7 @@ body {
   font-weight: 300;
 }
 
-/* Gaya untuk tombol Edit */
+/* Styles for Edit button */
 .edit-btn {
   border: none;
   background: none;
@@ -492,7 +492,7 @@ body {
   background: rgba(255, 193, 7, 0.3);
 }
 
-/* Gaya untuk area tombol Save/Copy */
+/* Styles for Save/Copy button area */
 .export-btn {
   padding: 6px 14px;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -529,7 +529,7 @@ body {
    GLASSMORPHISM TIMERS & MODALS
    ========================================== */
 
-/* Floating Widget (Pojok Kanan Bawah) */
+/* Floating Widget (Bottom Right Corner) */
 .global-timer-widget {
   position: fixed;
   bottom: 25px;
@@ -679,7 +679,7 @@ body {
   background: rgba(0, 255, 135, 0.3);
 }
 
-/* Tombol Track pada Item Todo */
+/* Track Button on Todo Item */
 .track-btn {
   border: none;
   background: none;
@@ -1052,7 +1052,7 @@ body {
   background: rgba(255, 255, 255, 0.04);
 }
 
-/* Tombol Calendar pada Todo Actions */
+/* Calendar Button on Todo Actions */
 .cal-btn {
   border: none;
   background: none;
@@ -1073,7 +1073,7 @@ body {
   background: rgba(33, 150, 243, 0.3);
 }
 
-/* Tag Tanggal Jadwal pada Todo */
+/* Schedule Date Tag on Todo */
 .task-schedule-tag {
   display: inline-flex;
   align-items: center;

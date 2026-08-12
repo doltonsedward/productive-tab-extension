@@ -124,11 +124,11 @@ function checkMilestoneNotice() {
   } catch (e) {}
 }
 
-// Logic Evaluasi Strikes dan Missed Days
+// Strike and Missed Days Evaluation Logic
 function checkMilestoneDayGap(data) {
   if (!data) return null;
 
-  // Jika milestone sudah TAMAT / COMPLETED (hfinal reached):
+  // If milestone is COMPLETED (final day reached):
   if (data.completed) {
     return data;
   }
@@ -210,7 +210,7 @@ function editTodo(id) {
   }
 }
 
-// --- FUNGSI KELOLA SUBTASK & ACCORDION ---
+// --- SUBTASK & ACCORDION MANAGEMENT FUNCTIONS ---
 function toggleAccordion(parentId) {
   const todo = todos.find((t) => t.id === parentId);
   if (todo) {
@@ -290,7 +290,7 @@ function editSubtask(parentId, subtaskId) {
   }
 }
 
-// Format Tampilan Tag Tanggal Jadwal (e.g., 📅 04 Aug 15:00)
+// Schedule Date Tag Display Format (e.g., 📅 04 Aug 15:00)
 function formatScheduleTag(dateStr) {
   if (!dateStr) return "";
   try {
@@ -311,7 +311,7 @@ function formatScheduleTag(dateStr) {
   }
 }
 
-// --- FUNGSI RENDER MILESTONE BANNER ---
+// --- MILESTONE BANNER RENDER FUNCTIONS ---
 function renderMilestone() {
   const container = document.getElementById("milestoneContainer");
   if (!container) return;
@@ -473,7 +473,7 @@ function promptEditMilestoneOptions() {
   }
 }
 
-// --- FUNGSI RENDER UTAMA TODO ---
+// --- MAIN TODO RENDER FUNCTION ---
 function renderTodos() {
   const todoList = document.getElementById("todoList");
   const todoStats = document.getElementById("todoStats");
@@ -485,7 +485,7 @@ function renderTodos() {
     return;
   }
 
-  // 1. Render List Item dengan Subtask Accordion
+  // 1. Render List Item with Subtask Accordion
   todoList.innerHTML = todos
     .map((t, index) => {
       const subtasks = t.subtasks || [];
@@ -513,10 +513,10 @@ function renderTodos() {
         </div>
 
         <div class="todo-actions">
-          <!-- Tombol Google Calendar -->
+          <!-- Google Calendar Button -->
           <button class="cal-btn" data-id="${t.id}" title="Schedule in Google Calendar">📅</button>
 
-          <!-- Tombol Track Stopwatch Task -->
+          <!-- Task Stopwatch Tracking Button -->
           <button class="track-btn" data-id="${t.id}" title="Track task time">⏱️</button>
           
           <button class="complete-btn" data-id="${t.id}" title="${
@@ -574,7 +574,7 @@ function renderTodos() {
     item.addEventListener("drop", dragDrop);
   });
 
-  // Tombol Toggle Accordion Subtask
+  // Subtask Accordion Toggle Button
   todoList.querySelectorAll(".accordion-btn").forEach((btn) =>
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -607,7 +607,7 @@ function renderTodos() {
     }),
   );
 
-  // Hapus Subtask
+  // Delete Subtask
   todoList.querySelectorAll(".subtask-delete-btn").forEach((btn) =>
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -615,7 +615,7 @@ function renderTodos() {
     }),
   );
 
-  // Tambah Subtask via Input Enter Key
+  // Add Subtask via Input Enter Key
   todoList.querySelectorAll(".subtask-input").forEach((input) =>
     input.addEventListener("keypress", (e) => {
       if (e.key === "Enter") {
@@ -624,12 +624,12 @@ function renderTodos() {
     }),
   );
 
-  // Tombol 📅 Google Calendar Modal
+  // 📅 Google Calendar Modal Button
   todoList.querySelectorAll(".cal-btn").forEach((btn) =>
     btn.addEventListener("click", () => openGcalModal(Number(btn.dataset.id)))
   );
 
-  // Tombol ⏱️ Track Task Stopwatch
+  // ⏱️ Track Task Stopwatch Button
   todoList.querySelectorAll(".track-btn").forEach((btn) =>
     btn.addEventListener("click", () => {
       if (typeof startTaskTracking === "function") {
@@ -694,13 +694,13 @@ function openGcalModal(taskId) {
 
   gcalTaskTitle.textContent = task.text;
 
-  // Setup default date/time jika belum ada
+  // Setup default date/time if not set
   if (task.scheduledDate) {
     gcalDate.value = task.scheduledDate;
   } else {
     const now = new Date();
     now.setMinutes(now.getMinutes() + 15);
-    // Format YYYY-MM-THH:mm untuk input datetime-local
+    // Format YYYY-MM-THH:mm for datetime-local input
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, "0");
     const day = String(now.getDate()).padStart(2, "0");
@@ -757,7 +757,7 @@ function launchGoogleCalendar() {
   closeGcalModal();
 }
 
-// --- FUNGSI DRAG AND DROP ---
+// --- DRAG AND DROP FUNCTIONS ---
 let dragStartIndex;
 
 function dragStart(e) {
@@ -874,7 +874,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Bind Event Modal Google Calendar
+  // Bind Google Calendar Modal Events
   const openGcalBtn = document.getElementById("openGcalBtn");
   const saveTaskScheduleBtn = document.getElementById("saveTaskScheduleBtn");
   const closeGcalBtn = document.getElementById("closeGcalBtn");
@@ -891,7 +891,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   if (closeGcalBtn) closeGcalBtn.addEventListener("click", closeGcalModal);
 
-  // --- COPY KE OBSIDIAN ---
+  // --- COPY TO OBSIDIAN ---
   const copyMdBtn = document.getElementById("copyMdBtn");
   if (copyMdBtn) {
     copyMdBtn.addEventListener("click", () => {
@@ -900,7 +900,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const completedTodos = todos.filter((t) => t.completed);
       const cancelledTodos = todos.filter((t) => !t.completed);
 
-      // Helper kecil buat format detik ke text
+      // Small helper to format seconds into text
       const formatDuration = (sec) => {
         if (!sec || sec <= 0) return "";
         const h = Math.floor(sec / 3600);

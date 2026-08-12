@@ -34,9 +34,9 @@ function updateTaskTimerDisplay() {
   }
 }
 
-// Fungsi ini dipanggil dari newtab.js saat tombol ⏱️ diklik
+// This function is called from newtab.js when the ⏱️ button is clicked
 function startTaskTracking(id) {
-  // Access variabel 'todos' global dari newtab.js
+  // Access global 'todos' variable from newtab.js
   const todo = todos.find((t) => t.id === id);
   if (!todo) return;
 
@@ -86,7 +86,7 @@ function stopTracking(shouldComplete = false) {
   taskStartTime = null;
   taskAccumulatedSeconds = 0;
 
-  // Mengakses 'todos', 'saveTodos', dan 'renderTodos' global dari newtab.js
+  // Access global 'todos', 'saveTodos', and 'renderTodos' from newtab.js
   const todo = todos.find((t) => t.id === activeTrackingTodoId);
   if (todo) {
     todo.elapsedTime = finalSeconds;
