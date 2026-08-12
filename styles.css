@@ -86,7 +86,7 @@ body {
   border-radius: 14px;
   padding: 22px 25px;
   width: 100%;
-  max-width: 700px;
+  max-width: 750px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.2),
@@ -139,9 +139,18 @@ body {
 }
 
 .todo-list {
-  max-height: 200px;
+  max-height: 190px;
   overflow-y: auto;
   margin-top: 12px;
+}
+
+.todo-wrapper {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.2s ease;
+}
+
+.todo-wrapper.hidden {
+  display: none !important;
 }
 
 .todo-item {
@@ -149,7 +158,6 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
   animation: slideIn 0.3s ease;
   cursor: grab;
@@ -164,8 +172,8 @@ body {
 
 .todo-item:hover {
   background: rgba(255, 255, 255, 0.05);
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 16px;
+  padding-right: 16px;
   border-radius: 4px;
 }
 
@@ -180,6 +188,177 @@ body {
 
 .todo-item.over {
   border-top: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Accordion & Subtask Styling */
+.accordion-btn {
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 3px 6px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  margin-right: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.accordion-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.accordion-btn.expanded {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.subtask-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 1px 7px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.75);
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.subtask-badge.all-done {
+  background: rgba(46, 204, 113, 0.2);
+  border-color: rgba(46, 204, 113, 0.3);
+  color: #2ecc71;
+}
+
+.subtask-container {
+  padding: 6px 12px 8px 14px;
+  border-left: 2px solid rgba(255, 255, 255, 0.12);
+  margin-left: 22px;
+  margin-top: 2px;
+  margin-bottom: 6px;
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 0 6px 6px 0;
+  animation: fadeIn 0.2s ease-in-out;
+  text-align: left;
+}
+
+.subtask-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.subtask-item {
+  display: flex;
+  align-items: center;
+  padding: 5px 8px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+  border-radius: 5px;
+  transition: background 0.2s ease;
+  text-align: left;
+  gap: 10px;
+}
+
+.subtask-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.subtask-item.completed .subtask-text {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.subtask-checkbox {
+  accent-color: #2ecc71;
+  cursor: pointer;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.subtask-text {
+  flex: 1;
+  font-weight: 300;
+  cursor: pointer;
+  text-align: left;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.subtask-actions {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.subtask-item:hover .subtask-actions {
+  opacity: 1;
+}
+
+.subtask-edit-btn,
+.subtask-delete-btn {
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 2px 5px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.subtask-edit-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.subtask-delete-btn:hover {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.15);
+}
+
+.subtask-add-row {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.subtask-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: white;
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  outline: none;
+  text-align: left;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  box-sizing: border-box;
+}
+
+.subtask-input:focus {
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.subtask-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.8rem;
+  font-style: normal;
+  text-align: left;
 }
 
 /* --- FITUR HIDE COMPLETED --- */

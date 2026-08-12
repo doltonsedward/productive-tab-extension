@@ -6,7 +6,12 @@ let milestone = null;
 
 function loadTodos() {
   try {
-    return JSON.parse(localStorage.getItem("todos") || "[]");
+    const raw = JSON.parse(localStorage.getItem("todos") || "[]");
+    return raw.map((t) => ({
+      ...t,
+      subtasks: Array.isArray(t.subtasks) ? t.subtasks : [],
+      isExpanded: Boolean(t.isExpanded),
+    }));
   } catch {
     return [];
   }
@@ -176,6 +181,9 @@ function toggleTodo(id) {
   const todo = todos.find((t) => t.id === id);
   if (todo) {
     todo.completed = !todo.completed;
+    if (Array.isArray(todo.subtasks)) {
+      todo.subtasks.forEach((st) => (st.completed = todo.completed));
+    }
     saveTodos();
     renderTodos();
     if (todo.completed) {
@@ -197,6 +205,86 @@ function editTodo(id) {
   const newText = prompt("Edit your task:", todo.text);
   if (newText !== null && newText.trim() !== "") {
     todo.text = newText.trim();
+    saveTodos();
+    renderTodos();
+  }
+}
+
+// --- FUNGSI KELOLA SUBTASK & ACCORDION ---
+function toggleAccordion(parentId) {
+  const todo = todos.find((t) => t.id === parentId);
+  if (todo) {
+    todo.isExpanded = !todo.isExpanded;
+    saveTodos();
+    renderTodos();
+  }
+}
+
+function addSubtask(parentId, text) {
+  const todo = todos.find((t) => t.id === parentId);
+  if (!todo || !text || !text.trim()) return;
+
+  if (!Array.isArray(todo.subtasks)) todo.subtasks = [];
+
+  todo.subtasks.push({
+    id: Date.now(),
+    text: text.trim(),
+    completed: false,
+  });
+
+  todo.isExpanded = true;
+  todo.completed = false; // reset completion if new uncompleted subtask added
+
+  saveTodos();
+  renderTodos();
+}
+
+function toggleSubtask(parentId, subtaskId) {
+  const todo = todos.find((t) => t.id === parentId);
+  if (!todo || !Array.isArray(todo.subtasks)) return;
+
+  const st = todo.subtasks.find((s) => s.id === subtaskId);
+  if (st) {
+    st.completed = !st.completed;
+
+    if (todo.subtasks.length > 0) {
+      const allDone = todo.subtasks.every((s) => s.completed);
+      const wasCompleted = todo.completed;
+      todo.completed = allDone;
+      if (allDone && !wasCompleted) {
+        checkAllTodosCompleted();
+      }
+    }
+
+    saveTodos();
+    renderTodos();
+  }
+}
+
+function deleteSubtask(parentId, subtaskId) {
+  const todo = todos.find((t) => t.id === parentId);
+  if (!todo || !Array.isArray(todo.subtasks)) return;
+
+  todo.subtasks = todo.subtasks.filter((s) => s.id !== subtaskId);
+
+  if (todo.subtasks.length > 0) {
+    todo.completed = todo.subtasks.every((s) => s.completed);
+  }
+
+  saveTodos();
+  renderTodos();
+}
+
+function editSubtask(parentId, subtaskId) {
+  const todo = todos.find((t) => t.id === parentId);
+  if (!todo || !Array.isArray(todo.subtasks)) return;
+
+  const st = todo.subtasks.find((s) => s.id === subtaskId);
+  if (!st) return;
+
+  const newText = prompt("Edit subtask:", st.text);
+  if (newText !== null && newText.trim() !== "") {
+    st.text = newText.trim();
     saveTodos();
     renderTodos();
   }
@@ -397,15 +485,33 @@ function renderTodos() {
     return;
   }
 
-  // 1. Render List Item
+  // 1. Render List Item dengan Subtask Accordion
   todoList.innerHTML = todos
-    .map(
-      (t, index) => `
-    <div class="todo-item${t.completed ? " completed" : ""}${t.completed && isHidden ? " hidden" : ""}" draggable="true" data-index="${index}">
-      <div class="todo-text">
-        ${escapeHtml(t.text)}
-        ${formatScheduleTag(t.scheduledDate)}
-      </div>
+    .map((t, index) => {
+      const subtasks = t.subtasks || [];
+      const completedSubtasks = subtasks.filter((s) => s.completed).length;
+      const hasSubtasks = subtasks.length > 0;
+      const allSubtasksDone = hasSubtasks && completedSubtasks === subtasks.length;
+
+      const subtaskBadge = hasSubtasks
+        ? `<span class="subtask-badge${allSubtasksDone ? " all-done" : ""}">${completedSubtasks}/${subtasks.length}</span>`
+        : "";
+
+      const accordionIcon = t.isExpanded ? "▼" : "▶";
+
+      return `
+    <div class="todo-wrapper${t.completed && isHidden ? " hidden" : ""}">
+      <div class="todo-item${t.completed ? " completed" : ""}" draggable="true" data-index="${index}" data-id="${t.id}">
+        <button class="accordion-btn${t.isExpanded ? " expanded" : ""}" data-id="${t.id}" title="${t.isExpanded ? "Sembunyikan subtask" : "Tampilkan/tambah subtask"}">
+          ${accordionIcon}
+        </button>
+
+        <div class="todo-text">
+          ${escapeHtml(t.text)}
+          ${subtaskBadge}
+          ${formatScheduleTag(t.scheduledDate)}
+        </div>
+
         <div class="todo-actions">
           <!-- Tombol Google Calendar -->
           <button class="cal-btn" data-id="${t.id}" title="Jadwalkan ke Google Calendar">📅</button>
@@ -421,9 +527,42 @@ function renderTodos() {
           
           <button class="delete-btn" data-id="${t.id}" title="Hapus tugas">✕</button>
         </div>
+      </div>
+
+      ${
+        t.isExpanded
+          ? `
+      <div class="subtask-container">
+        ${
+          hasSubtasks
+            ? `<div class="subtask-list">
+            ${subtasks
+              .map(
+                (st) => `
+              <div class="subtask-item${st.completed ? " completed" : ""}">
+                <input type="checkbox" class="subtask-checkbox" data-parent-id="${t.id}" data-sub-id="${st.id}" ${st.completed ? "checked" : ""}>
+                <span class="subtask-text" data-parent-id="${t.id}" data-sub-id="${st.id}" title="Klik untuk toggle, double-click untuk edit">${escapeHtml(st.text)}</span>
+                <div class="subtask-actions">
+                  <button class="subtask-edit-btn" data-parent-id="${t.id}" data-sub-id="${st.id}" title="Edit subtask">✎</button>
+                  <button class="subtask-delete-btn" data-parent-id="${t.id}" data-sub-id="${st.id}" title="Hapus subtask">✕</button>
+                </div>
+              </div>
+            `,
+              )
+              .join("")}
+          </div>`
+            : ""
+        }
+        <div class="subtask-add-row">
+          <input type="text" class="subtask-input" data-parent-id="${t.id}" placeholder="+ Tambah subtask... (Enter)" maxlength="80">
+        </div>
+      </div>
+      `
+          : ""
+      }
     </div>
-  `,
-    )
+  `;
+    })
     .join("");
 
   // 2. Attach Event Listeners
@@ -434,6 +573,56 @@ function renderTodos() {
     item.addEventListener("dragleave", dragLeave);
     item.addEventListener("drop", dragDrop);
   });
+
+  // Tombol Toggle Accordion Subtask
+  todoList.querySelectorAll(".accordion-btn").forEach((btn) =>
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleAccordion(Number(btn.dataset.id));
+    }),
+  );
+
+  // Checkbox Subtask & Click/DblClick Subtask Text
+  todoList.querySelectorAll(".subtask-checkbox").forEach((cb) =>
+    cb.addEventListener("change", () => {
+      toggleSubtask(Number(cb.dataset.parentId), Number(cb.dataset.subId));
+    }),
+  );
+
+  todoList.querySelectorAll(".subtask-text").forEach((stText) => {
+    stText.addEventListener("click", () => {
+      toggleSubtask(Number(stText.dataset.parentId), Number(stText.dataset.subId));
+    });
+    stText.addEventListener("dblclick", (e) => {
+      e.stopPropagation();
+      editSubtask(Number(stText.dataset.parentId), Number(stText.dataset.subId));
+    });
+  });
+
+  // Edit Subtask Button
+  todoList.querySelectorAll(".subtask-edit-btn").forEach((btn) =>
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      editSubtask(Number(btn.dataset.parentId), Number(btn.dataset.subId));
+    }),
+  );
+
+  // Hapus Subtask
+  todoList.querySelectorAll(".subtask-delete-btn").forEach((btn) =>
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      deleteSubtask(Number(btn.dataset.parentId), Number(btn.dataset.subId));
+    }),
+  );
+
+  // Tambah Subtask via Input Enter Key
+  todoList.querySelectorAll(".subtask-input").forEach((input) =>
+    input.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        addSubtask(Number(input.dataset.parentId), input.value);
+      }
+    }),
+  );
 
   // Tombol 📅 Google Calendar Modal
   todoList.querySelectorAll(".cal-btn").forEach((btn) =>
@@ -632,6 +821,8 @@ document.addEventListener("DOMContentLoaded", () => {
       id: Date.now(),
       text,
       completed: false,
+      subtasks: [],
+      isExpanded: false,
     });
 
     saveTodos();
@@ -729,6 +920,11 @@ document.addEventListener("DOMContentLoaded", () => {
           const duration = formatDuration(t.elapsedTime);
           const sched = t.scheduledDate ? ` [📅 ${t.scheduledDate.replace("T", " ")}]` : "";
           markdownText += `- [x] ${t.text}${sched}${duration}\n`;
+          if (t.subtasks && t.subtasks.length > 0) {
+            t.subtasks.forEach((st) => {
+              markdownText += `  - [${st.completed ? "x" : " "}] ${st.text}\n`;
+            });
+          }
         });
       } else {
         markdownText += `*(Tidak ada tugas yang selesai)*\n`;
@@ -740,7 +936,12 @@ document.addEventListener("DOMContentLoaded", () => {
         cancelledTodos.forEach((t) => {
           const duration = formatDuration(t.elapsedTime);
           const sched = t.scheduledDate ? ` [📅 ${t.scheduledDate.replace("T", " ")}]` : "";
-          markdownText += `- ${t.text}${sched}${duration}\n`;
+          markdownText += `- [ ] ${t.text}${sched}${duration}\n`;
+          if (t.subtasks && t.subtasks.length > 0) {
+            t.subtasks.forEach((st) => {
+              markdownText += `  - [${st.completed ? "x" : " "}] ${st.text}\n`;
+            });
+          }
         });
       } else {
         markdownText += `*(Tidak ada tugas yang dibatalkan)*\n`;
