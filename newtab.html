@@ -10,135 +10,338 @@
     <div id="toastContainer" class="toast-container"></div>
     <div class="background-overlay"></div>
 
+    <!-- ============================================
+         SETTINGS SIDE DRAWER
+         ============================================ -->
+    <div id="settingsBackdrop" class="settings-backdrop"></div>
+    <div id="settingsDrawer" class="settings-drawer">
+      <div class="settings-drawer-header">
+        <div class="settings-drawer-title">
+          <span class="settings-title-icon">⚙️</span>
+          <span>Settings</span>
+        </div>
+        <button id="closeSettingsBtn" class="settings-close-btn" title="Tutup Settings">✕</button>
+      </div>
+
+      <!-- Settings Tabs Navigation -->
+      <div class="settings-tabs">
+        <button class="settings-tab-btn active" data-tab="personal">👤 Personal</button>
+        <button class="settings-tab-btn" data-tab="background">🖼️ Background</button>
+        <button class="settings-tab-btn" data-tab="widgets">🧩 Widgets</button>
+        <button class="settings-tab-btn" data-tab="data">💾 Data</button>
+      </div>
+
+      <!-- Tab: Personal -->
+      <div class="settings-tab-content active" id="settingsTab-personal">
+        <div class="settings-section">
+          <div class="settings-section-label">Identitas</div>
+          <div class="settings-field">
+            <label for="settingName">Nama Panggilan</label>
+            <input type="text" id="settingName" class="settings-input" placeholder="e.g. Edward" maxlength="30" />
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-label">Format Jam</div>
+          <div class="settings-field">
+            <label>Tampilan Jam</label>
+            <div class="settings-toggle-group">
+              <button class="settings-toggle-btn active" data-clock="24h">24 Jam</button>
+              <button class="settings-toggle-btn" data-clock="12h">12 Jam (AM/PM)</button>
+            </div>
+          </div>
+          <div class="settings-field">
+            <label class="settings-toggle-label">
+              <span>Tampilkan Detik</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="settingShowSeconds" />
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+          </div>
+          <div class="settings-field">
+            <label class="settings-toggle-label">
+              <span>Tampilkan Tanggal</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="settingShowDate" checked />
+                <span class="toggle-slider"></span>
+              </label>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Background -->
+      <div class="settings-tab-content" id="settingsTab-background">
+        <div class="settings-section">
+          <div class="settings-section-label">Sumber Background</div>
+          
+          <div class="settings-field">
+            <label>Upload Gambar Sendiri</label>
+            <button id="bgUploadBtn" class="settings-action-btn">📁 Upload Gambar (JPG/PNG)</button>
+            <input type="file" id="bgFileInput" accept="image/*" style="display:none" />
+          </div>
+
+          <div class="settings-field">
+            <label for="bgUrlInput">Atau URL Gambar</label>
+            <div style="display:flex; gap:6px;">
+              <input type="url" id="bgUrlInput" class="settings-input" placeholder="https://images.unsplash.com/..." />
+              <button id="bgApplyUrlBtn" class="glass-btn" style="flex:0 0 60px;">Set</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-label">Wallpaper Presets</div>
+          <div class="bg-preset-grid">
+            <button class="bg-preset-btn active" data-bg="default" style="background-image: url('bg.png');" title="Default Cyber Mesh">
+              <span>Default</span>
+            </button>
+            <button class="bg-preset-btn" data-bg="aurora" style="background-image: url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=400&auto=format&fit=crop');" title="Aurora Borealis">
+              <span>Aurora</span>
+            </button>
+            <button class="bg-preset-btn" data-bg="space" style="background-image: url('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=400&auto=format&fit=crop');" title="Deep Space">
+              <span>Space</span>
+            </button>
+            <button class="bg-preset-btn" data-bg="mountain" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=400&auto=format&fit=crop');" title="Night Mountain">
+              <span>Mountain</span>
+            </button>
+            <button class="bg-preset-btn" data-bg="cyber" style="background-image: url('https://images.unsplash.com/photo-1519501025264-65ba15a82390?q=80&w=400&auto=format&fit=crop');" title="Cyber City">
+              <span>Cyber</span>
+            </button>
+            <button class="bg-preset-btn" data-bg="dark" style="background: #0d1117;" title="Minimal Dark">
+              <span>Dark</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-section-label">Efek Visual</div>
+
+          <div class="settings-field">
+            <label for="bgDimSlider" class="settings-slider-label">
+              <span>Kegelapan Overlay (Dim)</span>
+              <span id="bgDimVal">40%</span>
+            </label>
+            <input type="range" id="bgDimSlider" class="settings-slider" min="0" max="85" value="40" />
+          </div>
+
+          <div class="settings-field">
+            <label for="bgBlurSlider" class="settings-slider-label">
+              <span>Efek Blur Background</span>
+              <span id="bgBlurVal">0px</span>
+            </label>
+            <input type="range" id="bgBlurSlider" class="settings-slider" min="0" max="25" value="0" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Widgets -->
+      <div class="settings-tab-content" id="settingsTab-widgets">
+        <div class="settings-section">
+          <div class="settings-section-label">Widget Aktif</div>
+          <p class="settings-hint">Kelola widget yang ditampilkan di samping todo list. Maksimal 4 widget.</p>
+          <div id="settingsWidgetList" class="settings-widget-list">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-label">Posisi Widget</div>
+          <div class="settings-field">
+            <label>Kolom Widget</label>
+            <div class="settings-toggle-group">
+              <button class="settings-toggle-btn active" data-widgetpos="right">Kanan</button>
+              <button class="settings-toggle-btn" data-widgetpos="left">Kiri</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Data -->
+      <div class="settings-tab-content" id="settingsTab-data">
+        <div class="settings-section">
+          <div class="settings-section-label">Backup & Restore</div>
+          <p class="settings-hint">Ekspor semua data (Todo, Settings, Notes) ke file JSON.</p>
+          <button id="exportDataBtn" class="settings-action-btn">⬇️ Export Data (JSON)</button>
+          <button id="importDataBtn" class="settings-action-btn">⬆️ Import Data (JSON)</button>
+          <input type="file" id="importFileInput" accept=".json" style="display:none" />
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-label">Reset</div>
+          <p class="settings-hint">Hapus semua data dan kembalikan ke pengaturan awal.</p>
+          <button id="resetAllDataBtn" class="settings-action-btn danger">⚠️ Reset Semua Data</button>
+        </div>
+      </div>
+
+      <div class="settings-drawer-footer">
+        <span class="settings-version">Productive Tab · v1.2</span>
+      </div>
+    </div>
+
+    <!-- ============================================
+         SETTINGS FAB (Kanan Atas — mudah pindahkan via CSS var --settings-fab-pos)
+         ============================================ -->
+    <button id="toggleSettingsBtn" class="settings-fab" title="Buka Settings">⚙️</button>
+
     <div class="container">
       <div class="time-section">
         <div class="time" id="time"></div>
+        <div class="date" id="date"></div>
       </div>
 
       <div class="greeting" id="greeting"></div>
 
-      <div class="todo-section">
-        <!-- Milestone Habit Container -->
-        <div id="milestoneContainer" class="milestone-container">
-          <!-- Rendered dynamically by JS -->
-        </div>
+      <!-- ============================================
+           WORKSPACE LAYOUT (Todo + Side Widgets)
+           ============================================ -->
+      <div class="workspace-layout" id="workspaceLayout">
 
-        <div class="todo-input-container">
-          <input
-            type="text"
-            class="todo-input"
-            id="todoInput"
-            placeholder="What is your main focus for today?..."
-            maxlength="100"
-          />
-        </div>
-
-        <div class="todo-list" id="todoList"></div>
-
-        <div class="todo-stats" id="todoStats">0 tugas · 0 selesai</div>
-
-        <div class="export-actions">
-          <button
-            disabled
-            class="export-btn disabled-btn"
-            title="Fitur nyusul nanti"
-          >
-            ☁️ Save to Cloud
-          </button>
-          <button
-            id="copyMdBtn"
-            class="export-btn"
-            title="Copy format Obsidian"
-          >
-            📋 Copy to Obsidian
-          </button>
-        </div>
-      </div>
-
-      <!-- Floating Global Timer/Stopwatch Widget (Pojok Kanan Bawah) -->
-      <div id="globalTimerWidget" class="global-timer-widget">
-        <div id="timerPanel" class="timer-panel hidden">
-          <div class="timer-tabs">
-            <button id="tabStopwatch" class="tab-btn active">Stopwatch</button>
-            <button id="tabTimer" class="tab-btn">Timer</button>
+        <!-- Todo Section -->
+        <div class="todo-section">
+          <!-- Milestone Habit Container -->
+          <div id="milestoneContainer" class="milestone-container">
+            <!-- Rendered dynamically by JS -->
           </div>
 
-          <div id="displayGlobalTime" class="glass-timer-display">00:00:00</div>
-
-          <div id="timerInputGroup" class="timer-input-group hidden">
+          <div class="todo-input-container">
             <input
-              type="number"
-              id="timerMinutes"
-              placeholder="Menit"
-              min="1"
-              max="180"
+              type="text"
+              class="todo-input"
+              id="todoInput"
+              placeholder="What is your main focus for today?..."
+              maxlength="100"
             />
           </div>
 
-          <div class="timer-controls">
-            <button id="startGlobalTimerBtn" class="glass-btn">Start</button>
-            <button id="resetGlobalTimerBtn" class="glass-btn icon-only">
-              ↺
-            </button>
-          </div>
-        </div>
-        <button
-          id="toggleTimerPanelBtn"
-          class="timer-fab"
-          title="Timer & Stopwatch"
-        >
-          ⏱️
-        </button>
-      </div>
+          <div class="todo-list" id="todoList"></div>
 
-      <!-- Modal Pop-up Tracking Task (Glassmorphic) -->
-      <div id="taskTrackModal" class="modal-overlay hidden">
-        <div class="glass-modal-content">
-          <span class="track-badge">Task Tracking</span>
-          <h4 id="trackTaskTitle" class="track-task-title">---</h4>
-          <div id="trackTaskTime" class="glass-timer-display large">
-            00:00:00
-          </div>
+          <div class="todo-stats" id="todoStats">0 tugas · 0 selesai</div>
 
-          <div class="modal-actions">
-            <button id="pauseTaskTrackBtn" class="glass-btn">Pause</button>
-            <!-- Tombol Reset / Restart Baru -->
+          <div class="export-actions">
             <button
-              id="restartTaskTrackBtn"
-              class="glass-btn icon-only"
-              title="Reset waktu ke 00:00:00"
+              disabled
+              class="export-btn disabled-btn"
+              title="Fitur nyusul nanti"
             >
-              ↺ Reset
+              ☁️ Save to Cloud
             </button>
-            <button id="stopTaskTrackBtn" class="glass-btn danger">
-              Stop (Simpan Waktu)
-            </button>
-            <button id="completeTaskTrackBtn" class="glass-btn success">
-              Stop & Selesai ✓
+            <button
+              id="copyMdBtn"
+              class="export-btn"
+              title="Copy format Obsidian"
+            >
+              📋 Copy to Obsidian
             </button>
           </div>
         </div>
+
+        <!-- Side Widget Column -->
+        <div class="widget-column" id="widgetColumn">
+          <!-- Widgets rendered dynamically by JS -->
+          <button id="addWidgetBtn" class="add-widget-btn" title="Tambah Widget">
+            <span class="add-widget-icon">+</span>
+            <span class="add-widget-label">Tambah Widget</span>
+          </button>
+        </div>
       </div>
+    </div>
 
-      <!-- Modal Schedule Google Calendar -->
-      <div id="gcalModal" class="modal-overlay hidden">
-        <div class="glass-modal-content">
-          <span class="track-badge">📅 Schedule to Google Calendar</span>
-          <h4 id="gcalTaskTitle" class="track-task-title">---</h4>
-          <div class="gcal-form-group">
-            <label for="gcalDate">Tanggal & Waktu Mula:</label>
-            <input type="datetime-local" id="gcalDate" class="gcal-input" />
-          </div>
-          <div class="gcal-form-group">
-            <label for="gcalDuration">Durasi (Menit):</label>
-            <input type="number" id="gcalDuration" class="gcal-input" value="30" min="15" step="15" />
-          </div>
+    <!-- Widget Picker Modal -->
+    <div id="widgetPickerModal" class="modal-overlay hidden">
+      <div class="glass-modal-content widget-picker-modal">
+        <span class="track-badge">🧩 Pilih Widget</span>
+        <h4 class="track-task-title" style="margin-bottom: 16px;">Tambahkan Widget</h4>
+        <div id="widgetPickerList" class="widget-picker-list">
+          <!-- Rendered dynamically -->
+        </div>
+        <div class="modal-actions" style="margin-top: 12px;">
+          <button id="closeWidgetPickerBtn" class="glass-btn danger">Batal</button>
+        </div>
+      </div>
+    </div>
 
-          <div class="modal-actions">
-            <button id="openGcalBtn" class="glass-btn success">🚀 Open in Google Calendar</button>
-            <button id="saveTaskScheduleBtn" class="glass-btn">💾 Simpan Tanggal Saja</button>
-            <button id="closeGcalBtn" class="glass-btn danger">Batal</button>
-          </div>
+    <!-- Floating Global Timer/Stopwatch Widget (Pojok Kanan Bawah) -->
+    <div id="globalTimerWidget" class="global-timer-widget">
+      <div id="timerPanel" class="timer-panel hidden">
+        <div class="timer-tabs">
+          <button id="tabStopwatch" class="tab-btn active">Stopwatch</button>
+          <button id="tabTimer" class="tab-btn">Timer</button>
+        </div>
+
+        <div id="displayGlobalTime" class="glass-timer-display">00:00:00</div>
+
+        <div id="timerInputGroup" class="timer-input-group hidden">
+          <input
+            type="number"
+            id="timerMinutes"
+            placeholder="Menit"
+            min="1"
+            max="180"
+          />
+        </div>
+
+        <div class="timer-controls">
+          <button id="startGlobalTimerBtn" class="glass-btn">Start</button>
+          <button id="resetGlobalTimerBtn" class="glass-btn icon-only">
+            ↺
+          </button>
+        </div>
+      </div>
+      <button
+        id="toggleTimerPanelBtn"
+        class="timer-fab"
+        title="Timer & Stopwatch"
+      >
+        ⏱️
+      </button>
+    </div>
+
+    <!-- Modal Pop-up Tracking Task (Glassmorphic) -->
+    <div id="taskTrackModal" class="modal-overlay hidden">
+      <div class="glass-modal-content">
+        <span class="track-badge">Task Tracking</span>
+        <h4 id="trackTaskTitle" class="track-task-title">---</h4>
+        <div id="trackTaskTime" class="glass-timer-display large">
+          00:00:00
+        </div>
+
+        <div class="modal-actions">
+          <button id="pauseTaskTrackBtn" class="glass-btn">Pause</button>
+          <button
+            id="restartTaskTrackBtn"
+            class="glass-btn icon-only"
+            title="Reset waktu ke 00:00:00"
+          >
+            ↺ Reset
+          </button>
+          <button id="stopTaskTrackBtn" class="glass-btn danger">
+            Stop (Simpan Waktu)
+          </button>
+          <button id="completeTaskTrackBtn" class="glass-btn success">
+            Stop & Selesai ✓
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Schedule Google Calendar -->
+    <div id="gcalModal" class="modal-overlay hidden">
+      <div class="glass-modal-content">
+        <span class="track-badge">📅 Schedule to Google Calendar</span>
+        <h4 id="gcalTaskTitle" class="track-task-title">---</h4>
+        <div class="gcal-form-group">
+          <label for="gcalDate">Tanggal & Waktu Mula:</label>
+          <input type="datetime-local" id="gcalDate" class="gcal-input" />
+        </div>
+        <div class="gcal-form-group">
+          <label for="gcalDuration">Durasi (Menit):</label>
+          <input type="number" id="gcalDuration" class="gcal-input" value="30" min="15" step="15" />
+        </div>
+
+        <div class="modal-actions">
+          <button id="openGcalBtn" class="glass-btn success">🚀 Open in Google Calendar</button>
+          <button id="saveTaskScheduleBtn" class="glass-btn">💾 Simpan Tanggal Saja</button>
+          <button id="closeGcalBtn" class="glass-btn danger">Batal</button>
         </div>
       </div>
     </div>

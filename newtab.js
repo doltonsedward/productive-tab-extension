@@ -834,32 +834,43 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateTimeAndGreeting() {
     const now = new Date();
     if (timeEl) {
-      timeEl.textContent = now.toLocaleTimeString("id-ID", {
+      const use12h = (typeof appSettings !== 'undefined') && appSettings.clockFormat === '12h';
+      const showSecs = (typeof appSettings !== 'undefined') && appSettings.showSeconds;
+      const timeOpts = {
         hour: "2-digit",
         minute: "2-digit",
-        hour12: false,
-      });
+        hour12: use12h,
+      };
+      if (showSecs) timeOpts.second = "2-digit";
+      timeEl.textContent = now.toLocaleTimeString("id-ID", timeOpts);
     }
 
     if (dateEl) {
-      dateEl.textContent = now.toLocaleDateString("id-ID", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
+      const showDate = (typeof appSettings === 'undefined') || appSettings.showDate !== false;
+      if (showDate) {
+        dateEl.textContent = now.toLocaleDateString("id-ID", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+        dateEl.style.display = '';
+      } else {
+        dateEl.style.display = 'none';
+      }
     }
 
     if (greetingEl) {
       const h = now.getHours();
+      const name = (typeof appSettings !== 'undefined' && appSettings.name) ? `, ${appSettings.name}` : '';
       greetingEl.textContent =
         h < 12
-          ? "Good morning, dollong"
+          ? `Good morning${name}`
           : h < 15
-            ? "Good afternoon, dollong"
+            ? `Good afternoon${name}`
             : h < 18
-              ? "Good evening, dollong"
-              : "Good night, dollong";
+              ? `Good evening${name}`
+              : `Good night${name}`;
     }
   }
 
@@ -964,4 +975,796 @@ document.addEventListener("DOMContentLoaded", () => {
   renderTodos();
   updateTimeAndGreeting();
   setInterval(updateTimeAndGreeting, 1000);
+
+  // Init Settings & Widget System
+  initSettings();
+  renderWidgets();
+  initSettingsDrawer();
+  bindSettingsControls();
 });
+
+// ==========================================
+// APP SETTINGS SYSTEM
+// ==========================================
+
+// Default settings schema - easy to extend
+const DEFAULT_SETTINGS = {
+  name: "dollong",           // Greeting name
+  clockFormat: "24h",        // "24h" | "12h"
+  showSeconds: false,        // bool
+  showDate: true,            // bool
+  activeWidgets: ["quicknotes", "dailyquote"], // ordered list of active widget IDs
+  widgetPosition: "right",   // "right" | "left"
+  bgType: "default",         // "default" | "preset" | "url" | "custom"
+  bgVal: "",                 // URL, base64 data string, or preset key
+  bgDim: 40,                 // 0 to 85 percent overlay darkness
+  bgBlur: 0,                 // 0 to 25 px blur
+};
+
+const BG_PRESETS = {
+  default: "bg.png",
+  aurora: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1920&auto=format&fit=crop",
+  space: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1920&auto=format&fit=crop",
+  mountain: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920&auto=format&fit=crop",
+  cyber: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?q=80&w=1920&auto=format&fit=crop",
+  dark: "none",
+};
+
+let appSettings = { ...DEFAULT_SETTINGS };
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem("appSettings");
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    appSettings = { ...DEFAULT_SETTINGS, ...saved };
+  } catch {
+    appSettings = { ...DEFAULT_SETTINGS };
+  }
+}
+
+function saveSettings() {
+  localStorage.setItem("appSettings", JSON.stringify(appSettings));
+}
+
+function initSettings() {
+  loadSettings();
+  applyWorkspaceLayout();
+  applyBackgroundSettings();
+}
+
+function applyBackgroundSettings() {
+  const type = appSettings.bgType || "default";
+  const val = appSettings.bgVal || "";
+  const dim = appSettings.bgDim !== undefined ? appSettings.bgDim : 40;
+  const blur = appSettings.bgBlur !== undefined ? appSettings.bgBlur : 0;
+
+  // 1. Wallpaper image / background
+  if (type === "preset" && BG_PRESETS[val]) {
+    if (val === "dark") {
+      document.body.style.background = "#0d1117";
+    } else {
+      document.body.style.background = `#181c24 url("${BG_PRESETS[val]}") no-repeat center center fixed`;
+      document.body.style.backgroundSize = "cover";
+    }
+  } else if ((type === "url" || type === "custom") && val) {
+    document.body.style.background = `#181c24 url("${val}") no-repeat center center fixed`;
+    document.body.style.backgroundSize = "cover";
+  } else {
+    // Default
+    document.body.style.background = `#181c24 url("bg.png") no-repeat center center fixed`;
+    document.body.style.backgroundSize = "cover";
+  }
+
+  // 2. Dim Overlay
+  const overlay = document.querySelector(".background-overlay");
+  if (overlay) {
+    const dimAlpha = (dim / 100).toFixed(2);
+    overlay.style.backgroundColor = `rgba(0, 0, 0, ${dimAlpha})`;
+    overlay.style.backdropFilter = blur > 0 ? `blur(${blur}px)` : "none";
+    overlay.style.webkitBackdropFilter = blur > 0 ? `blur(${blur}px)` : "none";
+  }
+}
+
+function applyWorkspaceLayout() {
+  const workspace = document.getElementById("workspaceLayout");
+  if (!workspace) return;
+  const hasWidgets = appSettings.activeWidgets.length > 0;
+  workspace.classList.toggle("has-widgets", hasWidgets);
+  workspace.classList.toggle("widgets-left", appSettings.widgetPosition === "left");
+  workspace.classList.toggle("widgets-right", appSettings.widgetPosition === "right");
+}
+
+// ==========================================
+// WIDGET REGISTRY
+// Each widget defines: id, name, icon, desc, render()
+// ==========================================
+
+const WIDGET_REGISTRY = {
+  quicknotes: {
+    id: "quicknotes",
+    name: "Quick Notes",
+    icon: "📝",
+    desc: "Catatan cepat & scratchpad",
+    render() {
+      const saved = localStorage.getItem("quickNotes") || "";
+      const card = document.createElement("div");
+      card.className = "widget-card";
+      card.dataset.widgetId = "quicknotes";
+      card.innerHTML = `
+        <div class="widget-header">
+          <div class="widget-title">
+            <span class="widget-title-icon">📝</span>
+            Quick Notes
+          </div>
+          <button class="widget-remove-btn" data-remove="quicknotes" title="Hapus widget">✕</button>
+        </div>
+        <textarea
+          id="quickNotesTextarea"
+          class="quick-notes-textarea"
+          placeholder="Ide cepat, catatan sementara..."
+          maxlength="1000"
+        >${escapeHtml(saved)}</textarea>
+        <div class="quick-notes-footer">
+          <span class="quick-notes-autosave" id="quickNotesStatus">✓ Tersimpan</span>
+          <button class="quick-notes-clear-btn" id="quickNotesClearBtn">Hapus semua</button>
+        </div>
+      `;
+      return card;
+    },
+    afterRender() {
+      const textarea = document.getElementById("quickNotesTextarea");
+      const status = document.getElementById("quickNotesStatus");
+      const clearBtn = document.getElementById("quickNotesClearBtn");
+      let saveTimer = null;
+
+      if (textarea) {
+        textarea.addEventListener("input", () => {
+          clearTimeout(saveTimer);
+          saveTimer = setTimeout(() => {
+            localStorage.setItem("quickNotes", textarea.value);
+            if (status) {
+              status.classList.add("visible");
+              setTimeout(() => status.classList.remove("visible"), 1800);
+            }
+          }, 600);
+        });
+      }
+
+      if (clearBtn) {
+        clearBtn.addEventListener("click", () => {
+          if (textarea && confirm("Hapus semua catatan?")) {
+            textarea.value = "";
+            localStorage.removeItem("quickNotes");
+            showToast("📝 Quick Notes dibersihkan.", "info", 2000);
+          }
+        });
+      }
+    }
+  },
+
+  dailyquote: {
+    id: "dailyquote",
+    name: "Daily Quote",
+    icon: "💡",
+    desc: "Inspirasi & kutipan harian",
+    quotes: [
+      { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+      { text: "It always seems impossible until it's done.", author: "Nelson Mandela" },
+      { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
+      { text: "The future depends on what you do today.", author: "Mahatma Gandhi" },
+      { text: "Success is the sum of small efforts, repeated day in and day out.", author: "Robert Collier" },
+      { text: "You don't have to be great to start, but you have to start to be great.", author: "Zig Ziglar" },
+      { text: "Push yourself, because no one else is going to do it for you.", author: "Unknown" },
+      { text: "Dream it. Wish it. Do it.", author: "Unknown" },
+      { text: "Stay focused, go after your dreams and keep moving toward your goals.", author: "LL Cool J" },
+      { text: "Great things never come from comfort zones.", author: "Unknown" },
+      { text: "Discipline is choosing between what you want now and what you want most.", author: "Abraham Lincoln" },
+      { text: "Work hard in silence, let your success be your noise.", author: "Frank Ocean" },
+      { text: "The harder the struggle, the more glorious the triumph.", author: "Unknown" },
+      { text: "You are braver than you believe, stronger than you seem.", author: "A.A. Milne" },
+      { text: "Act as if what you do makes a difference. It does.", author: "William James" },
+    ],
+    getCurrentQuote() {
+      // Deterministic per day, but can be refreshed manually
+      const savedIdx = sessionStorage.getItem("dailyQuoteIdx");
+      if (savedIdx !== null) return this.quotes[parseInt(savedIdx, 10) % this.quotes.length];
+      const dayIdx = new Date().getDate() % this.quotes.length;
+      return this.quotes[dayIdx];
+    },
+    render() {
+      const q = this.getCurrentQuote();
+      const card = document.createElement("div");
+      card.className = "widget-card";
+      card.dataset.widgetId = "dailyquote";
+      card.innerHTML = `
+        <div class="widget-header">
+          <div class="widget-title">
+            <span class="widget-title-icon">💡</span>
+            Daily Quote
+          </div>
+          <button class="widget-remove-btn" data-remove="dailyquote" title="Hapus widget">✕</button>
+        </div>
+        <div class="quote-text" id="quoteText">${escapeHtml(q.text)}</div>
+        <div class="quote-meta">
+          <span class="quote-author" id="quoteAuthor">— ${escapeHtml(q.author)}</span>
+          <button class="quote-refresh-btn" id="quoteRefreshBtn">↺ New</button>
+        </div>
+      `;
+      return card;
+    },
+    afterRender() {
+      const refreshBtn = document.getElementById("quoteRefreshBtn");
+      const quoteText = document.getElementById("quoteText");
+      const quoteAuthor = document.getElementById("quoteAuthor");
+      if (refreshBtn && quoteText && quoteAuthor) {
+        refreshBtn.addEventListener("click", () => {
+          const currentIdx = parseInt(sessionStorage.getItem("dailyQuoteIdx") ?? new Date().getDate(), 10);
+          const nextIdx = (currentIdx + 1) % this.quotes.length;
+          sessionStorage.setItem("dailyQuoteIdx", nextIdx);
+          const q = this.quotes[nextIdx];
+          quoteText.style.opacity = '0';
+          quoteAuthor.style.opacity = '0';
+          setTimeout(() => {
+            quoteText.textContent = q.text;
+            quoteAuthor.textContent = `— ${q.author}`;
+            quoteText.style.transition = 'opacity 0.3s ease';
+            quoteAuthor.style.transition = 'opacity 0.3s ease';
+            quoteText.style.opacity = '1';
+            quoteAuthor.style.opacity = '1';
+          }, 200);
+        });
+      }
+    }
+  },
+
+  focusstats: {
+    id: "focusstats",
+    name: "Focus Stats",
+    icon: "📊",
+    desc: "Ringkasan produktivitas harian",
+    render() {
+      const card = document.createElement("div");
+      card.className = "widget-card";
+      card.dataset.widgetId = "focusstats";
+
+      const totalTasks = (typeof todos !== 'undefined') ? todos.length : 0;
+      const doneTasks = (typeof todos !== 'undefined') ? todos.filter(t => t.completed).length : 0;
+      const totalTracked = (typeof todos !== 'undefined')
+        ? todos.reduce((acc, t) => acc + (t.elapsedTime || 0), 0)
+        : 0;
+
+      const formatTime = (sec) => {
+        const h = Math.floor(sec / 3600);
+        const m = Math.floor((sec % 3600) / 60);
+        return h > 0 ? `${h}h ${m}m` : `${m}m`;
+      };
+
+      const percent = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+
+      card.innerHTML = `
+        <div class="widget-header">
+          <div class="widget-title">
+            <span class="widget-title-icon">📊</span>
+            Focus Stats
+          </div>
+          <button class="widget-remove-btn" data-remove="focusstats" title="Hapus widget">✕</button>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value">${doneTasks}</div>
+            <div class="stat-label">Selesai</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">${totalTasks}</div>
+            <div class="stat-label">Total Task</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">${percent}%</div>
+            <div class="stat-label">Progress</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">${totalTracked > 0 ? formatTime(totalTracked) : '—'}</div>
+            <div class="stat-label">Tracked</div>
+          </div>
+        </div>
+      `;
+      return card;
+    },
+    afterRender() {}
+  },
+
+  timer: {
+    id: "timer",
+    name: "Timer Panel",
+    icon: "⏱️",
+    desc: "Timer & Stopwatch di samping todo",
+    render() {
+      const card = document.createElement("div");
+      card.className = "widget-card";
+      card.dataset.widgetId = "timer";
+      card.innerHTML = `
+        <div class="widget-header">
+          <div class="widget-title">
+            <span class="widget-title-icon">⏱️</span>
+            Timer
+          </div>
+          <button class="widget-remove-btn" data-remove="timer" title="Hapus widget">✕</button>
+        </div>
+        <div style="text-align:center; padding: 8px 0;">
+          <div style="font-size:0.75rem; color:rgba(255,255,255,0.4); margin-bottom:8px;">
+            Gunakan tombol ⏱️ di pojok kanan bawah untuk Timer & Stopwatch lengkap.
+          </div>
+          <div id="widgetTimerDisplay" style="font-size:1.6rem; font-weight:700; letter-spacing:1px; font-family:Arial,sans-serif;">00:00</div>
+        </div>
+      `;
+      return card;
+    },
+    afterRender() {
+      // Sync display with global timer if available
+      setInterval(() => {
+        const globalDisplay = document.getElementById("displayGlobalTime");
+        const widgetDisplay = document.getElementById("widgetTimerDisplay");
+        if (globalDisplay && widgetDisplay) {
+          widgetDisplay.textContent = globalDisplay.textContent.substring(0, 5);
+        }
+      }, 500);
+    }
+  }
+};
+
+// ==========================================
+// WIDGET RENDER ENGINE
+// ==========================================
+
+const MAX_WIDGETS = 4;
+
+function renderWidgets() {
+  const column = document.getElementById("widgetColumn");
+  const addBtn = document.getElementById("addWidgetBtn");
+  if (!column) return;
+
+  // Remove all existing widget cards
+  column.querySelectorAll(".widget-card").forEach(el => el.remove());
+
+  // Render each active widget
+  appSettings.activeWidgets.forEach(widgetId => {
+    const def = WIDGET_REGISTRY[widgetId];
+    if (!def) return;
+    const card = def.render();
+    column.insertBefore(card, addBtn);
+  });
+
+  // Bind remove buttons
+  column.querySelectorAll(".widget-remove-btn").forEach(btn => {
+    btn.addEventListener("click", () => removeWidget(btn.dataset.remove));
+  });
+
+  // Run afterRender hooks
+  appSettings.activeWidgets.forEach(widgetId => {
+    const def = WIDGET_REGISTRY[widgetId];
+    if (def && def.afterRender) def.afterRender();
+  });
+
+  // Show/hide add button based on max
+  if (addBtn) {
+    addBtn.classList.toggle("hidden", appSettings.activeWidgets.length >= MAX_WIDGETS);
+  }
+
+  // Update workspace layout classes
+  applyWorkspaceLayout();
+
+  // Sync settings widget list in drawer
+  renderSettingsWidgetList();
+}
+
+function addWidget(widgetId) {
+  if (appSettings.activeWidgets.length >= MAX_WIDGETS) {
+    showToast(`🧩 Maksimal ${MAX_WIDGETS} widget aktif.`, "warning", 2500);
+    return;
+  }
+  if (appSettings.activeWidgets.includes(widgetId)) {
+    showToast("Widget ini sudah aktif.", "info", 2000);
+    return;
+  }
+  appSettings.activeWidgets.push(widgetId);
+  saveSettings();
+  renderWidgets();
+  closeWidgetPicker();
+  showToast(`🧩 Widget "${WIDGET_REGISTRY[widgetId]?.name}" ditambahkan!`, "success", 2500);
+}
+
+function removeWidget(widgetId) {
+  appSettings.activeWidgets = appSettings.activeWidgets.filter(id => id !== widgetId);
+  saveSettings();
+  renderWidgets();
+  showToast(`Widget dihapus.`, "info", 2000);
+}
+
+// ==========================================
+// WIDGET PICKER MODAL
+// ==========================================
+
+function openWidgetPicker() {
+  const modal = document.getElementById("widgetPickerModal");
+  const list = document.getElementById("widgetPickerList");
+  if (!modal || !list) return;
+
+  list.innerHTML = "";
+
+  Object.values(WIDGET_REGISTRY).forEach(def => {
+    const isActive = appSettings.activeWidgets.includes(def.id);
+    const isMax = appSettings.activeWidgets.length >= MAX_WIDGETS;
+    const item = document.createElement("button");
+    item.className = `widget-picker-item${isActive || isMax ? " disabled" : ""}`;
+    item.innerHTML = `
+      <span class="widget-picker-item-icon">${def.icon}</span>
+      <span class="widget-picker-item-name">${def.name}</span>
+      <span class="widget-picker-item-desc">${isActive ? "Aktif" : def.desc}</span>
+    `;
+    if (!isActive && !isMax) {
+      item.addEventListener("click", () => addWidget(def.id));
+    }
+    list.appendChild(item);
+  });
+
+  modal.classList.remove("hidden");
+}
+
+function closeWidgetPicker() {
+  const modal = document.getElementById("widgetPickerModal");
+  if (modal) modal.classList.add("hidden");
+}
+
+// ==========================================
+// SETTINGS DRAWER
+// ==========================================
+
+function openSettingsDrawer() {
+  const drawer = document.getElementById("settingsDrawer");
+  const backdrop = document.getElementById("settingsBackdrop");
+  const fab = document.getElementById("toggleSettingsBtn");
+  if (drawer) drawer.classList.add("open");
+  if (backdrop) backdrop.classList.add("visible");
+  if (fab) fab.classList.add("active");
+  syncSettingsUI();
+}
+
+function closeSettingsDrawer() {
+  const drawer = document.getElementById("settingsDrawer");
+  const backdrop = document.getElementById("settingsBackdrop");
+  const fab = document.getElementById("toggleSettingsBtn");
+  if (drawer) drawer.classList.remove("open");
+  if (backdrop) backdrop.classList.remove("visible");
+  if (fab) fab.classList.remove("active");
+}
+
+function syncSettingsUI() {
+  // Personal tab
+  const nameInput = document.getElementById("settingName");
+  if (nameInput) nameInput.value = appSettings.name || "";
+
+  // Clock format toggle
+  document.querySelectorAll("[data-clock]").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.clock === appSettings.clockFormat);
+  });
+
+  // Toggles
+  const showSecondsEl = document.getElementById("settingShowSeconds");
+  if (showSecondsEl) showSecondsEl.checked = !!appSettings.showSeconds;
+
+  const showDateEl = document.getElementById("settingShowDate");
+  if (showDateEl) showDateEl.checked = appSettings.showDate !== false;
+
+  // Background presets
+  document.querySelectorAll("[data-bg]").forEach(btn => {
+    const isSel = (appSettings.bgType === "preset" || appSettings.bgType === "default") && (appSettings.bgVal || "default") === btn.dataset.bg;
+    btn.classList.toggle("active", isSel);
+  });
+
+  // Background URL input
+  const bgUrlInput = document.getElementById("bgUrlInput");
+  if (bgUrlInput) {
+    bgUrlInput.value = appSettings.bgType === "url" ? appSettings.bgVal || "" : "";
+  }
+
+  // Dim slider
+  const bgDimSlider = document.getElementById("bgDimSlider");
+  const bgDimVal = document.getElementById("bgDimVal");
+  if (bgDimSlider && bgDimVal) {
+    bgDimSlider.value = appSettings.bgDim !== undefined ? appSettings.bgDim : 40;
+    bgDimVal.textContent = `${bgDimSlider.value}%`;
+  }
+
+  // Blur slider
+  const bgBlurSlider = document.getElementById("bgBlurSlider");
+  const bgBlurVal = document.getElementById("bgBlurVal");
+  if (bgBlurSlider && bgBlurVal) {
+    bgBlurSlider.value = appSettings.bgBlur !== undefined ? appSettings.bgBlur : 0;
+    bgBlurVal.textContent = `${bgBlurSlider.value}px`;
+  }
+
+  // Widget position toggles
+  document.querySelectorAll("[data-widgetpos]").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.widgetpos === appSettings.widgetPosition);
+  });
+
+  // Refresh widget list in drawer
+  renderSettingsWidgetList();
+}
+
+function renderSettingsWidgetList() {
+  const list = document.getElementById("settingsWidgetList");
+  if (!list) return;
+
+  if (appSettings.activeWidgets.length === 0) {
+    list.innerHTML = `<p class="settings-hint" style="margin:0;">Belum ada widget aktif. Klik tombol "+" untuk menambahkan.</p>`;
+    return;
+  }
+
+  list.innerHTML = appSettings.activeWidgets.map(id => {
+    const def = WIDGET_REGISTRY[id];
+    if (!def) return "";
+    return `
+      <div class="settings-widget-item">
+        <span class="settings-widget-item-icon">${def.icon}</span>
+        <span class="settings-widget-item-name">${def.name}</span>
+        <button class="settings-widget-item-remove" data-remove-widget="${id}" title="Hapus widget">✕</button>
+      </div>
+    `;
+  }).join("");
+
+  list.querySelectorAll("[data-remove-widget]").forEach(btn => {
+    btn.addEventListener("click", () => removeWidget(btn.dataset.removeWidget));
+  });
+}
+
+function initSettingsDrawer() {
+  // Apply any saved settings immediately on load
+  syncSettingsUI();
+}
+
+function bindSettingsControls() {
+  // FAB toggle
+  const fab = document.getElementById("toggleSettingsBtn");
+  if (fab) fab.addEventListener("click", () => {
+    const drawer = document.getElementById("settingsDrawer");
+    if (drawer && drawer.classList.contains("open")) {
+      closeSettingsDrawer();
+    } else {
+      openSettingsDrawer();
+    }
+  });
+
+  // Close button
+  const closeBtn = document.getElementById("closeSettingsBtn");
+  if (closeBtn) closeBtn.addEventListener("click", closeSettingsDrawer);
+
+  // Backdrop click to close
+  const backdrop = document.getElementById("settingsBackdrop");
+  if (backdrop) backdrop.addEventListener("click", closeSettingsDrawer);
+
+  // Tab switching
+  document.querySelectorAll(".settings-tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".settings-tab-btn").forEach(b => b.classList.remove("active"));
+      document.querySelectorAll(".settings-tab-content").forEach(c => c.classList.remove("active"));
+      btn.classList.add("active");
+      const tab = document.getElementById(`settingsTab-${btn.dataset.tab}`);
+      if (tab) tab.classList.add("active");
+    });
+  });
+
+  // --- PERSONAL TAB ---
+  // Name input
+  const nameInput = document.getElementById("settingName");
+  if (nameInput) {
+    nameInput.addEventListener("input", () => {
+      appSettings.name = nameInput.value.trim();
+      saveSettings();
+    });
+  }
+
+  // Clock format (24h / 12h)
+  document.querySelectorAll("[data-clock]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-clock]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      appSettings.clockFormat = btn.dataset.clock;
+      saveSettings();
+    });
+  });
+
+  // Show Seconds toggle
+  const showSecondsEl = document.getElementById("settingShowSeconds");
+  if (showSecondsEl) {
+    showSecondsEl.addEventListener("change", () => {
+      appSettings.showSeconds = showSecondsEl.checked;
+      saveSettings();
+    });
+  }
+
+  // Show Date toggle
+  const showDateEl = document.getElementById("settingShowDate");
+  if (showDateEl) {
+    showDateEl.addEventListener("change", () => {
+      appSettings.showDate = showDateEl.checked;
+      saveSettings();
+    });
+  }
+
+  // --- BACKGROUND TAB ---
+  // Presets
+  document.querySelectorAll("[data-bg]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-bg]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      appSettings.bgType = btn.dataset.bg === "default" ? "default" : "preset";
+      appSettings.bgVal = btn.dataset.bg;
+      saveSettings();
+      applyBackgroundSettings();
+    });
+  });
+
+  // URL apply
+  const bgApplyUrlBtn = document.getElementById("bgApplyUrlBtn");
+  const bgUrlInput = document.getElementById("bgUrlInput");
+  if (bgApplyUrlBtn && bgUrlInput) {
+    bgApplyUrlBtn.addEventListener("click", () => {
+      const url = bgUrlInput.value.trim();
+      if (!url) return;
+      document.querySelectorAll("[data-bg]").forEach(b => b.classList.remove("active"));
+      appSettings.bgType = "url";
+      appSettings.bgVal = url;
+      saveSettings();
+      applyBackgroundSettings();
+      showToast("🖼️ Custom URL background diterapkan!", "success", 2500);
+    });
+  }
+
+  // File Upload
+  const bgUploadBtn = document.getElementById("bgUploadBtn");
+  const bgFileInput = document.getElementById("bgFileInput");
+  if (bgUploadBtn && bgFileInput) {
+    bgUploadBtn.addEventListener("click", () => bgFileInput.click());
+    bgFileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) {
+        showToast("⚠️ Ukuran file maksimal 5MB.", "warning", 3000);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const dataUrl = ev.target.result;
+        document.querySelectorAll("[data-bg]").forEach(b => b.classList.remove("active"));
+        appSettings.bgType = "custom";
+        appSettings.bgVal = dataUrl;
+        saveSettings();
+        applyBackgroundSettings();
+        showToast("🖼️ Custom background gambar berhasil dipasang!", "success", 2500);
+      };
+      reader.readAsDataURL(file);
+      bgFileInput.value = "";
+    });
+  }
+
+  // Dim Slider
+  const bgDimSlider = document.getElementById("bgDimSlider");
+  const bgDimVal = document.getElementById("bgDimVal");
+  if (bgDimSlider && bgDimVal) {
+    bgDimSlider.addEventListener("input", () => {
+      const val = parseInt(bgDimSlider.value, 10);
+      bgDimVal.textContent = `${val}%`;
+      appSettings.bgDim = val;
+      saveSettings();
+      applyBackgroundSettings();
+    });
+  }
+
+  // Blur Slider
+  const bgBlurSlider = document.getElementById("bgBlurSlider");
+  const bgBlurVal = document.getElementById("bgBlurVal");
+  if (bgBlurSlider && bgBlurVal) {
+    bgBlurSlider.addEventListener("input", () => {
+      const val = parseInt(bgBlurSlider.value, 10);
+      bgBlurVal.textContent = `${val}px`;
+      appSettings.bgBlur = val;
+      saveSettings();
+      applyBackgroundSettings();
+    });
+  }
+
+  // --- WIDGETS TAB ---
+  // Widget position
+  document.querySelectorAll("[data-widgetpos]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-widgetpos]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      appSettings.widgetPosition = btn.dataset.widgetpos;
+      saveSettings();
+      applyWorkspaceLayout();
+    });
+  });
+
+  // Add widget button
+  const addWidgetBtn = document.getElementById("addWidgetBtn");
+  if (addWidgetBtn) addWidgetBtn.addEventListener("click", openWidgetPicker);
+
+  // Widget picker close
+  const closePickerBtn = document.getElementById("closeWidgetPickerBtn");
+  if (closePickerBtn) closePickerBtn.addEventListener("click", closeWidgetPicker);
+
+  // Close picker on backdrop click
+  const pickerModal = document.getElementById("widgetPickerModal");
+  if (pickerModal) {
+    pickerModal.addEventListener("click", (e) => {
+      if (e.target === pickerModal) closeWidgetPicker();
+    });
+  }
+
+  // --- DATA TAB ---
+  // Export
+  const exportBtn = document.getElementById("exportDataBtn");
+  if (exportBtn) {
+    exportBtn.addEventListener("click", () => {
+      const data = {
+        todos: JSON.parse(localStorage.getItem("todos") || "[]"),
+        milestone: JSON.parse(localStorage.getItem("milestone") || "null"),
+        appSettings: JSON.parse(localStorage.getItem("appSettings") || "{}"),
+        quickNotes: localStorage.getItem("quickNotes") || "",
+        isHidden: localStorage.getItem("isHidden") || "false",
+        exportedAt: new Date().toISOString(),
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `productive-tab-backup-${new Date().toISOString().split("T")[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("💾 Data berhasil diekspor!", "success", 3000);
+    });
+  }
+
+  // Import
+  const importBtn = document.getElementById("importDataBtn");
+  const importFile = document.getElementById("importFileInput");
+  if (importBtn && importFile) {
+    importBtn.addEventListener("click", () => importFile.click());
+    importFile.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const data = JSON.parse(ev.target.result);
+          if (data.todos) localStorage.setItem("todos", JSON.stringify(data.todos));
+          if (data.milestone) localStorage.setItem("milestone", JSON.stringify(data.milestone));
+          if (data.appSettings) localStorage.setItem("appSettings", JSON.stringify(data.appSettings));
+          if (data.quickNotes !== undefined) localStorage.setItem("quickNotes", data.quickNotes);
+          if (data.isHidden !== undefined) localStorage.setItem("isHidden", data.isHidden);
+          showToast("📥 Data berhasil diimpor! Halaman akan di-reload...", "success", 2000);
+          setTimeout(() => location.reload(), 2200);
+        } catch {
+          showToast("❌ File tidak valid. Pastikan format JSON benar.", "danger", 4000);
+        }
+      };
+      reader.readAsText(file);
+      importFile.value = "";
+    });
+  }
+
+  // Reset all
+  const resetBtn = document.getElementById("resetAllDataBtn");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      if (!confirm("⚠️ Yakin ingin menghapus SEMUA data?\n\nTodos, milestone, settings, dan catatan akan terhapus permanen.")) return;
+      localStorage.clear();
+      sessionStorage.clear();
+      showToast("🗑️ Semua data dihapus. Reload...", "warning", 2000);
+      setTimeout(() => location.reload(), 2200);
+    });
+  }
+}
+
