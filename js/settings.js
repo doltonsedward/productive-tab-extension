@@ -9,6 +9,9 @@ function initSettings() {
 }
 
 function applyBackgroundSettings() {
+  const instantStyle = document.getElementById("instantBgStyle");
+  if (instantStyle) instantStyle.remove();
+
   const type = appSettings.bgType || "default";
   const val = appSettings.bgVal || "";
   const dim = appSettings.bgDim !== undefined ? appSettings.bgDim : 40;

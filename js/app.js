@@ -44,4 +44,49 @@ document.addEventListener("DOMContentLoaded", () => {
   try { initSettingsDrawer(); } catch (e) { console.error("Drawer init error:", e); }
   try { initCalendarEvents(); } catch (e) { console.error("Calendar init error:", e); }
   try { setupObsidianExport(); } catch (e) { console.error("Obsidian export init error:", e); }
+
+  // Dismiss Loading Screen with smooth fade-out
+  dismissAppLoader();
 });
+
+function dismissAppLoader() {
+  const loader = document.getElementById("appLoader");
+  if (!loader) return;
+
+  const type = appSettings?.bgType || "default";
+  const val = appSettings?.bgVal || "";
+
+  if ((type === "preset" || type === "url" || type === "custom" || type === "default") && val && val !== "dark") {
+    let imgSrc = "";
+    if (type === "preset" && typeof BG_PRESETS !== "undefined" && BG_PRESETS[val]) {
+      imgSrc = BG_PRESETS[val];
+    } else if ((type === "url" || type === "custom") && val) {
+      imgSrc = val;
+    } else {
+      imgSrc = "background/default.png";
+    }
+
+    if (imgSrc) {
+      const img = new Image();
+      img.src = imgSrc;
+      const hideLoader = () => {
+        requestAnimationFrame(() => {
+          loader.classList.add("fade-out");
+        });
+      };
+
+      if (img.complete) {
+        hideLoader();
+      } else {
+        img.onload = hideLoader;
+        img.onerror = hideLoader;
+        setTimeout(hideLoader, 500);
+      }
+      return;
+    }
+  }
+
+  requestAnimationFrame(() => {
+    loader.classList.add("fade-out");
+  });
+}

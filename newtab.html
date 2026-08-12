@@ -5,8 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>New Tab</title>
     <link rel="stylesheet" href="styles.css" />
+    <script>
+      (function () {
+        try {
+          const raw = localStorage.getItem("appSettings");
+          const presets = {
+            default: "background/default.png",
+            aurora: "background/aurora.png",
+            space: "background/space.png",
+            mountain: "background/mountain.png",
+            "dark-ribbon": "background/dark-ribbon.jpg",
+            "dark-cubes": "background/dark-cubes.jpg",
+            "teal-clouds": "background/teal-clouds.jpg",
+            dark: "linear-gradient(135deg, #0d1117 0%, #161b22 100%)",
+          };
+          let bgVal = "background/default.png";
+          let dim = 40;
+          let blur = 0;
+
+          if (raw) {
+            const s = JSON.parse(raw);
+            const type = s.bgType || "default";
+            const val = s.bgVal || "";
+            if (s.bgDim !== undefined) dim = s.bgDim;
+            if (s.bgBlur !== undefined) blur = s.bgBlur;
+
+            if (type === "preset" && presets[val]) {
+              bgVal = val === "dark" ? "#0d1117" : presets[val];
+            } else if ((type === "url" || type === "custom") && val) {
+              bgVal = val;
+            }
+          }
+
+          const isColorOrGradient = bgVal.startsWith("#") || bgVal.startsWith("linear-gradient");
+          const bgStyle = isColorOrGradient
+            ? bgVal
+            : `#181c24 url("${bgVal}") no-repeat center center fixed`;
+
+          const dimAlpha = (dim / 100).toFixed(2);
+          const blurCss = blur > 0 ? `blur(${blur}px)` : "none";
+
+          const style = document.createElement("style");
+          style.id = "instantBgStyle";
+          style.textContent = `
+            body {
+              background: ${bgStyle} !important;
+              background-size: cover !important;
+            }
+            .background-overlay {
+              background-color: rgba(0, 0, 0, ${dimAlpha}) !important;
+              backdrop-filter: ${blurCss} !important;
+              -webkit-backdrop-filter: ${blurCss} !important;
+            }
+          `;
+          document.head.appendChild(style);
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
+    <div id="appLoader" class="app-loader">
+      <div class="app-loader-spinner"></div>
+    </div>
     <div id="toastContainer" class="toast-container"></div>
     <div class="background-overlay"></div>
 
