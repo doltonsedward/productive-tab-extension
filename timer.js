@@ -69,7 +69,7 @@ if (pauseTaskTrackBtn) {
       taskStartTime = null;
       clearInterval(taskTimerInterval);
       taskTimerInterval = null;
-      pauseTaskTrackBtn.textContent = "Lanjut";
+      pauseTaskTrackBtn.textContent = "Resume";
       updateTaskTimerDisplay();
     } else {
       taskStartTime = Date.now();
@@ -230,7 +230,7 @@ if (startGlobalTimerBtn) {
           globalTargetEndTime = null;
           updateGlobalDisplay();
           if (startGlobalTimerBtn) startGlobalTimerBtn.textContent = "Start";
-          alert("⏰ Waktu habis!");
+          alert("⏰ Time's up!");
           resetGlobalTimer();
           return;
         }

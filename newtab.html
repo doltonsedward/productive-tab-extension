@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,7 +20,7 @@
           <span class="settings-title-icon">⚙️</span>
           <span>Settings</span>
         </div>
-        <button id="closeSettingsBtn" class="settings-close-btn" title="Tutup Settings">✕</button>
+        <button id="closeSettingsBtn" class="settings-close-btn" title="Close Settings">✕</button>
       </div>
 
       <!-- Settings Tabs Navigation -->
@@ -34,25 +34,25 @@
       <!-- Tab: Personal -->
       <div class="settings-tab-content active" id="settingsTab-personal">
         <div class="settings-section">
-          <div class="settings-section-label">Identitas</div>
+          <div class="settings-section-label">Identity</div>
           <div class="settings-field">
-            <label for="settingName">Nama Panggilan</label>
+            <label for="settingName">Display Name</label>
             <input type="text" id="settingName" class="settings-input" placeholder="e.g. Edward" maxlength="30" />
           </div>
         </div>
 
         <div class="settings-section">
-          <div class="settings-section-label">Format Jam</div>
+          <div class="settings-section-label">Clock Format</div>
           <div class="settings-field">
-            <label>Tampilan Jam</label>
+            <label>Time Display</label>
             <div class="settings-toggle-group">
-              <button class="settings-toggle-btn active" data-clock="24h">24 Jam</button>
-              <button class="settings-toggle-btn" data-clock="12h">12 Jam (AM/PM)</button>
+              <button class="settings-toggle-btn active" data-clock="24h">24-Hour</button>
+              <button class="settings-toggle-btn" data-clock="12h">12-Hour (AM/PM)</button>
             </div>
           </div>
           <div class="settings-field">
             <label class="settings-toggle-label">
-              <span>Tampilkan Detik</span>
+              <span>Show Seconds</span>
               <label class="toggle-switch">
                 <input type="checkbox" id="settingShowSeconds" />
                 <span class="toggle-slider"></span>
@@ -61,7 +61,7 @@
           </div>
           <div class="settings-field">
             <label class="settings-toggle-label">
-              <span>Tampilkan Tanggal</span>
+              <span>Show Date</span>
               <label class="toggle-switch">
                 <input type="checkbox" id="settingShowDate" checked />
                 <span class="toggle-slider"></span>
@@ -74,16 +74,16 @@
       <!-- Tab: Background -->
       <div class="settings-tab-content" id="settingsTab-background">
         <div class="settings-section">
-          <div class="settings-section-label">Sumber Background</div>
+          <div class="settings-section-label">Background Source</div>
           
           <div class="settings-field">
-            <label>Upload Gambar Sendiri</label>
-            <button id="bgUploadBtn" class="settings-action-btn">📁 Upload Gambar (JPG/PNG)</button>
+            <label>Upload Custom Image</label>
+            <button id="bgUploadBtn" class="settings-action-btn">📁 Upload Image (JPG/PNG)</button>
             <input type="file" id="bgFileInput" accept="image/*" style="display:none" />
           </div>
 
           <div class="settings-field">
-            <label for="bgUrlInput">Atau URL Gambar</label>
+            <label for="bgUrlInput">Or Image URL</label>
             <div style="display:flex; gap:6px;">
               <input type="url" id="bgUrlInput" class="settings-input" placeholder="https://images.unsplash.com/..." />
               <button id="bgApplyUrlBtn" class="glass-btn" style="flex:0 0 60px;">Set</button>
@@ -94,20 +94,26 @@
         <div class="settings-section">
           <div class="settings-section-label">Wallpaper Presets</div>
           <div class="bg-preset-grid">
-            <button class="bg-preset-btn active" data-bg="default" style="background-image: url('bg.png');" title="Default Cyber Mesh">
+            <button class="bg-preset-btn active" data-bg="default" style="background-image: url('background/default.png');" title="Default Cyber Mesh">
               <span>Default</span>
             </button>
-            <button class="bg-preset-btn" data-bg="aurora" style="background-image: url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=400&auto=format&fit=crop');" title="Aurora Borealis">
+            <button class="bg-preset-btn" data-bg="aurora" style="background-image: url('background/aurora.png');" title="Aurora Borealis">
               <span>Aurora</span>
             </button>
-            <button class="bg-preset-btn" data-bg="space" style="background-image: url('https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=400&auto=format&fit=crop');" title="Deep Space">
+            <button class="bg-preset-btn" data-bg="space" style="background-image: url('background/space.png');" title="Deep Space">
               <span>Space</span>
             </button>
-            <button class="bg-preset-btn" data-bg="mountain" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=400&auto=format&fit=crop');" title="Night Mountain">
+            <button class="bg-preset-btn" data-bg="mountain" style="background-image: url('background/mountain.png');" title="Night Mountain">
               <span>Mountain</span>
             </button>
-            <button class="bg-preset-btn" data-bg="cyber" style="background-image: url('https://images.unsplash.com/photo-1519501025264-65ba15a82390?q=80&w=400&auto=format&fit=crop');" title="Cyber City">
-              <span>Cyber</span>
+            <button class="bg-preset-btn" data-bg="dark-ribbon" style="background-image: url('background/dark-ribbon.jpg');" title="Dark Ribbon">
+              <span>Ribbon</span>
+            </button>
+            <button class="bg-preset-btn" data-bg="dark-cubes" style="background-image: url('background/dark-cubes.jpg');" title="Dark Cubes">
+              <span>Cubes</span>
+            </button>
+            <button class="bg-preset-btn" data-bg="teal-clouds" style="background-image: url('background/teal-clouds.jpg');" title="Teal Clouds">
+              <span>Clouds</span>
             </button>
             <button class="bg-preset-btn" data-bg="dark" style="background: #0d1117;" title="Minimal Dark">
               <span>Dark</span>
@@ -116,11 +122,11 @@
         </div>
 
         <div class="settings-section">
-          <div class="settings-section-label">Efek Visual</div>
+          <div class="settings-section-label">Visual Effects</div>
 
           <div class="settings-field">
             <label for="bgDimSlider" class="settings-slider-label">
-              <span>Kegelapan Overlay (Dim)</span>
+              <span>Overlay Dimming</span>
               <span id="bgDimVal">40%</span>
             </label>
             <input type="range" id="bgDimSlider" class="settings-slider" min="0" max="85" value="40" />
@@ -128,7 +134,7 @@
 
           <div class="settings-field">
             <label for="bgBlurSlider" class="settings-slider-label">
-              <span>Efek Blur Background</span>
+              <span>Background Blur Effect</span>
               <span id="bgBlurVal">0px</span>
             </label>
             <input type="range" id="bgBlurSlider" class="settings-slider" min="0" max="25" value="0" />
@@ -139,20 +145,10 @@
       <!-- Tab: Widgets -->
       <div class="settings-tab-content" id="settingsTab-widgets">
         <div class="settings-section">
-          <div class="settings-section-label">Widget Aktif</div>
-          <p class="settings-hint">Kelola widget yang ditampilkan di samping todo list. Maksimal 4 widget.</p>
+          <div class="settings-section-label">Active Widgets (Max 2 Left, Max 2 Right)</div>
+          <p class="settings-hint">💡 Drag & drop widgets on the main screen to swap positions (left/right/top/bottom), or use the shift buttons on widget headers.</p>
           <div id="settingsWidgetList" class="settings-widget-list">
             <!-- Rendered dynamically -->
-          </div>
-        </div>
-        <div class="settings-section">
-          <div class="settings-section-label">Posisi Widget</div>
-          <div class="settings-field">
-            <label>Kolom Widget</label>
-            <div class="settings-toggle-group">
-              <button class="settings-toggle-btn active" data-widgetpos="right">Kanan</button>
-              <button class="settings-toggle-btn" data-widgetpos="left">Kiri</button>
-            </div>
           </div>
         </div>
       </div>
@@ -161,15 +157,15 @@
       <div class="settings-tab-content" id="settingsTab-data">
         <div class="settings-section">
           <div class="settings-section-label">Backup & Restore</div>
-          <p class="settings-hint">Ekspor semua data (Todo, Settings, Notes) ke file JSON.</p>
+          <p class="settings-hint">Export all data (Todo, Settings, Notes) to a JSON file.</p>
           <button id="exportDataBtn" class="settings-action-btn">⬇️ Export Data (JSON)</button>
           <button id="importDataBtn" class="settings-action-btn">⬆️ Import Data (JSON)</button>
           <input type="file" id="importFileInput" accept=".json" style="display:none" />
         </div>
         <div class="settings-section">
           <div class="settings-section-label">Reset</div>
-          <p class="settings-hint">Hapus semua data dan kembalikan ke pengaturan awal.</p>
-          <button id="resetAllDataBtn" class="settings-action-btn danger">⚠️ Reset Semua Data</button>
+          <p class="settings-hint">Delete all data and restore factory defaults.</p>
+          <button id="resetAllDataBtn" class="settings-action-btn danger">⚠️ Reset All Data</button>
         </div>
       </div>
 
@@ -179,9 +175,9 @@
     </div>
 
     <!-- ============================================
-         SETTINGS FAB (Kanan Atas — mudah pindahkan via CSS var --settings-fab-pos)
+         SETTINGS FAB
          ============================================ -->
-    <button id="toggleSettingsBtn" class="settings-fab" title="Buka Settings">⚙️</button>
+    <button id="toggleSettingsBtn" class="settings-fab" title="Open Settings">⚙️</button>
 
     <div class="container">
       <div class="time-section">
@@ -192,11 +188,20 @@
       <div class="greeting" id="greeting"></div>
 
       <!-- ============================================
-           WORKSPACE LAYOUT (Todo + Side Widgets)
+           WORKSPACE LAYOUT (Dual Side Widgets + Centered Todo)
            ============================================ -->
       <div class="workspace-layout" id="workspaceLayout">
 
-        <!-- Todo Section -->
+        <!-- Left Widget Column (Max 2) -->
+        <div class="widget-column widget-column-left" id="widgetColumnLeft" data-side="left">
+          <!-- Rendered dynamically by JS -->
+          <button id="addWidgetBtnLeft" class="add-widget-btn" data-side="left" title="Add Left Widget">
+            <span class="add-widget-icon">+</span>
+            <span class="add-widget-label">Left Widget</span>
+          </button>
+        </div>
+
+        <!-- Centered Todo Section -->
         <div class="todo-section">
           <!-- Milestone Habit Container -->
           <div id="milestoneContainer" class="milestone-container">
@@ -215,32 +220,32 @@
 
           <div class="todo-list" id="todoList"></div>
 
-          <div class="todo-stats" id="todoStats">0 tugas · 0 selesai</div>
+          <div class="todo-stats" id="todoStats">0 tasks · 0 completed</div>
 
           <div class="export-actions">
             <button
               disabled
               class="export-btn disabled-btn"
-              title="Fitur nyusul nanti"
+              title="Coming soon"
             >
               ☁️ Save to Cloud
             </button>
             <button
               id="copyMdBtn"
               class="export-btn"
-              title="Copy format Obsidian"
+              title="Copy Obsidian format"
             >
               📋 Copy to Obsidian
             </button>
           </div>
         </div>
 
-        <!-- Side Widget Column -->
-        <div class="widget-column" id="widgetColumn">
-          <!-- Widgets rendered dynamically by JS -->
-          <button id="addWidgetBtn" class="add-widget-btn" title="Tambah Widget">
+        <!-- Right Widget Column (Max 2) -->
+        <div class="widget-column widget-column-right" id="widgetColumnRight" data-side="right">
+          <!-- Rendered dynamically by JS -->
+          <button id="addWidgetBtnRight" class="add-widget-btn" data-side="right" title="Add Right Widget">
             <span class="add-widget-icon">+</span>
-            <span class="add-widget-label">Tambah Widget</span>
+            <span class="add-widget-label">Right Widget</span>
           </button>
         </div>
       </div>
@@ -249,18 +254,18 @@
     <!-- Widget Picker Modal -->
     <div id="widgetPickerModal" class="modal-overlay hidden">
       <div class="glass-modal-content widget-picker-modal">
-        <span class="track-badge">🧩 Pilih Widget</span>
-        <h4 class="track-task-title" style="margin-bottom: 16px;">Tambahkan Widget</h4>
+        <span class="track-badge">🧩 Select Widget</span>
+        <h4 class="track-task-title" style="margin-bottom: 16px;">Add Widget</h4>
         <div id="widgetPickerList" class="widget-picker-list">
           <!-- Rendered dynamically -->
         </div>
         <div class="modal-actions" style="margin-top: 12px;">
-          <button id="closeWidgetPickerBtn" class="glass-btn danger">Batal</button>
+          <button id="closeWidgetPickerBtn" class="glass-btn danger">Cancel</button>
         </div>
       </div>
     </div>
 
-    <!-- Floating Global Timer/Stopwatch Widget (Pojok Kanan Bawah) -->
+    <!-- Floating Global Timer/Stopwatch Widget -->
     <div id="globalTimerWidget" class="global-timer-widget">
       <div id="timerPanel" class="timer-panel hidden">
         <div class="timer-tabs">
@@ -274,7 +279,7 @@
           <input
             type="number"
             id="timerMinutes"
-            placeholder="Menit"
+            placeholder="Minutes"
             min="1"
             max="180"
           />
@@ -310,15 +315,15 @@
           <button
             id="restartTaskTrackBtn"
             class="glass-btn icon-only"
-            title="Reset waktu ke 00:00:00"
+            title="Reset time to 00:00:00"
           >
             ↺ Reset
           </button>
           <button id="stopTaskTrackBtn" class="glass-btn danger">
-            Stop (Simpan Waktu)
+            Stop (Save Time)
           </button>
           <button id="completeTaskTrackBtn" class="glass-btn success">
-            Stop & Selesai ✓
+            Stop & Complete ✓
           </button>
         </div>
       </div>
@@ -330,18 +335,18 @@
         <span class="track-badge">📅 Schedule to Google Calendar</span>
         <h4 id="gcalTaskTitle" class="track-task-title">---</h4>
         <div class="gcal-form-group">
-          <label for="gcalDate">Tanggal & Waktu Mula:</label>
+          <label for="gcalDate">Start Date & Time:</label>
           <input type="datetime-local" id="gcalDate" class="gcal-input" />
         </div>
         <div class="gcal-form-group">
-          <label for="gcalDuration">Durasi (Menit):</label>
+          <label for="gcalDuration">Duration (Minutes):</label>
           <input type="number" id="gcalDuration" class="gcal-input" value="30" min="15" step="15" />
         </div>
 
         <div class="modal-actions">
           <button id="openGcalBtn" class="glass-btn success">🚀 Open in Google Calendar</button>
-          <button id="saveTaskScheduleBtn" class="glass-btn">💾 Simpan Tanggal Saja</button>
-          <button id="closeGcalBtn" class="glass-btn danger">Batal</button>
+          <button id="saveTaskScheduleBtn" class="glass-btn">💾 Save Date Only</button>
+          <button id="closeGcalBtn" class="glass-btn danger">Cancel</button>
         </div>
       </div>
     </div>

@@ -480,7 +480,7 @@ function renderTodos() {
   if (!todoList) return;
 
   if (!todos.length) {
-    if (todoStats) todoStats.textContent = "0 tugas · 0 selesai";
+    if (todoStats) todoStats.textContent = "0 tasks · 0 completed";
     todoList.innerHTML = "";
     return;
   }
@@ -502,7 +502,7 @@ function renderTodos() {
       return `
     <div class="todo-wrapper${t.completed && isHidden ? " hidden" : ""}">
       <div class="todo-item${t.completed ? " completed" : ""}" draggable="true" data-index="${index}" data-id="${t.id}">
-        <button class="accordion-btn${t.isExpanded ? " expanded" : ""}" data-id="${t.id}" title="${t.isExpanded ? "Sembunyikan subtask" : "Tampilkan/tambah subtask"}">
+        <button class="accordion-btn${t.isExpanded ? " expanded" : ""}" data-id="${t.id}" title="${t.isExpanded ? "Hide subtasks" : "Show/add subtasks"}">
           ${accordionIcon}
         </button>
 
@@ -514,18 +514,18 @@ function renderTodos() {
 
         <div class="todo-actions">
           <!-- Tombol Google Calendar -->
-          <button class="cal-btn" data-id="${t.id}" title="Jadwalkan ke Google Calendar">📅</button>
+          <button class="cal-btn" data-id="${t.id}" title="Schedule in Google Calendar">📅</button>
 
           <!-- Tombol Track Stopwatch Task -->
-          <button class="track-btn" data-id="${t.id}" title="Track waktu tugas">⏱️</button>
+          <button class="track-btn" data-id="${t.id}" title="Track task time">⏱️</button>
           
           <button class="complete-btn" data-id="${t.id}" title="${
-            t.completed ? "Tandai belum selesai" : "Tandai selesai"
+            t.completed ? "Mark incomplete" : "Mark complete"
           }">${t.completed ? "↩" : "✓"}</button>
           
-          <button class="edit-btn" data-id="${t.id}" title="Edit tugas">✎</button>
+          <button class="edit-btn" data-id="${t.id}" title="Edit task">✎</button>
           
-          <button class="delete-btn" data-id="${t.id}" title="Hapus tugas">✕</button>
+          <button class="delete-btn" data-id="${t.id}" title="Delete task">✕</button>
         </div>
       </div>
 
@@ -541,10 +541,10 @@ function renderTodos() {
                 (st) => `
               <div class="subtask-item${st.completed ? " completed" : ""}">
                 <input type="checkbox" class="subtask-checkbox" data-parent-id="${t.id}" data-sub-id="${st.id}" ${st.completed ? "checked" : ""}>
-                <span class="subtask-text" data-parent-id="${t.id}" data-sub-id="${st.id}" title="Klik untuk toggle, double-click untuk edit">${escapeHtml(st.text)}</span>
+                <span class="subtask-text" data-parent-id="${t.id}" data-sub-id="${st.id}" title="Click to toggle, double-click to edit">${escapeHtml(st.text)}</span>
                 <div class="subtask-actions">
                   <button class="subtask-edit-btn" data-parent-id="${t.id}" data-sub-id="${st.id}" title="Edit subtask">✎</button>
-                  <button class="subtask-delete-btn" data-parent-id="${t.id}" data-sub-id="${st.id}" title="Hapus subtask">✕</button>
+                  <button class="subtask-delete-btn" data-parent-id="${t.id}" data-sub-id="${st.id}" title="Delete subtask">✕</button>
                 </div>
               </div>
             `,
@@ -554,7 +554,7 @@ function renderTodos() {
             : ""
         }
         <div class="subtask-add-row">
-          <input type="text" class="subtask-input" data-parent-id="${t.id}" placeholder="+ Tambah subtask... (Enter)" maxlength="80">
+          <input type="text" class="subtask-input" data-parent-id="${t.id}" placeholder="+ Add subtask... (Enter)" maxlength="80">
         </div>
       </div>
       `
@@ -658,11 +658,11 @@ function renderTodos() {
 
   // 3. Render Stats & Toggle Pill
   const completedCount = todos.filter((t) => t.completed).length;
-  let statsHtml = `${todos.length} tugas · ${completedCount} selesai`;
+  let statsHtml = `${todos.length} tasks · ${completedCount} completed`;
 
   if (completedCount > 0) {
-    statsHtml += ` <span id="toggleHideBtn" class="toggle-hide" title="Sembunyikan/Tampilkan">
-      ${isHidden ? "Tampilkan" : "Sembunyikan"}
+    statsHtml += ` <span id="toggleHideBtn" class="toggle-hide" title="Hide/Show">
+      ${isHidden ? "Show" : "Hide"}
     </span>`;
   }
 
@@ -735,7 +735,7 @@ function launchGoogleCalendar() {
   const gcalDuration = document.getElementById("gcalDuration");
 
   if (!task || !gcalDate || !gcalDate.value) {
-    alert("Silakan pilih tanggal dan waktu terlebih dahulu.");
+    alert("Please select a date and time first.");
     return;
   }
 
@@ -751,7 +751,7 @@ function launchGoogleCalendar() {
   const dates = `${toGCalTime(startDate)}/${toGCalTime(endDate)}`;
   const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
     task.text
-  )}&dates=${dates}&details=${encodeURIComponent("Tugas dari Productive Tab")}`;
+  )}&dates=${dates}&details=${encodeURIComponent("Task from Productive Tab")}`;
 
   window.open(url, "_blank");
   closeGcalModal();
@@ -842,13 +842,13 @@ document.addEventListener("DOMContentLoaded", () => {
         hour12: use12h,
       };
       if (showSecs) timeOpts.second = "2-digit";
-      timeEl.textContent = now.toLocaleTimeString("id-ID", timeOpts);
+      timeEl.textContent = now.toLocaleTimeString("en-US", timeOpts);
     }
 
     if (dateEl) {
       const showDate = (typeof appSettings === 'undefined') || appSettings.showDate !== false;
       if (showDate) {
-        dateEl.textContent = now.toLocaleDateString("id-ID", {
+        dateEl.textContent = now.toLocaleDateString("en-US", {
           weekday: "long",
           year: "numeric",
           month: "long",
@@ -938,10 +938,10 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
       } else {
-        markdownText += `*(Tidak ada tugas yang selesai)*\n`;
+        markdownText += `*(No completed tasks)*\n`;
       }
 
-      markdownText += `\n#### Cancelled\n\n`;
+      markdownText += `\n#### Incomplete\n\n`;
 
       if (cancelledTodos.length > 0) {
         cancelledTodos.forEach((t) => {
@@ -955,12 +955,12 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
       } else {
-        markdownText += `*(Tidak ada tugas yang dibatalkan)*\n`;
+        markdownText += `*(No incomplete tasks)*\n`;
       }
 
       navigator.clipboard.writeText(markdownText).then(() => {
         const originalText = copyMdBtn.textContent;
-        copyMdBtn.textContent = "✅ Tersalin!";
+        copyMdBtn.textContent = "✅ Copied!";
 
         setTimeout(() => {
           copyMdBtn.textContent = originalText;
@@ -970,17 +970,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Init UI
-  renderMilestone();
-  checkMilestoneNotice();
-  renderTodos();
-  updateTimeAndGreeting();
+  try { renderMilestone(); } catch(e) { console.error("Milestone init error:", e); }
+  try { checkMilestoneNotice(); } catch(e) { console.error("Notice error:", e); }
+  try { renderTodos(); } catch(e) { console.error("Todos init error:", e); }
+  try { updateTimeAndGreeting(); } catch(e) { console.error("Time init error:", e); }
   setInterval(updateTimeAndGreeting, 1000);
 
   // Init Settings & Widget System
-  initSettings();
-  renderWidgets();
-  initSettingsDrawer();
-  bindSettingsControls();
+  try { initSettings(); } catch(e) { console.error("Settings init error:", e); }
+  try { renderWidgets(); } catch(e) { console.error("Widgets render error:", e); }
+  try { initSettingsDrawer(); } catch(e) { console.error("Drawer init error:", e); }
+  try { bindSettingsControls(); } catch(e) { console.error("Settings bind error:", e); }
 });
 
 // ==========================================
@@ -993,20 +993,24 @@ const DEFAULT_SETTINGS = {
   clockFormat: "24h",        // "24h" | "12h"
   showSeconds: false,        // bool
   showDate: true,            // bool
-  activeWidgets: ["quicknotes", "dailyquote"], // ordered list of active widget IDs
-  widgetPosition: "right",   // "right" | "left"
+  widgetSlots: {
+    left: [],    // max 2 widgets
+    right: []    // max 2 widgets
+  },
   bgType: "default",         // "default" | "preset" | "url" | "custom"
-  bgVal: "",                 // URL, base64 data string, or preset key
+  bgVal: "background/default.png", // URL, base64 data string, or preset key
   bgDim: 40,                 // 0 to 85 percent overlay darkness
   bgBlur: 0,                 // 0 to 25 px blur
 };
 
 const BG_PRESETS = {
-  default: "bg.png",
-  aurora: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1920&auto=format&fit=crop",
-  space: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=1920&auto=format&fit=crop",
-  mountain: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920&auto=format&fit=crop",
-  cyber: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?q=80&w=1920&auto=format&fit=crop",
+  default: "background/default.png",
+  aurora: "background/aurora.png",
+  space: "background/space.png",
+  mountain: "background/mountain.png",
+  "dark-ribbon": "background/dark-ribbon.jpg",
+  "dark-cubes": "background/dark-cubes.jpg",
+  "teal-clouds": "background/teal-clouds.jpg",
   dark: "none",
 };
 
@@ -1017,7 +1021,23 @@ function loadSettings() {
     const raw = localStorage.getItem("appSettings");
     if (!raw) return;
     const saved = JSON.parse(raw);
-    appSettings = { ...DEFAULT_SETTINGS, ...saved };
+    
+    // Auto-migrate old activeWidgets array format to dual slots
+    if (Array.isArray(saved.activeWidgets)) {
+      const left = saved.activeWidgets.slice(0, 2);
+      const right = saved.activeWidgets.slice(2, 4);
+      saved.widgetSlots = { left, right };
+      delete saved.activeWidgets;
+    }
+
+    appSettings = {
+      ...DEFAULT_SETTINGS,
+      ...saved,
+      widgetSlots: {
+        left: Array.isArray(saved.widgetSlots?.left) ? saved.widgetSlots.left : [...DEFAULT_SETTINGS.widgetSlots.left],
+        right: Array.isArray(saved.widgetSlots?.right) ? saved.widgetSlots.right : [...DEFAULT_SETTINGS.widgetSlots.right],
+      }
+    };
   } catch {
     appSettings = { ...DEFAULT_SETTINGS };
   }
@@ -1052,7 +1072,7 @@ function applyBackgroundSettings() {
     document.body.style.backgroundSize = "cover";
   } else {
     // Default
-    document.body.style.background = `#181c24 url("bg.png") no-repeat center center fixed`;
+    document.body.style.background = `#181c24 url("background/default.png") no-repeat center center fixed`;
     document.body.style.backgroundSize = "cover";
   }
 
@@ -1069,10 +1089,10 @@ function applyBackgroundSettings() {
 function applyWorkspaceLayout() {
   const workspace = document.getElementById("workspaceLayout");
   if (!workspace) return;
-  const hasWidgets = appSettings.activeWidgets.length > 0;
+  const leftCount = appSettings.widgetSlots?.left?.length || 0;
+  const rightCount = appSettings.widgetSlots?.right?.length || 0;
+  const hasWidgets = (leftCount + rightCount) > 0;
   workspace.classList.toggle("has-widgets", hasWidgets);
-  workspace.classList.toggle("widgets-left", appSettings.widgetPosition === "left");
-  workspace.classList.toggle("widgets-right", appSettings.widgetPosition === "right");
 }
 
 // ==========================================
@@ -1085,7 +1105,7 @@ const WIDGET_REGISTRY = {
     id: "quicknotes",
     name: "Quick Notes",
     icon: "📝",
-    desc: "Catatan cepat & scratchpad",
+    desc: "Quick notes & scratchpad",
     render() {
       const saved = localStorage.getItem("quickNotes") || "";
       const card = document.createElement("div");
@@ -1097,17 +1117,17 @@ const WIDGET_REGISTRY = {
             <span class="widget-title-icon">📝</span>
             Quick Notes
           </div>
-          <button class="widget-remove-btn" data-remove="quicknotes" title="Hapus widget">✕</button>
+          <button class="widget-remove-btn" data-remove="quicknotes" title="Remove widget">✕</button>
         </div>
         <textarea
           id="quickNotesTextarea"
           class="quick-notes-textarea"
-          placeholder="Ide cepat, catatan sementara..."
+          placeholder="Quick ideas, temporary notes..."
           maxlength="1000"
         >${escapeHtml(saved)}</textarea>
         <div class="quick-notes-footer">
-          <span class="quick-notes-autosave" id="quickNotesStatus">✓ Tersimpan</span>
-          <button class="quick-notes-clear-btn" id="quickNotesClearBtn">Hapus semua</button>
+          <span class="quick-notes-autosave" id="quickNotesStatus">✓ Saved</span>
+          <button class="quick-notes-clear-btn" id="quickNotesClearBtn">Clear all</button>
         </div>
       `;
       return card;
@@ -1133,10 +1153,10 @@ const WIDGET_REGISTRY = {
 
       if (clearBtn) {
         clearBtn.addEventListener("click", () => {
-          if (textarea && confirm("Hapus semua catatan?")) {
+          if (textarea && confirm("Clear all notes?")) {
             textarea.value = "";
             localStorage.removeItem("quickNotes");
-            showToast("📝 Quick Notes dibersihkan.", "info", 2000);
+            showToast("📝 Quick Notes cleared.", "info", 2000);
           }
         });
       }
@@ -1147,7 +1167,7 @@ const WIDGET_REGISTRY = {
     id: "dailyquote",
     name: "Daily Quote",
     icon: "💡",
-    desc: "Inspirasi & kutipan harian",
+    desc: "Daily inspiration & quotes",
     quotes: [
       { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
       { text: "It always seems impossible until it's done.", author: "Nelson Mandela" },
@@ -1183,7 +1203,7 @@ const WIDGET_REGISTRY = {
             <span class="widget-title-icon">💡</span>
             Daily Quote
           </div>
-          <button class="widget-remove-btn" data-remove="dailyquote" title="Hapus widget">✕</button>
+          <button class="widget-remove-btn" data-remove="dailyquote" title="Remove widget">✕</button>
         </div>
         <div class="quote-text" id="quoteText">${escapeHtml(q.text)}</div>
         <div class="quote-meta">
@@ -1222,7 +1242,7 @@ const WIDGET_REGISTRY = {
     id: "focusstats",
     name: "Focus Stats",
     icon: "📊",
-    desc: "Ringkasan produktivitas harian",
+    desc: "Daily productivity summary",
     render() {
       const card = document.createElement("div");
       card.className = "widget-card";
@@ -1248,16 +1268,16 @@ const WIDGET_REGISTRY = {
             <span class="widget-title-icon">📊</span>
             Focus Stats
           </div>
-          <button class="widget-remove-btn" data-remove="focusstats" title="Hapus widget">✕</button>
+          <button class="widget-remove-btn" data-remove="focusstats" title="Remove widget">✕</button>
         </div>
         <div class="stats-grid">
           <div class="stat-item">
             <div class="stat-value">${doneTasks}</div>
-            <div class="stat-label">Selesai</div>
+            <div class="stat-label">Completed</div>
           </div>
           <div class="stat-item">
             <div class="stat-value">${totalTasks}</div>
-            <div class="stat-label">Total Task</div>
+            <div class="stat-label">Total Tasks</div>
           </div>
           <div class="stat-item">
             <div class="stat-value">${percent}%</div>
@@ -1278,7 +1298,7 @@ const WIDGET_REGISTRY = {
     id: "timer",
     name: "Timer Panel",
     icon: "⏱️",
-    desc: "Timer & Stopwatch di samping todo",
+    desc: "Timer & Stopwatch next to todo",
     render() {
       const card = document.createElement("div");
       card.className = "widget-card";
@@ -1289,11 +1309,11 @@ const WIDGET_REGISTRY = {
             <span class="widget-title-icon">⏱️</span>
             Timer
           </div>
-          <button class="widget-remove-btn" data-remove="timer" title="Hapus widget">✕</button>
+          <button class="widget-remove-btn" data-remove="timer" title="Remove widget">✕</button>
         </div>
         <div style="text-align:center; padding: 8px 0;">
           <div style="font-size:0.75rem; color:rgba(255,255,255,0.4); margin-bottom:8px;">
-            Gunakan tombol ⏱️ di pojok kanan bawah untuk Timer & Stopwatch lengkap.
+            Use the ⏱️ button in the bottom right corner for full Timer & Stopwatch.
           </div>
           <div id="widgetTimerDisplay" style="font-size:1.6rem; font-weight:700; letter-spacing:1px; font-family:Arial,sans-serif;">00:00</div>
         </div>
@@ -1319,91 +1339,312 @@ const WIDGET_REGISTRY = {
 
 const MAX_WIDGETS = 4;
 
+// ==========================================
+// DUAL-SLOT WIDGET RENDER & DRAG ENGINE
+// ==========================================
+
+const MAX_WIDGETS_PER_SIDE = 2;
+let targetAddSide = "right"; // default side for widget picker
+let draggedWidgetInfo = null; // { side: 'left'|'right', index: 0|1, widgetId: string }
+
 function renderWidgets() {
-  const column = document.getElementById("widgetColumn");
-  const addBtn = document.getElementById("addWidgetBtn");
-  if (!column) return;
+  const colLeft = document.getElementById("widgetColumnLeft");
+  const colRight = document.getElementById("widgetColumnRight");
+  const addBtnLeft = document.getElementById("addWidgetBtnLeft");
+  const addBtnRight = document.getElementById("addWidgetBtnRight");
 
-  // Remove all existing widget cards
-  column.querySelectorAll(".widget-card").forEach(el => el.remove());
+  if (!colLeft || !colRight) return;
 
-  // Render each active widget
-  appSettings.activeWidgets.forEach(widgetId => {
-    const def = WIDGET_REGISTRY[widgetId];
-    if (!def) return;
-    const card = def.render();
-    column.insertBefore(card, addBtn);
+  // Clear existing cards
+  colLeft.querySelectorAll(".widget-card").forEach(el => el.remove());
+  colRight.querySelectorAll(".widget-card").forEach(el => el.remove());
+
+  // Render left column
+  appSettings.widgetSlots.left.forEach((widgetId, index) => {
+    const card = renderCardForSlot(widgetId, "left", index);
+    if (card && addBtnLeft) colLeft.insertBefore(card, addBtnLeft);
   });
 
-  // Bind remove buttons
-  column.querySelectorAll(".widget-remove-btn").forEach(btn => {
-    btn.addEventListener("click", () => removeWidget(btn.dataset.remove));
+  // Render right column
+  appSettings.widgetSlots.right.forEach((widgetId, index) => {
+    const card = renderCardForSlot(widgetId, "right", index);
+    if (card && addBtnRight) colRight.insertBefore(card, addBtnRight);
   });
+
+  // Bind column drop targets
+  setupColumnDropTarget(colLeft, "left");
+  setupColumnDropTarget(colRight, "right");
 
   // Run afterRender hooks
-  appSettings.activeWidgets.forEach(widgetId => {
+  [...appSettings.widgetSlots.left, ...appSettings.widgetSlots.right].forEach(widgetId => {
     const def = WIDGET_REGISTRY[widgetId];
     if (def && def.afterRender) def.afterRender();
   });
 
-  // Show/hide add button based on max
-  if (addBtn) {
-    addBtn.classList.toggle("hidden", appSettings.activeWidgets.length >= MAX_WIDGETS);
+  // Toggle add buttons
+  if (addBtnLeft) {
+    addBtnLeft.classList.toggle("hidden", appSettings.widgetSlots.left.length >= MAX_WIDGETS_PER_SIDE);
+    const isEmpty = appSettings.widgetSlots.left.length === 0;
+    addBtnLeft.classList.toggle("empty-column-btn", isEmpty);
+    const label = addBtnLeft.querySelector(".add-widget-label");
+    if (label) label.textContent = isEmpty ? "Left Widget" : "More Widgets";
   }
 
-  // Update workspace layout classes
-  applyWorkspaceLayout();
+  if (addBtnRight) {
+    addBtnRight.classList.toggle("hidden", appSettings.widgetSlots.right.length >= MAX_WIDGETS_PER_SIDE);
+    const isEmpty = appSettings.widgetSlots.right.length === 0;
+    addBtnRight.classList.toggle("empty-column-btn", isEmpty);
+    const label = addBtnRight.querySelector(".add-widget-label");
+    if (label) label.textContent = isEmpty ? "Right Widget" : "More Widgets";
+  }
 
-  // Sync settings widget list in drawer
+  // Sync settings list
   renderSettingsWidgetList();
 }
 
-function addWidget(widgetId) {
-  if (appSettings.activeWidgets.length >= MAX_WIDGETS) {
-    showToast(`🧩 Maksimal ${MAX_WIDGETS} widget aktif.`, "warning", 2500);
+function renderCardForSlot(widgetId, side, index) {
+  const def = WIDGET_REGISTRY[widgetId];
+  if (!def) return null;
+  const card = def.render();
+  card.dataset.widgetId = widgetId;
+  card.dataset.side = side;
+  card.dataset.index = index;
+
+  // Enhance header with drag handle & action buttons
+  const header = card.querySelector(".widget-header");
+  if (header) {
+    const otherSide = side === "left" ? "right" : "left";
+    const sameColCount = appSettings.widgetSlots[side].length;
+
+    header.innerHTML = `
+      <div class="widget-title">
+        <span class="widget-drag-handle" title="Drag & Drop to move/swap position">⣿</span>
+        <span class="widget-title-icon">${def.icon}</span>
+        ${escapeHtml(def.name)}
+      </div>
+      <div class="widget-card-actions">
+        ${sameColCount > 1 ? `<button class="widget-action-btn move-updown-btn" data-side="${side}" data-idx="${index}" title="Swap top/bottom position">⇅</button>` : ''}
+        <button class="widget-action-btn move-side-btn" data-side="${side}" data-idx="${index}" title="Move to ${otherSide === 'left' ? 'left' : 'right'} side">⇄</button>
+        <button class="widget-action-btn widget-remove-btn" data-side="${side}" data-widget-id="${widgetId}" title="Remove widget">✕</button>
+      </div>
+    `;
+
+    // Bind action buttons
+    const removeBtn = header.querySelector(".widget-remove-btn");
+    if (removeBtn) removeBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      removeWidget(widgetId);
+    });
+
+    const moveSideBtn = header.querySelector(".move-side-btn");
+    if (moveSideBtn) moveSideBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      moveWidgetToOtherSide(side, index);
+    });
+
+    const moveUpDownBtn = header.querySelector(".move-updown-btn");
+    if (moveUpDownBtn) moveUpDownBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      swapWidgetUpDown(side, index);
+    });
+  }
+
+  // Setup HTML5 Drag & Drop
+  setupWidgetDragAndDrop(card, side, index, widgetId);
+
+  return card;
+}
+
+function setupWidgetDragAndDrop(card, side, index, widgetId) {
+  const dragHandle = card.querySelector(".widget-drag-handle");
+
+  if (dragHandle) {
+    dragHandle.setAttribute("draggable", "true");
+
+    dragHandle.addEventListener("dragstart", (e) => {
+      e.stopPropagation();
+      draggedWidgetInfo = { side, index, widgetId };
+      card.classList.add("is-dragging");
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", widgetId);
+    });
+
+    dragHandle.addEventListener("dragend", (e) => {
+      e.stopPropagation();
+      card.classList.remove("is-dragging");
+      document.querySelectorAll(".widget-card").forEach(c => c.classList.remove("drag-over"));
+      document.querySelectorAll(".widget-column").forEach(c => c.classList.remove("drag-over-column"));
+      draggedWidgetInfo = null;
+    });
+  }
+
+  card.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (draggedWidgetInfo && (draggedWidgetInfo.side !== side || draggedWidgetInfo.index !== index)) {
+      card.classList.add("drag-over");
+    }
+  });
+
+  card.addEventListener("dragleave", () => {
+    card.classList.remove("drag-over");
+  });
+
+  card.addEventListener("drop", (e) => {
+    e.preventDefault();
+    e.stopPropagation(); // Prevent bubbling up to the column drop target
+    card.classList.remove("drag-over");
+
+    if (!draggedWidgetInfo) return;
+    const { side: srcSide, index: srcIndex, widgetId: srcWidgetId } = draggedWidgetInfo;
+
+    if (srcSide === side && srcIndex === index) return;
+
+    // Swap widget slots!
+    const targetWidgetId = appSettings.widgetSlots[side][index];
+
+    appSettings.widgetSlots[srcSide][srcIndex] = targetWidgetId;
+    appSettings.widgetSlots[side][index] = srcWidgetId;
+
+    saveSettings();
+    renderWidgets();
+
+    // Trigger swap pulse animation
+    setTimeout(() => {
+      document.querySelectorAll(`.widget-card[data-widget-id="${srcWidgetId}"], .widget-card[data-widget-id="${targetWidgetId}"]`).forEach(c => {
+        c.classList.add("swapping");
+        setTimeout(() => c.classList.remove("swapping"), 450);
+      });
+    }, 50);
+  });
+}
+
+function setupColumnDropTarget(columnEl, side) {
+  if (columnEl.dataset.dropTargetInit) return;
+  columnEl.dataset.dropTargetInit = "true";
+
+  columnEl.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    if (draggedWidgetInfo && draggedWidgetInfo.side !== side) {
+      columnEl.classList.add("drag-over-column");
+    }
+  });
+
+  columnEl.addEventListener("dragleave", () => {
+    columnEl.classList.remove("drag-over-column");
+  });
+
+  columnEl.addEventListener("drop", (e) => {
+    if (e.target.closest(".widget-card")) return; // handled by card drop
+    e.preventDefault();
+    columnEl.classList.remove("drag-over-column");
+
+    if (!draggedWidgetInfo) return;
+    const { side: srcSide, index: srcIndex, widgetId: srcWidgetId } = draggedWidgetInfo;
+
+    if (srcSide === side) return;
+
+    const targetArray = appSettings.widgetSlots[side];
+    if (targetArray.length >= MAX_WIDGETS_PER_SIDE) {
+      showToast(`⚠️ ${side === 'left' ? 'Left' : 'Right'} side is full (max 2 widgets).`, "warning", 2500);
+      return;
+    }
+
+    appSettings.widgetSlots[srcSide].splice(srcIndex, 1);
+    targetArray.push(srcWidgetId);
+
+    saveSettings();
+    renderWidgets();
+  });
+}
+
+function moveWidgetToOtherSide(currentSide, index) {
+  const otherSide = currentSide === "left" ? "right" : "left";
+  const srcArray = appSettings.widgetSlots[currentSide];
+  const targetArray = appSettings.widgetSlots[otherSide];
+
+  const widgetId = srcArray[index];
+
+  if (targetArray.length >= MAX_WIDGETS_PER_SIDE) {
+    // Swap with first widget in target column
+    const swappedId = targetArray[0];
+    targetArray[0] = widgetId;
+    srcArray[index] = swappedId;
+  } else {
+    srcArray.splice(index, 1);
+    targetArray.push(widgetId);
+  }
+
+  saveSettings();
+  renderWidgets();
+}
+
+function swapWidgetUpDown(side, index) {
+  const arr = appSettings.widgetSlots[side];
+  if (arr.length < 2) return;
+  const otherIndex = index === 0 ? 1 : 0;
+  const temp = arr[index];
+  arr[index] = arr[otherIndex];
+  arr[otherIndex] = temp;
+
+  saveSettings();
+  renderWidgets();
+}
+
+function addWidget(widgetId, side = "right") {
+  const targetArray = appSettings.widgetSlots[side];
+  const allActive = [...appSettings.widgetSlots.left, ...appSettings.widgetSlots.right];
+
+  if (allActive.includes(widgetId)) {
+    showToast("This widget is already active.", "info", 2000);
     return;
   }
-  if (appSettings.activeWidgets.includes(widgetId)) {
-    showToast("Widget ini sudah aktif.", "info", 2000);
+
+  if (targetArray.length >= MAX_WIDGETS_PER_SIDE) {
+    showToast(`🧩 ${side === 'left' ? 'Left' : 'Right'} side is full (max 2 widgets).`, "warning", 2500);
     return;
   }
-  appSettings.activeWidgets.push(widgetId);
+
+  targetArray.push(widgetId);
   saveSettings();
   renderWidgets();
   closeWidgetPicker();
-  showToast(`🧩 Widget "${WIDGET_REGISTRY[widgetId]?.name}" ditambahkan!`, "success", 2500);
+  showToast(`🧩 Widget "${WIDGET_REGISTRY[widgetId]?.name}" added!`, "success", 2500);
 }
 
 function removeWidget(widgetId) {
-  appSettings.activeWidgets = appSettings.activeWidgets.filter(id => id !== widgetId);
+  appSettings.widgetSlots.left = appSettings.widgetSlots.left.filter(id => id !== widgetId);
+  appSettings.widgetSlots.right = appSettings.widgetSlots.right.filter(id => id !== widgetId);
   saveSettings();
   renderWidgets();
-  showToast(`Widget dihapus.`, "info", 2000);
+  showToast("Widget removed.", "info", 2000);
 }
 
 // ==========================================
 // WIDGET PICKER MODAL
 // ==========================================
 
-function openWidgetPicker() {
+function openWidgetPicker(side = "right") {
+  targetAddSide = side;
   const modal = document.getElementById("widgetPickerModal");
   const list = document.getElementById("widgetPickerList");
   if (!modal || !list) return;
 
   list.innerHTML = "";
+  const allActive = [...appSettings.widgetSlots.left, ...appSettings.widgetSlots.right];
 
   Object.values(WIDGET_REGISTRY).forEach(def => {
-    const isActive = appSettings.activeWidgets.includes(def.id);
-    const isMax = appSettings.activeWidgets.length >= MAX_WIDGETS;
+    const isActive = allActive.includes(def.id);
+    const isTargetFull = appSettings.widgetSlots[targetAddSide].length >= MAX_WIDGETS_PER_SIDE;
     const item = document.createElement("button");
-    item.className = `widget-picker-item${isActive || isMax ? " disabled" : ""}`;
+    item.className = `widget-picker-item${isActive || isTargetFull ? " disabled" : ""}`;
     item.innerHTML = `
       <span class="widget-picker-item-icon">${def.icon}</span>
       <span class="widget-picker-item-name">${def.name}</span>
-      <span class="widget-picker-item-desc">${isActive ? "Aktif" : def.desc}</span>
+      <span class="widget-picker-item-desc">${isActive ? "Active" : def.desc}</span>
     `;
-    if (!isActive && !isMax) {
-      item.addEventListener("click", () => addWidget(def.id));
+    if (!isActive && !isTargetFull) {
+      item.addEventListener("click", () => addWidget(def.id, targetAddSide));
     }
     list.appendChild(item);
   });
@@ -1497,22 +1738,54 @@ function renderSettingsWidgetList() {
   const list = document.getElementById("settingsWidgetList");
   if (!list) return;
 
-  if (appSettings.activeWidgets.length === 0) {
-    list.innerHTML = `<p class="settings-hint" style="margin:0;">Belum ada widget aktif. Klik tombol "+" untuk menambahkan.</p>`;
+  const leftActive = appSettings.widgetSlots.left;
+  const rightActive = appSettings.widgetSlots.right;
+  const total = leftActive.length + rightActive.length;
+
+  if (total === 0) {
+    list.innerHTML = `<p class="settings-hint" style="margin:0;">No active widgets. Click the "+" button on the main screen to add one.</p>`;
     return;
   }
 
-  list.innerHTML = appSettings.activeWidgets.map(id => {
-    const def = WIDGET_REGISTRY[id];
-    if (!def) return "";
-    return `
-      <div class="settings-widget-item">
-        <span class="settings-widget-item-icon">${def.icon}</span>
-        <span class="settings-widget-item-name">${def.name}</span>
-        <button class="settings-widget-item-remove" data-remove-widget="${id}" title="Hapus widget">✕</button>
-      </div>
-    `;
-  }).join("");
+  let html = "";
+
+  // Left column group
+  html += `<div style="font-size:0.7rem; font-weight:700; color:rgba(255,255,255,0.4); margin-bottom:6px;">LEFT COLUMN (${leftActive.length}/2)</div>`;
+  if (leftActive.length === 0) {
+    html += `<div class="settings-hint" style="margin-bottom:8px;">(Empty)</div>`;
+  } else {
+    leftActive.forEach(id => {
+      const def = WIDGET_REGISTRY[id];
+      if (!def) return;
+      html += `
+        <div class="settings-widget-item">
+          <span class="settings-widget-item-icon">${def.icon}</span>
+          <span class="settings-widget-item-name">${def.name}</span>
+          <button class="settings-widget-item-remove" data-remove-widget="${id}" title="Remove widget">✕</button>
+        </div>
+      `;
+    });
+  }
+
+  // Right column group
+  html += `<div style="font-size:0.7rem; font-weight:700; color:rgba(255,255,255,0.4); margin-top:12px; margin-bottom:6px;">RIGHT COLUMN (${rightActive.length}/2)</div>`;
+  if (rightActive.length === 0) {
+    html += `<div class="settings-hint" style="margin-bottom:8px;">(Empty)</div>`;
+  } else {
+    rightActive.forEach(id => {
+      const def = WIDGET_REGISTRY[id];
+      if (!def) return;
+      html += `
+        <div class="settings-widget-item">
+          <span class="settings-widget-item-icon">${def.icon}</span>
+          <span class="settings-widget-item-name">${def.name}</span>
+          <button class="settings-widget-item-remove" data-remove-widget="${id}" title="Remove widget">✕</button>
+        </div>
+      `;
+    });
+  }
+
+  list.innerHTML = html;
 
   list.querySelectorAll("[data-remove-widget]").forEach(btn => {
     btn.addEventListener("click", () => removeWidget(btn.dataset.removeWidget));
@@ -1618,7 +1891,7 @@ function bindSettingsControls() {
       appSettings.bgVal = url;
       saveSettings();
       applyBackgroundSettings();
-      showToast("🖼️ Custom URL background diterapkan!", "success", 2500);
+      showToast("🖼️ Custom URL background applied!", "success", 2500);
     });
   }
 
@@ -1630,19 +1903,43 @@ function bindSettingsControls() {
     bgFileInput.addEventListener("change", (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      if (file.size > 5 * 1024 * 1024) {
-        showToast("⚠️ Ukuran file maksimal 5MB.", "warning", 3000);
+      if (file.size > 10 * 1024 * 1024) {
+        showToast("⚠️ Maximum file size is 10MB.", "warning", 3000);
         return;
       }
       const reader = new FileReader();
       reader.onload = (ev) => {
-        const dataUrl = ev.target.result;
-        document.querySelectorAll("[data-bg]").forEach(b => b.classList.remove("active"));
-        appSettings.bgType = "custom";
-        appSettings.bgVal = dataUrl;
-        saveSettings();
-        applyBackgroundSettings();
-        showToast("🖼️ Custom background gambar berhasil dipasang!", "success", 2500);
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+          const max_size = 1920;
+          if (width > height && width > max_size) {
+            height = Math.round(height * (max_size / width));
+            width = max_size;
+          } else if (height > width && height > max_size) {
+            width = Math.round(width * (max_size / height));
+            height = max_size;
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL("image/jpeg", 0.7); // 70% quality JPEG
+          
+          document.querySelectorAll("[data-bg]").forEach(b => b.classList.remove("active"));
+          appSettings.bgType = "custom";
+          appSettings.bgVal = dataUrl;
+          try {
+            saveSettings();
+            applyBackgroundSettings();
+            showToast("🖼️ Custom background image set!", "success", 2500);
+          } catch (err) {
+            showToast("⚠️ Image is still too large to save.", "warning", 3000);
+          }
+        };
+        img.src = ev.target.result;
       };
       reader.readAsDataURL(file);
       bgFileInput.value = "";
@@ -1676,20 +1973,12 @@ function bindSettingsControls() {
   }
 
   // --- WIDGETS TAB ---
-  // Widget position
-  document.querySelectorAll("[data-widgetpos]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll("[data-widgetpos]").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      appSettings.widgetPosition = btn.dataset.widgetpos;
-      saveSettings();
-      applyWorkspaceLayout();
-    });
-  });
+  // Add widget buttons (Left & Right)
+  const addWidgetBtnLeft = document.getElementById("addWidgetBtnLeft");
+  if (addWidgetBtnLeft) addWidgetBtnLeft.addEventListener("click", () => openWidgetPicker("left"));
 
-  // Add widget button
-  const addWidgetBtn = document.getElementById("addWidgetBtn");
-  if (addWidgetBtn) addWidgetBtn.addEventListener("click", openWidgetPicker);
+  const addWidgetBtnRight = document.getElementById("addWidgetBtnRight");
+  if (addWidgetBtnRight) addWidgetBtnRight.addEventListener("click", () => openWidgetPicker("right"));
 
   // Widget picker close
   const closePickerBtn = document.getElementById("closeWidgetPickerBtn");
@@ -1723,7 +2012,7 @@ function bindSettingsControls() {
       a.download = `productive-tab-backup-${new Date().toISOString().split("T")[0]}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      showToast("💾 Data berhasil diekspor!", "success", 3000);
+      showToast("💾 Data exported successfully!", "success", 3000);
     });
   }
 
@@ -1744,10 +2033,10 @@ function bindSettingsControls() {
           if (data.appSettings) localStorage.setItem("appSettings", JSON.stringify(data.appSettings));
           if (data.quickNotes !== undefined) localStorage.setItem("quickNotes", data.quickNotes);
           if (data.isHidden !== undefined) localStorage.setItem("isHidden", data.isHidden);
-          showToast("📥 Data berhasil diimpor! Halaman akan di-reload...", "success", 2000);
+          showToast("📥 Data imported successfully! Reloading page...", "success", 2000);
           setTimeout(() => location.reload(), 2200);
         } catch {
-          showToast("❌ File tidak valid. Pastikan format JSON benar.", "danger", 4000);
+          showToast("❌ Invalid file format. Ensure valid JSON.", "danger", 4000);
         }
       };
       reader.readAsText(file);
@@ -1759,10 +2048,10 @@ function bindSettingsControls() {
   const resetBtn = document.getElementById("resetAllDataBtn");
   if (resetBtn) {
     resetBtn.addEventListener("click", () => {
-      if (!confirm("⚠️ Yakin ingin menghapus SEMUA data?\n\nTodos, milestone, settings, dan catatan akan terhapus permanen.")) return;
+      if (!confirm("⚠️ Are you sure you want to delete ALL data?\n\nTodos, milestone, settings, and notes will be permanently erased.")) return;
       localStorage.clear();
       sessionStorage.clear();
-      showToast("🗑️ Semua data dihapus. Reload...", "warning", 2000);
+      showToast("🗑️ All data erased. Reloading...", "warning", 2000);
       setTimeout(() => location.reload(), 2200);
     });
   }
