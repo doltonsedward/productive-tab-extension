@@ -99,6 +99,6 @@ function clearUpdateIndicator() {
 }
 
 function initUpdater() {
-  // Small delay so it doesn't compete with initial render
+  // Check for updates automatically in the background
   setTimeout(checkForUpdates, 3000);
 }

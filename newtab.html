@@ -315,6 +315,37 @@
       </div>
     </div>
 
+    <!-- First-Time Welcome Modal -->
+    <div id="welcomeModal" class="modal-overlay hidden">
+      <div class="glass-modal-content welcome-modal">
+        <span class="track-badge">✨ Welcome</span>
+        <h3 class="welcome-modal-title">Hello! What should we call you?</h3>
+        <p class="welcome-modal-subtitle">
+          Personalize your dashboard with your name for dynamic greetings and focus prompts.
+        </p>
+
+        <div class="welcome-input-group">
+          <input
+            type="text"
+            id="welcomeNameInput"
+            class="welcome-name-input"
+            placeholder="Enter your name (e.g. Edward)..."
+            maxlength="30"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="modal-actions welcome-modal-actions">
+          <button id="skipWelcomeBtn" class="glass-btn secondary welcome-btn-skip">
+            Skip for now
+          </button>
+          <button id="saveWelcomeNameBtn" class="glass-btn success welcome-btn-save">
+            Get Started →
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Widget Picker Modal -->
     <div id="widgetPickerModal" class="modal-overlay hidden">
       <div class="glass-modal-content widget-picker-modal">

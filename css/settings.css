@@ -649,3 +649,103 @@
   color: #00ff87;
 }
 
+/* FIRST-TIME WELCOME ONBOARDING MODAL */
+.glass-modal-content.welcome-modal {
+  max-width: 440px;
+  text-align: left;
+  padding: 28px 24px 22px;
+  background: rgba(14, 18, 26, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.65),
+    0 0 32px rgba(0, 255, 135, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-modal-content.welcome-modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00ff87, #60efff, transparent);
+}
+
+.welcome-modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: white;
+  margin: 10px 0 6px 0;
+  letter-spacing: -0.2px;
+}
+
+.welcome-modal-subtitle {
+  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.45;
+  margin: 0 0 18px 0;
+}
+
+.welcome-input-group {
+  margin-bottom: 14px;
+}
+
+.welcome-name-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  color: white;
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  box-sizing: border-box;
+}
+
+.welcome-name-input:focus {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #00ff87;
+  box-shadow: 0 0 20px rgba(0, 255, 135, 0.25);
+}
+
+.welcome-name-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.welcome-modal-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.welcome-btn-skip {
+  background: transparent;
+  border: 1px solid transparent;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.8rem;
+  padding: 8px 14px;
+  border-radius: 8px;
+}
+
+.welcome-btn-skip:hover {
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.welcome-btn-save {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: 8px;
+}
+
+

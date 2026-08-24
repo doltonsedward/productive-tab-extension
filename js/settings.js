@@ -177,6 +177,77 @@ function initSettingsDrawer() {
   } catch (e) {
     console.error("Error syncing settings UI:", e);
   }
+  try {
+    initWelcomeOnboarding();
+  } catch (e) {
+    console.error("Error initializing welcome onboarding:", e);
+  }
+}
+
+function initWelcomeOnboarding() {
+  const modal = document.getElementById("welcomeModal");
+  const input = document.getElementById("welcomeNameInput");
+  const saveBtn = document.getElementById("saveWelcomeNameBtn");
+  const skipBtn = document.getElementById("skipWelcomeBtn");
+
+  if (!modal) return;
+
+  const hasSeenPrompt = localStorage.getItem("hasSeenWelcomePrompt");
+  const hasName = appSettings && appSettings.name && appSettings.name.trim().length > 0;
+
+  // Show onboarding prompt only on first run when name is not yet set
+  if (!hasSeenPrompt && !hasName) {
+    setTimeout(() => {
+      modal.classList.remove("hidden");
+      if (input) {
+        input.value = "";
+        input.focus();
+      }
+    }, 450);
+  }
+
+  const closeOnboarding = () => {
+    modal.classList.add("hidden");
+    localStorage.setItem("hasSeenWelcomePrompt", "true");
+  };
+
+  const handleSave = () => {
+    const name = input ? input.value.trim() : "";
+    if (name) {
+      if (!appSettings) appSettings = loadSettings();
+      appSettings.name = name;
+      saveSettings();
+      if (typeof updateTimeAndGreeting === "function") {
+        updateTimeAndGreeting();
+      }
+      if (typeof syncSettingsUI === "function") {
+        syncSettingsUI();
+      }
+      if (typeof showToast === "function") {
+        showToast(`👋 Welcome, ${name}!`, "success", 3000);
+      }
+    }
+    closeOnboarding();
+  };
+
+  if (saveBtn) {
+    saveBtn.addEventListener("click", handleSave);
+  }
+
+  if (skipBtn) {
+    skipBtn.addEventListener("click", closeOnboarding);
+  }
+
+  if (input) {
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleSave();
+      } else if (e.key === "Escape") {
+        closeOnboarding();
+      }
+    });
+  }
 }
 
 function bindSettingsControls() {
