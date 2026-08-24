@@ -225,8 +225,24 @@
         </div>
       </div>
 
+      <div id="updateBanner" class="update-banner hidden">
+        <div class="update-banner-content">
+          <span class="update-banner-icon">🚀</span>
+          <div class="update-banner-text">
+            <strong>Update Available</strong>
+            <span>A new version <span class="update-banner-version"></span> is ready on GitHub</span>
+          </div>
+        </div>
+        <a
+          href="https://github.com/doltonsedward/productive-tab-extension"
+          target="_blank"
+          class="update-banner-btn"
+          rel="noopener noreferrer"
+        >View →</a>
+      </div>
+
       <div class="settings-drawer-footer">
-        <span class="settings-version">Productive Tab · v1.2</span>
+        <span class="settings-version" id="settingsVersionText" data-version="1.0">Productive Tab · v1.0</span>
       </div>
     </div>
 
@@ -405,6 +421,7 @@
     <script src="js/widgets.js"></script>
     <script src="js/settings.js"></script>
     <script src="js/timer.js"></script>
+    <script src="js/updater.js"></script>
     <script src="js/app.js"></script>
   </body>
 </html>

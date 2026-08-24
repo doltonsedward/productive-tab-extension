@@ -23,6 +23,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: visible;
 }
 
 .settings-fab:hover {
@@ -538,3 +539,113 @@
   font-weight: 400;
   letter-spacing: 0.5px;
 }
+
+/* UPDATE INDICATOR DOT ON FAB */
+.settings-fab.has-update {
+  border-color: rgba(0, 255, 135, 0.45);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    0 0 16px rgba(0, 255, 135, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.settings-fab.has-update::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00ff87;
+  box-shadow: 0 0 8px rgba(0, 255, 135, 0.8), 0 0 16px rgba(0, 255, 135, 0.4);
+  animation: update-pulse 2s ease-in-out infinite;
+}
+
+@keyframes update-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.25); }
+}
+
+/* UPDATE BANNER IN DRAWER */
+.update-banner {
+  margin: 0 12px 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(0, 255, 135, 0.07);
+  border: 1px solid rgba(0, 255, 135, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-shrink: 0;
+  animation: banner-fadein 0.4s ease;
+}
+
+.update-banner.hidden {
+  display: none;
+}
+
+@keyframes banner-fadein {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.update-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.update-banner-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.update-banner-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.update-banner-text strong {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(0, 255, 135, 0.9);
+  line-height: 1.2;
+}
+
+.update-banner-text span {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.45);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.update-banner-version {
+  color: rgba(0, 255, 135, 0.7);
+  font-weight: 600;
+}
+
+.update-banner-btn {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: rgba(0, 255, 135, 0.15);
+  border: 1px solid rgba(0, 255, 135, 0.3);
+  color: rgba(0, 255, 135, 0.9);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.update-banner-btn:hover {
+  background: rgba(0, 255, 135, 0.25);
+  border-color: rgba(0, 255, 135, 0.5);
+  color: #00ff87;
+}
+

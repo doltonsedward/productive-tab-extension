@@ -44,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
   try { initSettingsDrawer(); } catch (e) { console.error("Drawer init error:", e); }
   try { initCalendarEvents(); } catch (e) { console.error("Calendar init error:", e); }
   try { setupObsidianExport(); } catch (e) { console.error("Obsidian export init error:", e); }
+  try { initUpdater(); } catch (e) { console.error("Updater init error:", e); }
 
   // Dismiss Loading Screen with smooth fade-out
   dismissAppLoader();
