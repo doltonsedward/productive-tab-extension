@@ -12,7 +12,7 @@ const DEFAULT_SETTINGS = {
   clockFormat: "24h",
   showSeconds: false,
   showDate: true,
-  activeWidgets: {
+  widgetSlots: {
     left: [],
     right: []
   },
@@ -87,28 +87,33 @@ function saveMilestone() {
 function loadSettings() {
   try {
     const raw = localStorage.getItem("appSettings");
-    if (!raw) return { ...DEFAULT_SETTINGS };
+    if (!raw) return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
     const saved = JSON.parse(raw);
 
-    // Auto-migrate old activeWidgets array format to dual slots
-    if (Array.isArray(saved.activeWidgets)) {
-      const oldArr = saved.activeWidgets;
-      saved.activeWidgets = {
-        left: oldArr.slice(0, 2),
-        right: oldArr.slice(2, 4)
-      };
+    let leftSlots = [];
+    let rightSlots = [];
+
+    if (saved.widgetSlots) {
+      leftSlots = Array.isArray(saved.widgetSlots.left) ? saved.widgetSlots.left : [];
+      rightSlots = Array.isArray(saved.widgetSlots.right) ? saved.widgetSlots.right : [];
+    } else if (Array.isArray(saved.activeWidgets)) {
+      leftSlots = saved.activeWidgets.slice(0, 2);
+      rightSlots = saved.activeWidgets.slice(2, 4);
+    } else if (saved.activeWidgets && typeof saved.activeWidgets === "object") {
+      leftSlots = Array.isArray(saved.activeWidgets.left) ? saved.activeWidgets.left : [];
+      rightSlots = Array.isArray(saved.activeWidgets.right) ? saved.activeWidgets.right : [];
     }
 
     return {
       ...DEFAULT_SETTINGS,
       ...saved,
-      activeWidgets: {
-        left: Array.isArray(saved.activeWidgets?.left) ? saved.activeWidgets.left : [],
-        right: Array.isArray(saved.activeWidgets?.right) ? saved.activeWidgets.right : []
+      widgetSlots: {
+        left: leftSlots,
+        right: rightSlots
       }
     };
   } catch {
-    return { ...DEFAULT_SETTINGS };
+    return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
   }
 }
 

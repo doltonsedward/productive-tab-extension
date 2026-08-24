@@ -246,6 +246,11 @@ function renderWidgets() {
 
   if (!colLeft || !colRight) return;
 
+  if (!appSettings) appSettings = loadSettings();
+  if (!appSettings.widgetSlots) appSettings.widgetSlots = { left: [], right: [] };
+  if (!Array.isArray(appSettings.widgetSlots.left)) appSettings.widgetSlots.left = [];
+  if (!Array.isArray(appSettings.widgetSlots.right)) appSettings.widgetSlots.right = [];
+
   colLeft.querySelectorAll(".widget-card").forEach(el => el.remove());
   colRight.querySelectorAll(".widget-card").forEach(el => el.remove());
 
@@ -268,16 +273,18 @@ function renderWidgets() {
   });
 
   if (addBtnLeft) {
-    addBtnLeft.classList.toggle("hidden", appSettings.widgetSlots.left.length >= MAX_WIDGETS_PER_SIDE);
+    const isFull = appSettings.widgetSlots.left.length >= MAX_WIDGETS_PER_SIDE;
     const isEmpty = appSettings.widgetSlots.left.length === 0;
+    addBtnLeft.classList.toggle("hidden", isFull);
     addBtnLeft.classList.toggle("empty-column-btn", isEmpty);
     const label = addBtnLeft.querySelector(".add-widget-label");
     if (label) label.textContent = isEmpty ? "Left Widget" : "More Widgets";
   }
 
   if (addBtnRight) {
-    addBtnRight.classList.toggle("hidden", appSettings.widgetSlots.right.length >= MAX_WIDGETS_PER_SIDE);
+    const isFull = appSettings.widgetSlots.right.length >= MAX_WIDGETS_PER_SIDE;
     const isEmpty = appSettings.widgetSlots.right.length === 0;
+    addBtnRight.classList.toggle("hidden", isFull);
     addBtnRight.classList.toggle("empty-column-btn", isEmpty);
     const label = addBtnRight.querySelector(".add-widget-label");
     if (label) label.textContent = isEmpty ? "Right Widget" : "More Widgets";
@@ -460,7 +467,8 @@ function moveWidgetToOtherSide(currentSide, index) {
 }
 
 function swapWidgetUpDown(side, index) {
-  const arr = appSettings.widgetSlots[side];
+  if (!appSettings.widgetSlots) appSettings.widgetSlots = { left: [], right: [] };
+  const arr = appSettings.widgetSlots[side] || [];
   if (arr.length < 2) return;
   const otherIndex = index === 0 ? 1 : 0;
   const temp = arr[index];
@@ -472,6 +480,10 @@ function swapWidgetUpDown(side, index) {
 }
 
 function addWidget(widgetId, side = "right") {
+  if (!appSettings.widgetSlots) appSettings.widgetSlots = { left: [], right: [] };
+  if (!Array.isArray(appSettings.widgetSlots.left)) appSettings.widgetSlots.left = [];
+  if (!Array.isArray(appSettings.widgetSlots.right)) appSettings.widgetSlots.right = [];
+
   const targetArray = appSettings.widgetSlots[side];
   const allActive = [...appSettings.widgetSlots.left, ...appSettings.widgetSlots.right];
 
@@ -493,8 +505,9 @@ function addWidget(widgetId, side = "right") {
 }
 
 function removeWidget(widgetId) {
-  appSettings.widgetSlots.left = appSettings.widgetSlots.left.filter(id => id !== widgetId);
-  appSettings.widgetSlots.right = appSettings.widgetSlots.right.filter(id => id !== widgetId);
+  if (!appSettings.widgetSlots) appSettings.widgetSlots = { left: [], right: [] };
+  appSettings.widgetSlots.left = (appSettings.widgetSlots.left || []).filter(id => id !== widgetId);
+  appSettings.widgetSlots.right = (appSettings.widgetSlots.right || []).filter(id => id !== widgetId);
   saveSettings();
   renderWidgets();
   showToast("Widget removed.", "info", 2000);
@@ -506,12 +519,17 @@ function openWidgetPicker(side = "right") {
   const list = document.getElementById("widgetPickerList");
   if (!modal || !list) return;
 
+  if (!appSettings.widgetSlots) appSettings.widgetSlots = { left: [], right: [] };
+  const leftSlots = appSettings.widgetSlots.left || [];
+  const rightSlots = appSettings.widgetSlots.right || [];
+  const targetSlots = appSettings.widgetSlots[targetAddSide] || [];
+
   list.innerHTML = "";
-  const allActive = [...appSettings.widgetSlots.left, ...appSettings.widgetSlots.right];
+  const allActive = [...leftSlots, ...rightSlots];
 
   Object.values(WIDGET_REGISTRY).forEach(def => {
     const isActive = allActive.includes(def.id);
-    const isTargetFull = appSettings.widgetSlots[targetAddSide].length >= MAX_WIDGETS_PER_SIDE;
+    const isTargetFull = targetSlots.length >= MAX_WIDGETS_PER_SIDE;
     const item = document.createElement("button");
     item.className = `widget-picker-item${isActive || isTargetFull ? " disabled" : ""}`;
     item.innerHTML = `

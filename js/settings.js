@@ -114,8 +114,8 @@ function renderSettingsWidgetList() {
   const list = document.getElementById("settingsWidgetList");
   if (!list) return;
 
-  const leftActive = appSettings.widgetSlots.left;
-  const rightActive = appSettings.widgetSlots.right;
+  const leftActive = appSettings?.widgetSlots?.left || [];
+  const rightActive = appSettings?.widgetSlots?.right || [];
   const total = leftActive.length + rightActive.length;
 
   if (total === 0) {
@@ -167,8 +167,16 @@ function renderSettingsWidgetList() {
 }
 
 function initSettingsDrawer() {
-  syncSettingsUI();
-  bindSettingsControls();
+  try {
+    bindSettingsControls();
+  } catch (e) {
+    console.error("Error binding settings controls:", e);
+  }
+  try {
+    syncSettingsUI();
+  } catch (e) {
+    console.error("Error syncing settings UI:", e);
+  }
 }
 
 function bindSettingsControls() {
