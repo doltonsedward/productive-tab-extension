@@ -165,7 +165,6 @@ function renderTodos() {
     return;
   }
 
-  // 1. Render List Item with Subtask Accordion
   todoList.innerHTML = todos
     .map((t, index) => {
       const subtasks = t.subtasks || [];
@@ -193,10 +192,7 @@ function renderTodos() {
         </div>
 
         <div class="todo-actions">
-          <!-- Google Calendar Button -->
           <button class="cal-btn" data-id="${t.id}" title="Schedule in Google Calendar">📅</button>
-
-          <!-- Task Stopwatch Tracking Button -->
           <button class="track-btn" data-id="${t.id}" title="Track task time">⏱️</button>
           
           <button class="complete-btn" data-id="${t.id}" title="${
@@ -240,7 +236,6 @@ function renderTodos() {
     })
     .join("");
 
-  // 2. Attach Event Listeners
   todoList.querySelectorAll(".complete-btn").forEach((btn) =>
     btn.addEventListener("click", () => toggleTodo(Number(btn.dataset.id)))
   );
@@ -261,7 +256,6 @@ function renderTodos() {
     item.addEventListener("drop", dragDrop);
   });
 
-  // Subtask Accordion Toggle Button
   todoList.querySelectorAll(".accordion-btn").forEach((btn) =>
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -269,7 +263,6 @@ function renderTodos() {
     })
   );
 
-  // Checkbox Subtask & Click/DblClick Subtask Text
   todoList.querySelectorAll(".subtask-checkbox").forEach((cb) =>
     cb.addEventListener("change", () => {
       toggleSubtask(Number(cb.dataset.parentId), Number(cb.dataset.subId));
@@ -286,7 +279,6 @@ function renderTodos() {
     });
   });
 
-  // Edit Subtask Button
   todoList.querySelectorAll(".subtask-edit-btn").forEach((btn) =>
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -294,7 +286,6 @@ function renderTodos() {
     })
   );
 
-  // Delete Subtask
   todoList.querySelectorAll(".subtask-delete-btn").forEach((btn) =>
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -302,7 +293,6 @@ function renderTodos() {
     })
   );
 
-  // Add Subtask via Input Enter Key
   todoList.querySelectorAll(".subtask-input").forEach((input) =>
     input.addEventListener("keypress", (e) => {
       if (e.key === "Enter") {
@@ -311,12 +301,10 @@ function renderTodos() {
     })
   );
 
-  // 📅 Google Calendar Modal Button
   todoList.querySelectorAll(".cal-btn").forEach((btn) =>
     btn.addEventListener("click", () => openGcalModal(Number(btn.dataset.id)))
   );
 
-  // ⏱️ Track Task Stopwatch Button
   todoList.querySelectorAll(".track-btn").forEach((btn) =>
     btn.addEventListener("click", () => {
       if (typeof startTaskTracking === "function") {
@@ -325,7 +313,6 @@ function renderTodos() {
     })
   );
 
-  // 3. Render Stats & Toggle Pill
   const completedCount = todos.filter((t) => t.completed).length;
   let statsHtml = `${todos.length} tasks · ${completedCount} completed`;
 

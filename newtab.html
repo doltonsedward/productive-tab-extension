@@ -70,9 +70,7 @@
     <div id="toastContainer" class="toast-container"></div>
     <div class="background-overlay"></div>
 
-    <!-- ============================================
-         SETTINGS SIDE DRAWER
-         ============================================ -->
+    <!-- Settings Drawer -->
     <div id="settingsBackdrop" class="settings-backdrop"></div>
     <div id="settingsDrawer" class="settings-drawer">
       <div class="settings-drawer-header">
@@ -207,9 +205,7 @@
         <div class="settings-section">
           <div class="settings-section-label">Active Widgets (Max 2 Left, Max 2 Right)</div>
           <p class="settings-hint">💡 Drag & drop widgets on the main screen to swap positions (left/right/top/bottom), or use the shift buttons on widget headers.</p>
-          <div id="settingsWidgetList" class="settings-widget-list">
-            <!-- Rendered dynamically -->
-          </div>
+          <div id="settingsWidgetList" class="settings-widget-list"></div>
         </div>
       </div>
 
@@ -234,9 +230,7 @@
       </div>
     </div>
 
-    <!-- ============================================
-         SETTINGS FAB
-         ============================================ -->
+    <!-- Settings FAB Button -->
     <button id="toggleSettingsBtn" class="settings-fab" title="Open Settings">⚙️</button>
 
     <div class="container">
@@ -247,14 +241,11 @@
 
       <div class="greeting" id="greeting"></div>
 
-      <!-- ============================================
-           WORKSPACE LAYOUT (Dual Side Widgets + Centered Todo)
-           ============================================ -->
+      <!-- Workspace Layout -->
       <div class="workspace-layout" id="workspaceLayout">
 
-        <!-- Left Widget Column (Max 2) -->
+        <!-- Left Widget Column -->
         <div class="widget-column widget-column-left" id="widgetColumnLeft" data-side="left">
-          <!-- Rendered dynamically by JS -->
           <button id="addWidgetBtnLeft" class="add-widget-btn" data-side="left" title="Add Left Widget">
             <span class="add-widget-icon">+</span>
             <span class="add-widget-label">Left Widget</span>
@@ -264,9 +255,7 @@
         <!-- Centered Todo Section -->
         <div class="todo-section">
           <!-- Milestone Habit Container -->
-          <div id="milestoneContainer" class="milestone-container">
-            <!-- Rendered dynamically by JS -->
-          </div>
+          <div id="milestoneContainer" class="milestone-container"></div>
 
           <div class="todo-input-container">
             <input
@@ -300,9 +289,8 @@
           </div>
         </div>
 
-        <!-- Right Widget Column (Max 2) -->
+        <!-- Right Widget Column -->
         <div class="widget-column widget-column-right" id="widgetColumnRight" data-side="right">
-          <!-- Rendered dynamically by JS -->
           <button id="addWidgetBtnRight" class="add-widget-btn" data-side="right" title="Add Right Widget">
             <span class="add-widget-icon">+</span>
             <span class="add-widget-label">Right Widget</span>
@@ -316,16 +304,14 @@
       <div class="glass-modal-content widget-picker-modal">
         <span class="track-badge">🧩 Select Widget</span>
         <h4 class="track-task-title" style="margin-bottom: 16px;">Add Widget</h4>
-        <div id="widgetPickerList" class="widget-picker-list">
-          <!-- Rendered dynamically -->
-        </div>
+        <div id="widgetPickerList" class="widget-picker-list"></div>
         <div class="modal-actions" style="margin-top: 12px;">
           <button id="closeWidgetPickerBtn" class="glass-btn danger">Cancel</button>
         </div>
       </div>
     </div>
 
-    <!-- Floating Global Timer/Stopwatch Widget -->
+    <!-- Global Timer / Stopwatch -->
     <div id="globalTimerWidget" class="global-timer-widget">
       <div id="timerPanel" class="timer-panel hidden">
         <div class="timer-tabs">
@@ -361,7 +347,7 @@
       </button>
     </div>
 
-    <!-- Modal Pop-up Tracking Task (Glassmorphic) -->
+    <!-- Task Tracking Modal -->
     <div id="taskTrackModal" class="modal-overlay hidden">
       <div class="glass-modal-content">
         <span class="track-badge">Task Tracking</span>

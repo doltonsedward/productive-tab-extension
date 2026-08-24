@@ -8,18 +8,18 @@ let milestone = null;
 let appSettings = null;
 
 const DEFAULT_SETTINGS = {
-  name: "dollong",           // Greeting name
-  clockFormat: "24h",        // "24h" | "12h"
-  showSeconds: false,        // bool
-  showDate: true,            // bool
+  name: "",
+  clockFormat: "24h",
+  showSeconds: false,
+  showDate: true,
   activeWidgets: {
-    left: [],    // max 2 widgets
-    right: []    // max 2 widgets
+    left: [],
+    right: []
   },
-  bgType: "default",         // "default" | "preset" | "url" | "custom"
-  bgVal: "background/default.png", // URL, base64 data string, or preset key
-  bgDim: 40,                 // 0 to 85 percent overlay darkness
-  bgBlur: 0,                 // 0 to 25 px blur
+  bgType: "default",
+  bgVal: "background/default.png",
+  bgDim: 40,
+  bgBlur: 0,
 };
 
 const BG_PRESETS = {

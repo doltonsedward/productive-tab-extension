@@ -1,4 +1,4 @@
-/* Floating Widget (Bottom Right Corner) */
+/* Global Timer Widget */
 .global-timer-widget {
   position: fixed;
   bottom: 25px;
@@ -148,7 +148,7 @@
   background: rgba(0, 255, 135, 0.3);
 }
 
-/* Modal Pop-Up Tracking */
+/* Task Tracking Modal */
 .modal-overlay {
   position: fixed;
   top: 0;

@@ -2,18 +2,10 @@
 
 :root {
   --success-color: rgba(236, 250, 229, 0.4);
-
-  /* ============================================
-     Settings FAB Position — easy to change!
-     Options: top-right, top-left, bottom-right, bottom-left
-     Just change --settings-fab-top/bottom/left/right
-     ============================================ */
   --settings-fab-top: 20px;
   --settings-fab-right: 20px;
   --settings-fab-bottom: auto;
   --settings-fab-left: auto;
-
-  /* Drawer opens from this side ('right' or 'left') */
   --settings-drawer-side: right;
 }
 
@@ -36,7 +28,7 @@ body {
   position: relative;
 }
 
-/* --- INITIAL LOADING SCREEN --- */
+/* Loading Screen */
 .app-loader {
   position: fixed;
   inset: 0;
@@ -110,7 +102,7 @@ body {
   width: 100%;
 }
 
-/* --- TOAST NOTIFICATIONS --- */
+/* Toast Notifications */
 .toast-container {
   position: fixed;
   top: 20px;

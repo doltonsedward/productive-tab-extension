@@ -6,7 +6,7 @@
   margin-bottom: 0;
 }
 
-/* --- Milestone Card with Gradient Border Glow --- */
+/* Milestone Card */
 .milestone-card {
   position: relative;
   background: rgba(255, 255, 255, 0.04);
@@ -18,7 +18,6 @@
   overflow: hidden;
 }
 
-/* Subtle top-edge gradient glow */
 .milestone-card::before {
   content: "";
   position: absolute;

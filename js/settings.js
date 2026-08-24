@@ -17,7 +17,6 @@ function applyBackgroundSettings() {
   const dim = appSettings.bgDim !== undefined ? appSettings.bgDim : 40;
   const blur = appSettings.bgBlur !== undefined ? appSettings.bgBlur : 0;
 
-  // 1. Wallpaper image / background
   if (type === "preset" && BG_PRESETS[val]) {
     if (val === "dark") {
       document.body.style.background = "#0d1117";
@@ -29,12 +28,10 @@ function applyBackgroundSettings() {
     document.body.style.background = `#181c24 url("${val}") no-repeat center center fixed`;
     document.body.style.backgroundSize = "cover";
   } else {
-    // Default
     document.body.style.background = `#181c24 url("background/default.png") no-repeat center center fixed`;
     document.body.style.backgroundSize = "cover";
   }
 
-  // 2. Dim Overlay
   const overlay = document.querySelector(".background-overlay");
   if (overlay) {
     const dimAlpha = (dim / 100).toFixed(2);

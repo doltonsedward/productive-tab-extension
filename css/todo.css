@@ -293,7 +293,7 @@
   text-align: left;
 }
 
-/* --- HIDE COMPLETED FEATURE --- */
+/* Hide Completed Toggle */
 .toggle-hide {
   cursor: pointer;
   opacity: 0.6;

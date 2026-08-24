@@ -1,10 +1,11 @@
 {
   "manifest_version": 3,
-  "name": "Todo New Tab",
+  "name": "Productive Tab",
   "version": "1.0",
-  "description": "New tab page dengan todo list - seperti Momentum",
+  "description": "Minimalist productive new tab dashboard with todos, milestone habits, widgets, and focus timer.",
   "chrome_url_overrides": {
     "newtab": "newtab.html"
   },
   "permissions": ["scripting", "activeTab", "storage"]
 }
+

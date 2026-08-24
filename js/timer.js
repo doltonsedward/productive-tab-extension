@@ -1,6 +1,3 @@
-// ==========================================
-// 1. TASK-LEVEL STOPWATCH TRACKING
-// ==========================================
 let activeTrackingTodoId = null;
 let taskTimerInterval = null;
 let taskAccumulatedSeconds = 0;
@@ -34,9 +31,7 @@ function updateTaskTimerDisplay() {
   }
 }
 
-// This function is called from newtab.js when the ⏱️ button is clicked
 function startTaskTracking(id) {
-  // Access global 'todos' variable
   const todo = todos.find((t) => t.id === id);
   if (!todo) return;
 
@@ -86,7 +81,6 @@ function stopTracking(shouldComplete = false) {
   taskStartTime = null;
   taskAccumulatedSeconds = 0;
 
-  // Access global 'todos', 'saveTodos', and 'renderTodos'
   const todo = todos.find((t) => t.id === activeTrackingTodoId);
   if (todo) {
     todo.elapsedTime = finalSeconds;
@@ -118,9 +112,6 @@ if (restartTaskTrackBtn) {
   });
 }
 
-// ==========================================
-// 2. GLOBAL TIMER & STOPWATCH WIDGET
-// ==========================================
 const toggleTimerPanelBtn = document.getElementById("toggleTimerPanelBtn");
 const timerPanel = document.getElementById("timerPanel");
 const tabStopwatch = document.getElementById("tabStopwatch");
@@ -254,9 +245,7 @@ function resetGlobalTimer() {
 if (resetGlobalTimerBtn)
   resetGlobalTimerBtn.addEventListener("click", resetGlobalTimer);
 
-// ==========================================
-// 3. BACKGROUND TAB VISIBILITY SYNC
-// ==========================================
+// Sync timer display when tab becomes visible
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible") {
     if (taskTimerInterval) {
