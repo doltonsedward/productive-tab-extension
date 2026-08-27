@@ -1,53 +1,54 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>New Tab</title>
-    <link rel="stylesheet" href="styles.css" />
-    <script>
-      (function () {
-        try {
-          const raw = localStorage.getItem("appSettings");
-          const presets = {
-            default: "background/default.png",
-            aurora: "background/aurora.png",
-            space: "background/space.png",
-            mountain: "background/mountain.png",
-            "dark-ribbon": "background/dark-ribbon.jpg",
-            "dark-cubes": "background/dark-cubes.jpg",
-            "teal-clouds": "background/teal-clouds.jpg",
-            dark: "linear-gradient(135deg, #0d1117 0%, #161b22 100%)",
-          };
-          let bgVal = "background/default.png";
-          let dim = 40;
-          let blur = 0;
 
-          if (raw) {
-            const s = JSON.parse(raw);
-            const type = s.bgType || "default";
-            const val = s.bgVal || "";
-            if (s.bgDim !== undefined) dim = s.bgDim;
-            if (s.bgBlur !== undefined) blur = s.bgBlur;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Tab</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    (function () {
+      try {
+        const raw = localStorage.getItem("appSettings");
+        const presets = {
+          default: "background/default.png",
+          aurora: "background/aurora.png",
+          space: "background/space.png",
+          mountain: "background/mountain.png",
+          "dark-ribbon": "background/dark-ribbon.jpg",
+          "dark-cubes": "background/dark-cubes.jpg",
+          "teal-clouds": "background/teal-clouds.jpg",
+          dark: "linear-gradient(135deg, #0d1117 0%, #161b22 100%)",
+        };
+        let bgVal = "background/default.png";
+        let dim = 40;
+        let blur = 0;
 
-            if (type === "preset" && presets[val]) {
-              bgVal = val === "dark" ? "#0d1117" : presets[val];
-            } else if ((type === "url" || type === "custom") && val) {
-              bgVal = val;
-            }
+        if (raw) {
+          const s = JSON.parse(raw);
+          const type = s.bgType || "default";
+          const val = s.bgVal || "";
+          if (s.bgDim !== undefined) dim = s.bgDim;
+          if (s.bgBlur !== undefined) blur = s.bgBlur;
+
+          if (type === "preset" && presets[val]) {
+            bgVal = val === "dark" ? "#0d1117" : presets[val];
+          } else if ((type === "url" || type === "custom") && val) {
+            bgVal = val;
           }
+        }
 
-          const isColorOrGradient = bgVal.startsWith("#") || bgVal.startsWith("linear-gradient");
-          const bgStyle = isColorOrGradient
-            ? bgVal
-            : `#181c24 url("${bgVal}") no-repeat center center fixed`;
+        const isColorOrGradient = bgVal.startsWith("#") || bgVal.startsWith("linear-gradient");
+        const bgStyle = isColorOrGradient
+          ? bgVal
+          : `#181c24 url("${bgVal}") no-repeat center center fixed`;
 
-          const dimAlpha = (dim / 100).toFixed(2);
-          const blurCss = blur > 0 ? `blur(${blur}px)` : "none";
+        const dimAlpha = (dim / 100).toFixed(2);
+        const blurCss = blur > 0 ? `blur(${blur}px)` : "none";
 
-          const style = document.createElement("style");
-          style.id = "instantBgStyle";
-          style.textContent = `
+        const style = document.createElement("style");
+        style.id = "instantBgStyle";
+        style.textContent = `
             body {
               background: ${bgStyle} !important;
               background-size: cover !important;
@@ -58,469 +59,448 @@
               -webkit-backdrop-filter: ${blurCss} !important;
             }
           `;
-          document.head.appendChild(style);
-        } catch (e) {}
-      })();
-    </script>
-  </head>
-  <body>
-    <div id="appLoader" class="app-loader">
-      <div class="app-loader-spinner"></div>
+        document.head.appendChild(style);
+      } catch (e) { }
+    })();
+  </script>
+</head>
+
+<body>
+  <div id="appLoader" class="app-loader">
+    <div class="app-loader-spinner"></div>
+  </div>
+  <div id="toastContainer" class="toast-container"></div>
+  <div class="background-overlay"></div>
+
+  <!-- Settings Drawer -->
+  <div id="settingsBackdrop" class="settings-backdrop"></div>
+  <div id="settingsDrawer" class="settings-drawer">
+    <div class="settings-drawer-header">
+      <div class="settings-drawer-title">
+        <span class="settings-title-icon">⚙️</span>
+        <span>Settings</span>
+      </div>
+      <button id="closeSettingsBtn" class="settings-close-btn" title="Close Settings">✕</button>
     </div>
-    <div id="toastContainer" class="toast-container"></div>
-    <div class="background-overlay"></div>
 
-    <!-- Settings Drawer -->
-    <div id="settingsBackdrop" class="settings-backdrop"></div>
-    <div id="settingsDrawer" class="settings-drawer">
-      <div class="settings-drawer-header">
-        <div class="settings-drawer-title">
-          <span class="settings-title-icon">⚙️</span>
-          <span>Settings</span>
+    <!-- Settings Tabs Navigation -->
+    <div class="settings-tabs">
+      <button class="settings-tab-btn active" data-tab="personal">👤 Personal</button>
+      <button class="settings-tab-btn" data-tab="background">🖼️ Background</button>
+      <button class="settings-tab-btn" data-tab="widgets">🧩 Widgets</button>
+      <button class="settings-tab-btn" data-tab="data">💾 Data</button>
+    </div>
+
+    <!-- Tab: Personal -->
+    <div class="settings-tab-content active" id="settingsTab-personal">
+      <div class="settings-section">
+        <div class="settings-section-label">Identity</div>
+        <div class="settings-field">
+          <label for="settingName">Display Name</label>
+          <input type="text" id="settingName" class="settings-input" placeholder="e.g. Edward" maxlength="30" />
         </div>
-        <button id="closeSettingsBtn" class="settings-close-btn" title="Close Settings">✕</button>
       </div>
 
-      <!-- Settings Tabs Navigation -->
-      <div class="settings-tabs">
-        <button class="settings-tab-btn active" data-tab="personal">👤 Personal</button>
-        <button class="settings-tab-btn" data-tab="background">🖼️ Background</button>
-        <button class="settings-tab-btn" data-tab="widgets">🧩 Widgets</button>
-        <button class="settings-tab-btn" data-tab="data">💾 Data</button>
-      </div>
-
-      <!-- Tab: Personal -->
-      <div class="settings-tab-content active" id="settingsTab-personal">
-        <div class="settings-section">
-          <div class="settings-section-label">Identity</div>
-          <div class="settings-field">
-            <label for="settingName">Display Name</label>
-            <input type="text" id="settingName" class="settings-input" placeholder="e.g. Edward" maxlength="30" />
+      <div class="settings-section">
+        <div class="settings-section-label">Clock Format</div>
+        <div class="settings-field">
+          <label>Time Display</label>
+          <div class="settings-toggle-group">
+            <button class="settings-toggle-btn active" data-clock="24h">24-Hour</button>
+            <button class="settings-toggle-btn" data-clock="12h">12-Hour (AM/PM)</button>
           </div>
         </div>
-
-        <div class="settings-section">
-          <div class="settings-section-label">Clock Format</div>
-          <div class="settings-field">
-            <label>Time Display</label>
-            <div class="settings-toggle-group">
-              <button class="settings-toggle-btn active" data-clock="24h">24-Hour</button>
-              <button class="settings-toggle-btn" data-clock="12h">12-Hour (AM/PM)</button>
-            </div>
-          </div>
-          <div class="settings-field">
-            <label class="settings-toggle-label">
-              <span>Show Seconds</span>
-              <label class="toggle-switch">
-                <input type="checkbox" id="settingShowSeconds" />
-                <span class="toggle-slider"></span>
-              </label>
+        <div class="settings-field">
+          <label class="settings-toggle-label">
+            <span>Show Seconds</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="settingShowSeconds" />
+              <span class="toggle-slider"></span>
             </label>
-          </div>
-          <div class="settings-field">
-            <label class="settings-toggle-label">
-              <span>Show Date</span>
-              <label class="toggle-switch">
-                <input type="checkbox" id="settingShowDate" checked />
-                <span class="toggle-slider"></span>
-              </label>
+          </label>
+        </div>
+        <div class="settings-field">
+          <label class="settings-toggle-label">
+            <span>Show Date</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="settingShowDate" checked />
+              <span class="toggle-slider"></span>
             </label>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Background -->
+    <div class="settings-tab-content" id="settingsTab-background">
+      <div class="settings-section">
+        <div class="settings-section-label">Background Source</div>
+
+        <div class="settings-field">
+          <label>Upload Custom Image</label>
+          <button id="bgUploadBtn" class="settings-action-btn">📁 Upload Image (JPG/PNG)</button>
+          <input type="file" id="bgFileInput" accept="image/*" style="display:none" />
+        </div>
+
+        <div class="settings-field">
+          <label for="bgUrlInput">Or Image URL</label>
+          <div style="display:flex; gap:6px;">
+            <input type="url" id="bgUrlInput" class="settings-input" placeholder="https://images.unsplash.com/..." />
+            <button id="bgApplyUrlBtn" class="glass-btn" style="flex:0 0 60px;">Set</button>
           </div>
         </div>
       </div>
 
-      <!-- Tab: Background -->
-      <div class="settings-tab-content" id="settingsTab-background">
-        <div class="settings-section">
-          <div class="settings-section-label">Background Source</div>
-          
-          <div class="settings-field">
-            <label>Upload Custom Image</label>
-            <button id="bgUploadBtn" class="settings-action-btn">📁 Upload Image (JPG/PNG)</button>
-            <input type="file" id="bgFileInput" accept="image/*" style="display:none" />
+      <div class="settings-section">
+        <div class="settings-section-label">Wallpaper Presets</div>
+        <div class="bg-preset-grid">
+          <button class="bg-preset-btn active" data-bg="default"
+            style="background-image: url('background/default.png');" title="Default Cyber Mesh">
+            <span>Default</span>
+          </button>
+          <button class="bg-preset-btn" data-bg="aurora" style="background-image: url('background/aurora.png');"
+            title="Aurora Borealis">
+            <span>Aurora</span>
+          </button>
+          <button class="bg-preset-btn" data-bg="space" style="background-image: url('background/space.png');"
+            title="Deep Space">
+            <span>Space</span>
+          </button>
+          <button class="bg-preset-btn" data-bg="mountain" style="background-image: url('background/mountain.png');"
+            title="Night Mountain">
+            <span>Mountain</span>
+          </button>
+          <button class="bg-preset-btn" data-bg="dark-ribbon"
+            style="background-image: url('background/dark-ribbon.jpg');" title="Dark Ribbon">
+            <span>Ribbon</span>
+          </button>
+          <button class="bg-preset-btn" data-bg="dark-cubes" style="background-image: url('background/dark-cubes.jpg');"
+            title="Dark Cubes">
+            <span>Cubes</span>
+          </button>
+          <button class="bg-preset-btn" data-bg="teal-clouds"
+            style="background-image: url('background/teal-clouds.jpg');" title="Teal Clouds">
+            <span>Clouds</span>
+          </button>
+          <button class="bg-preset-btn" data-bg="dark" style="background: #0d1117;" title="Minimal Dark">
+            <span>Dark</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-label">Visual Effects</div>
+
+        <div class="settings-field">
+          <label for="bgDimSlider" class="settings-slider-label">
+            <span>Overlay Dimming</span>
+            <span id="bgDimVal">40%</span>
+          </label>
+          <input type="range" id="bgDimSlider" class="settings-slider" min="0" max="85" value="40" />
+        </div>
+
+        <div class="settings-field">
+          <label for="bgBlurSlider" class="settings-slider-label">
+            <span>Background Blur Effect</span>
+            <span id="bgBlurVal">0px</span>
+          </label>
+          <input type="range" id="bgBlurSlider" class="settings-slider" min="0" max="25" value="0" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Widgets -->
+    <div class="settings-tab-content" id="settingsTab-widgets">
+      <div class="settings-section">
+        <div class="settings-section-label">Active Widgets (Max 2 Left, Max 2 Right)</div>
+        <p class="settings-hint">💡 Drag & drop widgets on the main screen to swap positions (left/right/top/bottom), or
+          use the shift buttons on widget headers.</p>
+        <div id="settingsWidgetList" class="settings-widget-list"></div>
+      </div>
+    </div>
+
+    <!-- Tab: Data -->
+    <div class="settings-tab-content" id="settingsTab-data">
+      <div class="settings-section">
+        <div class="settings-section-label">Backup & Restore</div>
+        <p class="settings-hint">Export all data (Todo, Settings, Notes) to a JSON file.</p>
+        <button id="exportDataBtn" class="settings-action-btn">⬇️ Export Data (JSON)</button>
+        <button id="importDataBtn" class="settings-action-btn">⬆️ Import Data (JSON)</button>
+        <input type="file" id="importFileInput" accept=".json" style="display:none" />
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-label">Reset</div>
+        <p class="settings-hint">Delete all data and restore factory defaults.</p>
+        <button id="resetAllDataBtn" class="settings-action-btn danger">⚠️ Reset All Data</button>
+      </div>
+    </div>
+
+    <div id="updateBanner" class="update-banner hidden">
+      <div class="update-banner-content">
+        <span class="update-banner-icon">🚀</span>
+        <div class="update-banner-text">
+          <strong>Update Available</strong>
+          <span>A new version <span class="update-banner-version"></span> is ready on GitHub</span>
+        </div>
+      </div>
+      <a href="https://github.com/doltonsedward/productive-tab-extension" target="_blank" class="update-banner-btn"
+        rel="noopener noreferrer">View →</a>
+    </div>
+
+    <div class="settings-drawer-footer">
+      <span class="settings-version" id="settingsVersionText" data-version="1.5.1">Productive Tab · v1.5.1</span>
+      <button type="button" id="openChangelogBtn" class="settings-changelog-btn" title="View Release Notes">What's
+        New</button>
+    </div>
+  </div>
+
+  <!-- Settings FAB Button -->
+  <button id="toggleSettingsBtn" class="settings-fab" title="Open Settings">⚙️</button>
+
+  <div class="container">
+    <div class="time-section">
+      <div class="time" id="time"></div>
+      <div class="date" id="date"></div>
+    </div>
+
+    <div class="greeting" id="greeting"></div>
+
+    <!-- Workspace Layout -->
+    <div class="workspace-layout" id="workspaceLayout">
+
+      <!-- Left Widget Column -->
+      <div class="widget-column widget-column-left" id="widgetColumnLeft" data-side="left">
+        <button id="addWidgetBtnLeft" class="add-widget-btn empty-column-btn" data-side="left" title="Add Left Widget">
+          <span class="add-widget-icon">+</span>
+          <span class="add-widget-label">Left Widget</span>
+        </button>
+      </div>
+
+      <!-- Centered Todo Section -->
+      <div class="todo-section">
+        <!-- Milestone Habit Container -->
+        <div id="milestoneContainer" class="milestone-container"></div>
+
+        <div class="todo-input-container">
+          <input type="text" class="todo-input" id="todoInput" placeholder="What is your main focus for today?..."
+            maxlength="100" />
+        </div>
+
+        <div class="todo-list" id="todoList"></div>
+
+        <div class="todo-stats" id="todoStats">0 tasks · 0 completed</div>
+
+        <div class="export-actions">
+          <button disabled class="export-btn disabled-btn" title="Coming soon">
+            ☁️ Save to Cloud
+          </button>
+          <button id="copyMdBtn" class="export-btn" title="Copy Obsidian format">
+            📋 Copy to Obsidian
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Widget Column -->
+      <div class="widget-column widget-column-right" id="widgetColumnRight" data-side="right">
+        <button id="addWidgetBtnRight" class="add-widget-btn empty-column-btn" data-side="right"
+          title="Add Right Widget">
+          <span class="add-widget-icon">+</span>
+          <span class="add-widget-label">Right Widget</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- First-Time Welcome Modal -->
+  <div id="welcomeModal" class="modal-overlay hidden">
+    <div class="glass-modal-content welcome-modal">
+      <span class="track-badge">✨ Welcome</span>
+      <h3 class="welcome-modal-title">Hello! What should we call you?</h3>
+      <p class="welcome-modal-subtitle">
+        Personalize your dashboard with your name for dynamic greetings and focus prompts.
+      </p>
+
+      <div class="welcome-input-group">
+        <input type="text" id="welcomeNameInput" class="welcome-name-input"
+          placeholder="Enter your name (e.g. Edward)..." maxlength="30" autocomplete="off" />
+      </div>
+
+      <div class="modal-actions welcome-modal-actions">
+        <button id="skipWelcomeBtn" class="glass-btn secondary welcome-btn-skip">
+          Skip for now
+        </button>
+        <button id="saveWelcomeNameBtn" class="glass-btn success welcome-btn-save">
+          Get Started →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Links Edit Modal -->
+  <div id="quickLinksModal" class="modal-overlay hidden">
+    <div class="glass-modal-content ql-modal-content">
+      <span class="track-badge">🔗 Quick Links</span>
+      <h4 id="qlModalTitle" class="track-task-title" style="margin-bottom: 16px;">Add Shortcut</h4>
+
+      <div class="ql-modal-form">
+        <div class="ql-modal-field">
+          <label for="qlInputName">Display Name</label>
+          <input type="text" id="qlInputName" class="settings-input" placeholder="e.g. GitHub, Notion, Gmail..."
+            maxlength="30" autocomplete="off" />
+        </div>
+
+        <div class="ql-modal-field">
+          <label for="qlInputUrl">Website URL</label>
+          <div class="ql-url-with-icon-row">
+            <button type="button" id="qlIconPickerBtn" class="ql-icon-picker-btn" title="Choose Icon / Emoji">
+              <span id="qlSelectedIconPreview" class="ql-selected-icon">🌐</span>
+            </button>
+            <input type="url" id="qlInputUrl" class="settings-input" placeholder="https://github.com"
+              autocomplete="off" />
           </div>
 
-          <div class="settings-field">
-            <label for="bgUrlInput">Or Image URL</label>
-            <div style="display:flex; gap:6px;">
-              <input type="url" id="bgUrlInput" class="settings-input" placeholder="https://images.unsplash.com/..." />
-              <button id="bgApplyUrlBtn" class="glass-btn" style="flex:0 0 60px;">Set</button>
+          <!-- Searchable Emoji / Icon Popover Picker -->
+          <div id="qlEmojiPickerPopover" class="ql-emoji-picker-popover hidden">
+            <div class="ql-picker-header">
+              <input type="text" id="qlEmojiSearchInput" class="ql-picker-search"
+                placeholder="🔍 Search or type/paste any emoji..." autocomplete="off" />
+              <button type="button" id="qlResetFaviconBtn" class="ql-reset-favicon-btn"
+                title="Reset to auto website favicon">🌐 Auto Favicon</button>
             </div>
-          </div>
-        </div>
-
-        <div class="settings-section">
-          <div class="settings-section-label">Wallpaper Presets</div>
-          <div class="bg-preset-grid">
-            <button class="bg-preset-btn active" data-bg="default" style="background-image: url('background/default.png');" title="Default Cyber Mesh">
-              <span>Default</span>
-            </button>
-            <button class="bg-preset-btn" data-bg="aurora" style="background-image: url('background/aurora.png');" title="Aurora Borealis">
-              <span>Aurora</span>
-            </button>
-            <button class="bg-preset-btn" data-bg="space" style="background-image: url('background/space.png');" title="Deep Space">
-              <span>Space</span>
-            </button>
-            <button class="bg-preset-btn" data-bg="mountain" style="background-image: url('background/mountain.png');" title="Night Mountain">
-              <span>Mountain</span>
-            </button>
-            <button class="bg-preset-btn" data-bg="dark-ribbon" style="background-image: url('background/dark-ribbon.jpg');" title="Dark Ribbon">
-              <span>Ribbon</span>
-            </button>
-            <button class="bg-preset-btn" data-bg="dark-cubes" style="background-image: url('background/dark-cubes.jpg');" title="Dark Cubes">
-              <span>Cubes</span>
-            </button>
-            <button class="bg-preset-btn" data-bg="teal-clouds" style="background-image: url('background/teal-clouds.jpg');" title="Teal Clouds">
-              <span>Clouds</span>
-            </button>
-            <button class="bg-preset-btn" data-bg="dark" style="background: #0d1117;" title="Minimal Dark">
-              <span>Dark</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="settings-section">
-          <div class="settings-section-label">Visual Effects</div>
-
-          <div class="settings-field">
-            <label for="bgDimSlider" class="settings-slider-label">
-              <span>Overlay Dimming</span>
-              <span id="bgDimVal">40%</span>
-            </label>
-            <input type="range" id="bgDimSlider" class="settings-slider" min="0" max="85" value="40" />
-          </div>
-
-          <div class="settings-field">
-            <label for="bgBlurSlider" class="settings-slider-label">
-              <span>Background Blur Effect</span>
-              <span id="bgBlurVal">0px</span>
-            </label>
-            <input type="range" id="bgBlurSlider" class="settings-slider" min="0" max="25" value="0" />
+            <div id="qlCustomEmojiRow" class="ql-custom-emoji-row hidden"></div>
+            <div id="qlEmojiGrid" class="ql-emoji-grid"></div>
           </div>
         </div>
       </div>
 
-      <!-- Tab: Widgets -->
-      <div class="settings-tab-content" id="settingsTab-widgets">
-        <div class="settings-section">
-          <div class="settings-section-label">Active Widgets (Max 2 Left, Max 2 Right)</div>
-          <p class="settings-hint">💡 Drag & drop widgets on the main screen to swap positions (left/right/top/bottom), or use the shift buttons on widget headers.</p>
-          <div id="settingsWidgetList" class="settings-widget-list"></div>
-        </div>
-      </div>
-
-      <!-- Tab: Data -->
-      <div class="settings-tab-content" id="settingsTab-data">
-        <div class="settings-section">
-          <div class="settings-section-label">Backup & Restore</div>
-          <p class="settings-hint">Export all data (Todo, Settings, Notes) to a JSON file.</p>
-          <button id="exportDataBtn" class="settings-action-btn">⬇️ Export Data (JSON)</button>
-          <button id="importDataBtn" class="settings-action-btn">⬆️ Import Data (JSON)</button>
-          <input type="file" id="importFileInput" accept=".json" style="display:none" />
-        </div>
-        <div class="settings-section">
-          <div class="settings-section-label">Reset</div>
-          <p class="settings-hint">Delete all data and restore factory defaults.</p>
-          <button id="resetAllDataBtn" class="settings-action-btn danger">⚠️ Reset All Data</button>
-        </div>
-      </div>
-
-      <div id="updateBanner" class="update-banner hidden">
-        <div class="update-banner-content">
-          <span class="update-banner-icon">🚀</span>
-          <div class="update-banner-text">
-            <strong>Update Available</strong>
-            <span>A new version <span class="update-banner-version"></span> is ready on GitHub</span>
-          </div>
-        </div>
-        <a
-          href="https://github.com/doltonsedward/productive-tab-extension"
-          target="_blank"
-          class="update-banner-btn"
-          rel="noopener noreferrer"
-        >View →</a>
-      </div>
-
-      <div class="settings-drawer-footer">
-        <span class="settings-version" id="settingsVersionText" data-version="1.5.1">Productive Tab · v1.5.1</span>
-        <button type="button" id="openChangelogBtn" class="settings-changelog-btn" title="View Release Notes">What's New</button>
+      <div class="modal-actions" style="margin-top: 18px;">
+        <button id="qlSaveBtn" class="glass-btn success">Save Shortcut</button>
+        <button id="qlDeleteBtn" class="glass-btn danger hidden">Remove Shortcut</button>
+        <button id="qlCancelBtn" class="glass-btn secondary">Cancel</button>
       </div>
     </div>
+  </div>
 
-    <!-- Settings FAB Button -->
-    <button id="toggleSettingsBtn" class="settings-fab" title="Open Settings">⚙️</button>
-
-    <div class="container">
-      <div class="time-section">
-        <div class="time" id="time"></div>
-        <div class="date" id="date"></div>
+  <!-- Widget Picker Modal -->
+  <div id="widgetPickerModal" class="modal-overlay hidden">
+    <div class="glass-modal-content widget-picker-modal">
+      <span class="track-badge">🧩 Select Widget</span>
+      <h4 class="track-task-title" style="margin-bottom: 16px;">Add Widget</h4>
+      <div id="widgetPickerList" class="widget-picker-list"></div>
+      <div class="modal-actions" style="margin-top: 12px;">
+        <button id="closeWidgetPickerBtn" class="glass-btn danger">Cancel</button>
       </div>
+    </div>
+  </div>
 
-      <div class="greeting" id="greeting"></div>
-
-      <!-- Workspace Layout -->
-      <div class="workspace-layout" id="workspaceLayout">
-
-        <!-- Left Widget Column -->
-        <div class="widget-column widget-column-left" id="widgetColumnLeft" data-side="left">
-          <button id="addWidgetBtnLeft" class="add-widget-btn empty-column-btn" data-side="left" title="Add Left Widget">
-            <span class="add-widget-icon">+</span>
-            <span class="add-widget-label">Left Widget</span>
-          </button>
-        </div>
-
-        <!-- Centered Todo Section -->
-        <div class="todo-section">
-          <!-- Milestone Habit Container -->
-          <div id="milestoneContainer" class="milestone-container"></div>
-
-          <div class="todo-input-container">
-            <input
-              type="text"
-              class="todo-input"
-              id="todoInput"
-              placeholder="What is your main focus for today?..."
-              maxlength="100"
-            />
+  <!-- What's New / Changelog Modal -->
+  <div id="changelogModal" class="modal-overlay hidden">
+    <div class="glass-modal-content changelog-modal">
+      <div class="changelog-modal-header">
+        <div class="changelog-header-top">
+          <div class="changelog-title-group">
+            <span class="track-badge">📋 What's New</span>
           </div>
-
-          <div class="todo-list" id="todoList"></div>
-
-          <div class="todo-stats" id="todoStats">0 tasks · 0 completed</div>
-
-          <div class="export-actions">
-            <button
-              disabled
-              class="export-btn disabled-btn"
-              title="Coming soon"
-            >
-              ☁️ Save to Cloud
-            </button>
-            <button
-              id="copyMdBtn"
-              class="export-btn"
-              title="Copy Obsidian format"
-            >
-              📋 Copy to Obsidian
-            </button>
-          </div>
+          <a href="https://github.com/doltonsedward/productive-tab-extension" target="_blank" rel="noopener noreferrer"
+            class="changelog-github-link" title="Open GitHub Repository">
+            <span>🐙</span> GitHub ↗
+          </a>
         </div>
+        <p class="changelog-subtitle">Release notes & recent dashboard improvements</p>
+      </div>
 
-        <!-- Right Widget Column -->
-        <div class="widget-column widget-column-right" id="widgetColumnRight" data-side="right">
-          <button id="addWidgetBtnRight" class="add-widget-btn empty-column-btn" data-side="right" title="Add Right Widget">
-            <span class="add-widget-icon">+</span>
-            <span class="add-widget-label">Right Widget</span>
-          </button>
-        </div>
+      <div id="changelogList" class="changelog-list"></div>
+
+      <div class="changelog-modal-hint">
+        <span>Click outside or press <kbd>Esc</kbd> to close</span>
       </div>
     </div>
+  </div>
 
-    <!-- First-Time Welcome Modal -->
-    <div id="welcomeModal" class="modal-overlay hidden">
-      <div class="glass-modal-content welcome-modal">
-        <span class="track-badge">✨ Welcome</span>
-        <h3 class="welcome-modal-title">Hello! What should we call you?</h3>
-        <p class="welcome-modal-subtitle">
-          Personalize your dashboard with your name for dynamic greetings and focus prompts.
-        </p>
+  <!-- Global Timer / Stopwatch -->
+  <div id="globalTimerWidget" class="global-timer-widget">
+    <div id="timerPanel" class="timer-panel hidden">
+      <div class="timer-tabs">
+        <button id="tabStopwatch" class="tab-btn active">Stopwatch</button>
+        <button id="tabTimer" class="tab-btn">Timer</button>
+      </div>
 
-        <div class="welcome-input-group">
-          <input
-            type="text"
-            id="welcomeNameInput"
-            class="welcome-name-input"
-            placeholder="Enter your name (e.g. Edward)..."
-            maxlength="30"
-            autocomplete="off"
-          />
-        </div>
+      <div id="displayGlobalTime" class="glass-timer-display">00:00:00</div>
 
-        <div class="modal-actions welcome-modal-actions">
-          <button id="skipWelcomeBtn" class="glass-btn secondary welcome-btn-skip">
-            Skip for now
-          </button>
-          <button id="saveWelcomeNameBtn" class="glass-btn success welcome-btn-save">
-            Get Started →
-          </button>
-        </div>
+      <div id="timerInputGroup" class="timer-input-group hidden">
+        <input type="number" id="timerMinutes" placeholder="Minutes" min="1" max="180" />
+      </div>
+
+      <div class="timer-controls">
+        <button id="startGlobalTimerBtn" class="glass-btn">Start</button>
+        <button id="resetGlobalTimerBtn" class="glass-btn icon-only">
+          ↺
+        </button>
       </div>
     </div>
+    <button id="toggleTimerPanelBtn" class="timer-fab" title="Timer & Stopwatch">
+      ⏱️
+    </button>
+  </div>
 
-    <!-- Quick Links Edit Modal -->
-    <div id="quickLinksModal" class="modal-overlay hidden">
-      <div class="glass-modal-content ql-modal-content">
-        <span class="track-badge">🔗 Quick Links</span>
-        <h4 id="qlModalTitle" class="track-task-title" style="margin-bottom: 16px;">Add Shortcut</h4>
-        
-        <div class="ql-modal-form">
-          <div class="ql-modal-field">
-            <label for="qlInputName">Display Name</label>
-            <input type="text" id="qlInputName" class="settings-input" placeholder="e.g. GitHub, Notion, Gmail..." maxlength="30" autocomplete="off" />
-          </div>
+  <!-- Task Tracking Modal -->
+  <div id="taskTrackModal" class="modal-overlay hidden">
+    <div class="glass-modal-content">
+      <span class="track-badge">Task Tracking</span>
+      <h4 id="trackTaskTitle" class="track-task-title">---</h4>
+      <div id="trackTaskTime" class="glass-timer-display large">
+        00:00:00
+      </div>
 
-          <div class="ql-modal-field">
-            <label for="qlInputUrl">Website URL</label>
-            <div class="ql-url-with-icon-row">
-              <button type="button" id="qlIconPickerBtn" class="ql-icon-picker-btn" title="Choose Icon / Emoji">
-                <span id="qlSelectedIconPreview" class="ql-selected-icon">🌐</span>
-              </button>
-              <input type="url" id="qlInputUrl" class="settings-input" placeholder="https://github.com" autocomplete="off" />
-            </div>
-
-            <!-- Searchable Emoji / Icon Popover Picker -->
-            <div id="qlEmojiPickerPopover" class="ql-emoji-picker-popover hidden">
-              <div class="ql-picker-header">
-                <input type="text" id="qlEmojiSearchInput" class="ql-picker-search" placeholder="🔍 Search or type/paste any emoji..." autocomplete="off" />
-                <button type="button" id="qlResetFaviconBtn" class="ql-reset-favicon-btn" title="Reset to auto website favicon">🌐 Auto Favicon</button>
-              </div>
-              <div id="qlCustomEmojiRow" class="ql-custom-emoji-row hidden"></div>
-              <div id="qlEmojiGrid" class="ql-emoji-grid"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="modal-actions" style="margin-top: 18px;">
-          <button id="qlSaveBtn" class="glass-btn success">Save Shortcut</button>
-          <button id="qlDeleteBtn" class="glass-btn danger hidden">Remove Shortcut</button>
-          <button id="qlCancelBtn" class="glass-btn secondary">Cancel</button>
-        </div>
+      <div class="modal-actions">
+        <button id="pauseTaskTrackBtn" class="glass-btn">Pause</button>
+        <button id="restartTaskTrackBtn" class="glass-btn icon-only" title="Reset time to 00:00:00">
+          ↺ Reset
+        </button>
+        <button id="stopTaskTrackBtn" class="glass-btn danger">
+          Stop (Save Time)
+        </button>
+        <button id="completeTaskTrackBtn" class="glass-btn success">
+          Stop & Complete ✓
+        </button>
       </div>
     </div>
+  </div>
 
-    <!-- Widget Picker Modal -->
-    <div id="widgetPickerModal" class="modal-overlay hidden">
-      <div class="glass-modal-content widget-picker-modal">
-        <span class="track-badge">🧩 Select Widget</span>
-        <h4 class="track-task-title" style="margin-bottom: 16px;">Add Widget</h4>
-        <div id="widgetPickerList" class="widget-picker-list"></div>
-        <div class="modal-actions" style="margin-top: 12px;">
-          <button id="closeWidgetPickerBtn" class="glass-btn danger">Cancel</button>
-        </div>
+  <!-- Modal Schedule Google Calendar -->
+  <div id="gcalModal" class="modal-overlay hidden">
+    <div class="glass-modal-content">
+      <span class="track-badge">📅 Schedule to Google Calendar</span>
+      <h4 id="gcalTaskTitle" class="track-task-title">---</h4>
+      <div class="gcal-form-group">
+        <label for="gcalDate">Start Date & Time:</label>
+        <input type="datetime-local" id="gcalDate" class="gcal-input" />
+      </div>
+      <div class="gcal-form-group">
+        <label for="gcalDuration">Duration (Minutes):</label>
+        <input type="number" id="gcalDuration" class="gcal-input" value="30" min="15" step="15" />
+      </div>
+
+      <div class="modal-actions">
+        <button id="openGcalBtn" class="glass-btn success">🚀 Open in Google Calendar</button>
+        <button id="saveTaskScheduleBtn" class="glass-btn">💾 Save Date Only</button>
+        <button id="closeGcalBtn" class="glass-btn danger">Cancel</button>
       </div>
     </div>
+  </div>
 
-    <!-- What's New / Changelog Modal -->
-    <div id="changelogModal" class="modal-overlay hidden">
-      <div class="glass-modal-content changelog-modal">
-        <div class="changelog-modal-header">
-          <div class="changelog-header-top">
-            <div class="changelog-title-group">
-              <span class="track-badge">📋 What's New</span>
-              <span class="changelog-latest-tag" id="changelogCurrentVersion">v1.5.1</span>
-            </div>
-            <a href="https://github.com/doltonsedward/productive-tab-extension" target="_blank" rel="noopener noreferrer" class="changelog-github-link" title="Open GitHub Repository">
-              <span>🐙</span> GitHub ↗
-            </a>
-          </div>
-          <p class="changelog-subtitle">Release notes & recent dashboard improvements</p>
-        </div>
+  <script src="js/data/icons.js"></script>
+  <script src="js/data/changelog.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/clock.js"></script>
+  <script src="js/milestone.js"></script>
+  <script src="js/todo.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/widgets.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/timer.js"></script>
+  <script src="js/updater.js"></script>
+  <script src="js/app.js"></script>
+</body>
 
-        <div id="changelogList" class="changelog-list"></div>
-
-        <div class="changelog-modal-hint">
-          <span>Click outside or press <kbd>Esc</kbd> to close</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Global Timer / Stopwatch -->
-    <div id="globalTimerWidget" class="global-timer-widget">
-      <div id="timerPanel" class="timer-panel hidden">
-        <div class="timer-tabs">
-          <button id="tabStopwatch" class="tab-btn active">Stopwatch</button>
-          <button id="tabTimer" class="tab-btn">Timer</button>
-        </div>
-
-        <div id="displayGlobalTime" class="glass-timer-display">00:00:00</div>
-
-        <div id="timerInputGroup" class="timer-input-group hidden">
-          <input
-            type="number"
-            id="timerMinutes"
-            placeholder="Minutes"
-            min="1"
-            max="180"
-          />
-        </div>
-
-        <div class="timer-controls">
-          <button id="startGlobalTimerBtn" class="glass-btn">Start</button>
-          <button id="resetGlobalTimerBtn" class="glass-btn icon-only">
-            ↺
-          </button>
-        </div>
-      </div>
-      <button
-        id="toggleTimerPanelBtn"
-        class="timer-fab"
-        title="Timer & Stopwatch"
-      >
-        ⏱️
-      </button>
-    </div>
-
-    <!-- Task Tracking Modal -->
-    <div id="taskTrackModal" class="modal-overlay hidden">
-      <div class="glass-modal-content">
-        <span class="track-badge">Task Tracking</span>
-        <h4 id="trackTaskTitle" class="track-task-title">---</h4>
-        <div id="trackTaskTime" class="glass-timer-display large">
-          00:00:00
-        </div>
-
-        <div class="modal-actions">
-          <button id="pauseTaskTrackBtn" class="glass-btn">Pause</button>
-          <button
-            id="restartTaskTrackBtn"
-            class="glass-btn icon-only"
-            title="Reset time to 00:00:00"
-          >
-            ↺ Reset
-          </button>
-          <button id="stopTaskTrackBtn" class="glass-btn danger">
-            Stop (Save Time)
-          </button>
-          <button id="completeTaskTrackBtn" class="glass-btn success">
-            Stop & Complete ✓
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal Schedule Google Calendar -->
-    <div id="gcalModal" class="modal-overlay hidden">
-      <div class="glass-modal-content">
-        <span class="track-badge">📅 Schedule to Google Calendar</span>
-        <h4 id="gcalTaskTitle" class="track-task-title">---</h4>
-        <div class="gcal-form-group">
-          <label for="gcalDate">Start Date & Time:</label>
-          <input type="datetime-local" id="gcalDate" class="gcal-input" />
-        </div>
-        <div class="gcal-form-group">
-          <label for="gcalDuration">Duration (Minutes):</label>
-          <input type="number" id="gcalDuration" class="gcal-input" value="30" min="15" step="15" />
-        </div>
-
-        <div class="modal-actions">
-          <button id="openGcalBtn" class="glass-btn success">🚀 Open in Google Calendar</button>
-          <button id="saveTaskScheduleBtn" class="glass-btn">💾 Save Date Only</button>
-          <button id="closeGcalBtn" class="glass-btn danger">Cancel</button>
-        </div>
-      </div>
-    </div>
-
-    <script src="js/data/icons.js"></script>
-    <script src="js/data/changelog.js"></script>
-    <script src="js/state.js"></script>
-    <script src="js/clock.js"></script>
-    <script src="js/milestone.js"></script>
-    <script src="js/todo.js"></script>
-    <script src="js/calendar.js"></script>
-    <script src="js/widgets.js"></script>
-    <script src="js/settings.js"></script>
-    <script src="js/timer.js"></script>
-    <script src="js/updater.js"></script>
-    <script src="js/app.js"></script>
-  </body>
 </html>
