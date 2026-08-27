@@ -192,18 +192,18 @@ const WIDGET_REGISTRY = {
       `;
       return card;
     },
-    afterRender() {}
+    afterRender() { }
   },
 
   quicklinks: {
     id: "quicklinks",
     name: "Quick Links",
     icon: "🔗",
-    desc: "5 shortcut circles in a sleek tube dock",
+    desc: "6 shortcut app tiles with labels",
     large: true, // occupies full column — prevents other widgets alongside
 
     _storageKey: "quickLinksData",
-    _slotCount: 5,
+    _slotCount: 6,
     _modalInitialized: false,
 
     _defaultLinks() {
@@ -221,7 +221,7 @@ const WIDGET_REGISTRY = {
             return data.slice(0, this._slotCount);
           }
         }
-      } catch (e) {}
+      } catch (e) { }
       return this._defaultLinks();
     },
 
@@ -318,25 +318,25 @@ const WIDGET_REGISTRY = {
       const modal = document.getElementById("quickLinksModal");
       if (!modal) return;
 
-      const titleEl   = document.getElementById("qlModalTitle");
+      const titleEl = document.getElementById("qlModalTitle");
       const nameInput = document.getElementById("qlInputName");
-      const urlInput  = document.getElementById("qlInputUrl");
+      const urlInput = document.getElementById("qlInputUrl");
       const deleteBtn = document.getElementById("qlDeleteBtn");
-      const popover   = document.getElementById("qlEmojiPickerPopover");
+      const popover = document.getElementById("qlEmojiPickerPopover");
 
       modal.dataset.slotIdx = idx;
       if (popover) popover.classList.add("hidden");
 
       if (existingData && existingData.url) {
-        if (titleEl)   titleEl.textContent = `Edit Shortcut (Slot ${idx + 1})`;
-        if (nameInput) nameInput.value      = existingData.name || "";
-        if (urlInput)  urlInput.value       = existingData.url  || "";
+        if (titleEl) titleEl.textContent = `Edit Shortcut (Slot ${idx + 1})`;
+        if (nameInput) nameInput.value = existingData.name || "";
+        if (urlInput) urlInput.value = existingData.url || "";
         this._selectEmoji(existingData.emoji || null);
         if (deleteBtn) deleteBtn.classList.remove("hidden");
       } else {
-        if (titleEl)   titleEl.textContent = `Add Shortcut (Slot ${idx + 1})`;
-        if (nameInput) nameInput.value      = "";
-        if (urlInput)  urlInput.value       = "";
+        if (titleEl) titleEl.textContent = `Add Shortcut (Slot ${idx + 1})`;
+        if (nameInput) nameInput.value = "";
+        if (urlInput) urlInput.value = "";
         this._selectEmoji(null);
         if (deleteBtn) deleteBtn.classList.add("hidden");
       }
@@ -351,26 +351,26 @@ const WIDGET_REGISTRY = {
     },
 
     closeModal() {
-      const modal   = document.getElementById("quickLinksModal");
+      const modal = document.getElementById("quickLinksModal");
       const popover = document.getElementById("qlEmojiPickerPopover");
       if (popover) popover.classList.add("hidden");
-      if (modal)   modal.classList.add("hidden");
+      if (modal) modal.classList.add("hidden");
     },
 
     _initModalListeners() {
       if (this._modalInitialized) return;
       this._modalInitialized = true;
 
-      const modal        = document.getElementById("quickLinksModal");
-      const nameInput    = document.getElementById("qlInputName");
-      const urlInput     = document.getElementById("qlInputUrl");
-      const pickerBtn    = document.getElementById("qlIconPickerBtn");
-      const popover      = document.getElementById("qlEmojiPickerPopover");
-      const searchInput  = document.getElementById("qlEmojiSearchInput");
-      const resetFavBtn  = document.getElementById("qlResetFaviconBtn");
-      const saveBtn      = document.getElementById("qlSaveBtn");
-      const deleteBtn    = document.getElementById("qlDeleteBtn");
-      const cancelBtn    = document.getElementById("qlCancelBtn");
+      const modal = document.getElementById("quickLinksModal");
+      const nameInput = document.getElementById("qlInputName");
+      const urlInput = document.getElementById("qlInputUrl");
+      const pickerBtn = document.getElementById("qlIconPickerBtn");
+      const popover = document.getElementById("qlEmojiPickerPopover");
+      const searchInput = document.getElementById("qlEmojiSearchInput");
+      const resetFavBtn = document.getElementById("qlResetFaviconBtn");
+      const saveBtn = document.getElementById("qlSaveBtn");
+      const deleteBtn = document.getElementById("qlDeleteBtn");
+      const cancelBtn = document.getElementById("qlCancelBtn");
 
       // Toggle emoji popover
       if (pickerBtn && popover) {
@@ -469,7 +469,7 @@ const WIDGET_REGISTRY = {
         showToast("🔗 Shortcut saved!", "success", 2000);
       };
 
-      if (saveBtn)   saveBtn.addEventListener("click", handleSave);
+      if (saveBtn) saveBtn.addEventListener("click", handleSave);
       if (cancelBtn) cancelBtn.addEventListener("click", () => this.closeModal());
 
       if (deleteBtn) {
@@ -497,54 +497,56 @@ const WIDGET_REGISTRY = {
 
     _renderSlot(idx, linkData) {
       const slotEl = document.createElement("div");
-      slotEl.className = "ql-tube-slot";
+      slotEl.className = "ql-dock-slot";
       slotEl.dataset.idx = idx;
 
       const hasLink = linkData && linkData.url;
 
-      const circle = document.createElement("button");
-      circle.className = `ql-circle ${hasLink ? "has-link" : "is-empty"}`;
-      circle.type = "button";
+      // Squircle Tile Button
+      const tile = document.createElement("button");
+      tile.className = `ql-dock-tile ${hasLink ? "has-link" : "is-empty"}`;
+      tile.type = "button";
+
+      // Text Label underneath
+      const label = document.createElement("span");
+      label.className = "ql-dock-label";
 
       if (hasLink) {
         // Icon — emoji override or auto favicon
         if (linkData.emoji) {
           const emojiEl = document.createElement("span");
-          emojiEl.className = "ql-circle-emoji";
+          emojiEl.className = "ql-dock-emoji";
           emojiEl.textContent = linkData.emoji;
-          circle.appendChild(emojiEl);
+          tile.appendChild(emojiEl);
         } else {
           const faviconUrl = this._faviconUrl(linkData.url);
           if (faviconUrl) {
             const img = document.createElement("img");
-            img.className = "ql-circle-icon";
+            img.className = "ql-dock-icon";
             img.src = faviconUrl;
             img.alt = linkData.name || "";
             img.onerror = () => {
               img.remove();
               const fallback = document.createElement("span");
-              fallback.className = "ql-circle-emoji";
+              fallback.className = "ql-dock-emoji";
               fallback.textContent = "🌐";
-              circle.appendChild(fallback);
+              tile.appendChild(fallback);
             };
-            circle.appendChild(img);
+            tile.appendChild(img);
           } else {
             const fallback = document.createElement("span");
-            fallback.className = "ql-circle-emoji";
+            fallback.className = "ql-dock-emoji";
             fallback.textContent = "🌐";
-            circle.appendChild(fallback);
+            tile.appendChild(fallback);
           }
         }
 
-        // Side tooltip
-        const tooltip = document.createElement("span");
-        tooltip.className = "ql-tooltip";
+        // Label text
         try {
-          tooltip.textContent = linkData.name || new URL(linkData.url).hostname;
+          label.textContent = linkData.name || new URL(linkData.url).hostname.replace(/^www\./, "");
         } catch (e) {
-          tooltip.textContent = linkData.name || linkData.url;
+          label.textContent = linkData.name || linkData.url;
         }
-        slotEl.appendChild(tooltip);
 
         // Delete badge (✕ shown in edit mode)
         const badge = document.createElement("div");
@@ -555,7 +557,7 @@ const WIDGET_REGISTRY = {
         delBtn.title = "Remove shortcut";
         delBtn.textContent = "✕";
         badge.appendChild(delBtn);
-        slotEl.appendChild(badge);
+        tile.appendChild(badge);
 
         // Delete badge click
         delBtn.addEventListener("click", (e) => {
@@ -567,11 +569,11 @@ const WIDGET_REGISTRY = {
           showToast("Shortcut removed.", "info", 2000);
         });
 
-        // Circle click: open URL normally; open modal in edit mode
-        circle.addEventListener("click", (e) => {
+        // Tile click: open URL normally; open modal in edit mode
+        tile.addEventListener("click", (e) => {
           e.stopPropagation();
-          const tube = slotEl.closest(".ql-tube");
-          if (tube && tube.classList.contains("edit-mode")) {
+          const grid = slotEl.closest(".ql-dock-grid");
+          if (grid && grid.classList.contains("edit-mode")) {
             WIDGET_REGISTRY.quicklinks.openModal(idx, linkData);
             return;
           }
@@ -581,17 +583,21 @@ const WIDGET_REGISTRY = {
       } else {
         // Empty slot — + icon
         const plusIcon = document.createElement("span");
-        plusIcon.className = "ql-empty-icon";
+        plusIcon.className = "ql-dock-empty-icon";
         plusIcon.textContent = "+";
-        circle.appendChild(plusIcon);
+        tile.appendChild(plusIcon);
 
-        circle.addEventListener("click", (e) => {
+        label.textContent = "Add";
+        label.style.opacity = "0.4";
+
+        tile.addEventListener("click", (e) => {
           e.stopPropagation();
           WIDGET_REGISTRY.quicklinks.openModal(idx, null);
         });
       }
 
-      slotEl.appendChild(circle);
+      slotEl.appendChild(tile);
+      slotEl.appendChild(label);
       return slotEl;
     },
 
@@ -601,7 +607,7 @@ const WIDGET_REGISTRY = {
       this._rerenderTimeout = setTimeout(() => {
         const existing = document.querySelector('.widget-card[data-widget-id="quicklinks"]');
         if (!existing) return;
-        const side  = existing.dataset.side;
+        const side = existing.dataset.side;
         const index = parseInt(existing.dataset.index, 10);
         const fresh = renderCardForSlot("quicklinks", side, index);
         if (fresh) {
@@ -613,7 +619,7 @@ const WIDGET_REGISTRY = {
 
     render() {
       const links = this._load();
-      const card  = document.createElement("div");
+      const card = document.createElement("div");
       card.className = "widget-card widget-card-large";
       card.dataset.widgetId = "quicklinks";
 
@@ -622,29 +628,24 @@ const WIDGET_REGISTRY = {
       header.className = "widget-header";
       card.appendChild(header);
 
-      // Outer container (flex center)
-      const container = document.createElement("div");
-      container.className = "ql-tube-container";
-
-      // The pill tube
-      const tube = document.createElement("div");
-      tube.className = "ql-tube";
-      tube.id = "qlTube";
+      // App Dock Grid Container (2x3 = 6 slots)
+      const grid = document.createElement("div");
+      grid.className = "ql-dock-grid";
+      grid.id = "qlDockGrid";
 
       links.forEach((linkData, i) => {
-        tube.appendChild(this._renderSlot(i, linkData));
+        grid.appendChild(this._renderSlot(i, linkData));
       });
 
-      container.appendChild(tube);
-      card.appendChild(container);
+      card.appendChild(grid);
       return card;
     },
 
     afterRender() {
-      const tube = document.getElementById("qlTube");
-      if (!tube) return;
+      const grid = document.getElementById("qlDockGrid");
+      if (!grid) return;
 
-      const card = tube.closest(".widget-card");
+      const card = grid.closest(".widget-card");
       if (!card) return;
 
       // Inject ✎ edit-toggle button into widget-card-actions
@@ -652,14 +653,14 @@ const WIDGET_REGISTRY = {
       if (actionsEl && !actionsEl.querySelector(".ql-edit-toggle-btn")) {
         const editToggle = document.createElement("button");
         editToggle.className = "ql-edit-toggle-btn widget-action-btn";
-        editToggle.type  = "button";
+        editToggle.type = "button";
         editToggle.title = "Edit shortcuts";
         editToggle.textContent = "✎";
 
         editToggle.addEventListener("click", (e) => {
           e.stopPropagation();
-          tube.classList.toggle("edit-mode");
-          editToggle.classList.toggle("active", tube.classList.contains("edit-mode"));
+          grid.classList.toggle("edit-mode");
+          editToggle.classList.toggle("active", grid.classList.contains("edit-mode"));
         });
 
         const removeBtn = actionsEl.querySelector(".widget-remove-btn");
@@ -726,7 +727,7 @@ const WIDGET_REGISTRY = {
           const parsed = JSON.parse(raw);
           if (Array.isArray(parsed)) return parsed;
         }
-      } catch (e) {}
+      } catch (e) { }
       return [];
     },
 
@@ -741,7 +742,7 @@ const WIDGET_REGISTRY = {
           const parsed = JSON.parse(raw);
           if (Array.isArray(parsed) && parsed.length > 0) return parsed;
         }
-      } catch (e) {}
+      } catch (e) { }
       return [...this._defaultTags];
     },
 
@@ -778,7 +779,7 @@ const WIDGET_REGISTRY = {
         const colorClass = this._getTagColorClass(tagText); // e.g. "tag-cyan"
         const borderClass = colorClass.replace('tag-', 'border-');
         const textClass = colorClass.replace('tag-', 'text-');
-        
+
         return `
           <div class="someday-item ${borderClass}" data-id="${t.id}">
             <div class="someday-item-content">
@@ -800,14 +801,14 @@ const WIDGET_REGISTRY = {
       return `
         <div class="someday-tag-chip-bar" id="somedayTagChipBar">
           ${tags.map(tag => {
-            const isSelected = tag === this._selectedTag;
-            const colorClass = isSelected ? this._getTagColorClass(tag) : "";
-            return `
+        const isSelected = tag === this._selectedTag;
+        const colorClass = isSelected ? this._getTagColorClass(tag) : "";
+        return `
               <button type="button" class="someday-tag-chip ${colorClass} ${isSelected ? 'active' : ''}" data-tag="${escapeHtml(tag)}" title="Tag: ${escapeHtml(tag)}">
                 <span>${escapeHtml(tag)}</span>
               </button>
             `;
-          }).join("")}
+      }).join("")}
           <button type="button" class="someday-tag-chip-add" id="somedayAddCustomTagBtn" title="Create new tag">+</button>
         </div>
       `;

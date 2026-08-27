@@ -4,6 +4,28 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.7.2",
+    date: "2026-08-27",
+    items: [
+      { type: "change", text: "Subdued and softened Someday Box colors so it blends peacefully into the background, keeping the Todo List as the main focal point." }
+    ]
+  },
+  {
+    version: "1.7.1",
+    date: "2026-08-27",
+    items: [
+      { type: "change", text: "Softened Quick Links hover animations to be minimal, calm, and subtle." }
+    ]
+  },
+  {
+    version: "1.7.0",
+    date: "2026-08-27",
+    items: [
+      { type: "feat", text: "Redesigned Quick Links to a stylish 6-slot App Dock layout (2x3 squircle glass app tiles with labels)." },
+      { type: "feat", text: "Added interactive searchable icon & emoji selector with 180+ curated icons and direct keyboard input." }
+    ]
+  },
+  {
     version: "1.6.6",
     date: "2026-08-27",
     items: [

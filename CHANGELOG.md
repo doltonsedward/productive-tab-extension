@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.7.2] - 2026-08-27
+### Changed
+- **Subdued Someday Box Aesthetics**: Softened all colors, borders, and tags in the Someday Box widget with lower contrast and muted pastel accents. Item action buttons now hide when idle and only appear on hover, keeping the user's primary focus squarely on the main Todo List.
+
+---
+
+## [1.7.1] - 2026-08-27
+### Changed
+- **Subtle App Dock Hover Animations**: Softened the hover animation on Quick Links squircle tiles with gentle, minimal glass elevation (`translateY(-1.5px)`) and muted border highlights instead of aggressive neon glow and heavy scaling.
+
+---
+
+## [1.7.0] - 2026-08-27
+### Added
+- **📱 Quick Links App Dock Layout**: Redesigned Quick Links widget to a sleek 6-slot App Dock layout (2x3 squircle glass app tiles with clean labels underneath).
+- **🔍 Interactive Emoji & Icon Search Selector**: Replaced manual emoji inputs with a searchable popover icon selector featuring 180+ curated icons, bilingual keywords (EN/ID), and direct OS keyboard emoji pasting.
+- **🔄 Smart Column Exclusivity**: Moving or swapping full-column widgets cleanly swaps the whole column contents without overflow.
+
+---
+
 ## [1.6.6] - 2026-08-27
 ### Changed
 - **Expanded Widget Column Width**: Increased widget column width from `250px` to `290px` to give widgets like the Someday Box, Quick Links, and Notes more breathing room and prevent text from wrapping prematurely.

@@ -356,10 +356,10 @@
 }
 
 /* ==========================================
-   QUICK LINKS WIDGET — CYLINDRICAL TUBE DOCK
+   QUICK LINKS WIDGET — APP DOCK (SQUIRCLE TILES)
    ========================================== */
 
-/* Large widget card — full column height, overflow visible for tooltip */
+/* Large widget card — standard glassmorphism card matching todo list height */
 .widget-card.widget-card-large {
   flex: 1 1 auto;
   display: flex;
@@ -367,58 +367,41 @@
   overflow: visible;
 }
 
-/* Centers the tube in the 250px column */
-.ql-tube-container {
+/* App Dock Grid Container (2 columns x 3 rows = 6 slots) */
+.ql-dock-grid {
   flex: 1;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 12px 10px;
+  padding: 10px 4px 6px;
   align-items: center;
-  justify-content: center;
-  padding: 6px 0 12px;
+  justify-items: center;
 }
 
-/* The cylindrical pill dock — sized for 5 slots */
-.ql-tube {
-  width: 114px;
+/* Individual slot item wrapper */
+.ql-dock-slot {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 13px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  border-radius: 999px;
-  padding: 24px 16px;
-  box-shadow:
-    0 8px 36px rgba(0, 0, 0, 0.32),
-    inset 0 1px 0 rgba(255, 255, 255, 0.11),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.12);
-  position: relative;
-  overflow: visible;
-  transition: border-color 0.28s ease, box-shadow 0.28s ease;
+  gap: 5px;
+  width: 100%;
+  max-width: 96px;
 }
 
-/* Individual slot wrapper — tooltip context */
-.ql-tube-slot {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-/* The glass circle */
-.ql-circle {
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
+/* Squircle glass tile button */
+.ql-dock-tile {
+  width: 58px;
+  height: 58px;
+  border-radius: 17px;
   background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow:
-    0 2px 14px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    0 4px 18px rgba(0, 0, 0, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -427,139 +410,96 @@
     background 0.2s ease,
     border-color 0.2s ease,
     box-shadow 0.2s ease,
-    transform 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   overflow: visible;
-  font-size: 0;
   padding: 0;
   outline: none;
   -webkit-appearance: none;
   appearance: none;
+  position: relative;
 }
 
-/* Favicon img */
-.ql-circle-icon {
-  width: 22px;
-  height: 22px;
-  border-radius: 5px;
+/* Favicon icon inside tile */
+.ql-dock-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
   object-fit: contain;
   display: block;
   pointer-events: none;
   transition: transform 0.18s ease;
 }
 
-/* Emoji icon */
-.ql-circle-emoji {
-  font-size: 1.1rem;
+/* Emoji icon inside tile */
+.ql-dock-emoji {
+  font-size: 1.35rem;
   line-height: 1;
   pointer-events: none;
   transition: transform 0.18s ease;
 }
 
-/* Has-link hover — neon green glow */
-.ql-circle.has-link:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(0, 255, 135, 0.55);
+/* Hover state — filled tile (subtle & elegant glass elevation) */
+.ql-dock-tile.has-link:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.28);
   box-shadow:
-    0 0 0 2px rgba(0, 255, 135, 0.13),
-    0 4px 18px rgba(0, 0, 0, 0.26),
-    0 0 18px rgba(0, 255, 135, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.14);
-  transform: scale(1.14);
+    0 4px 16px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  transform: translateY(-1.5px);
 }
 
-.ql-circle.has-link:hover .ql-circle-icon,
-.ql-circle.has-link:hover .ql-circle-emoji {
-  transform: scale(1.1);
+.ql-dock-tile.has-link:hover .ql-dock-icon,
+.ql-dock-tile.has-link:hover .ql-dock-emoji {
+  transform: none;
 }
 
-.ql-circle.has-link:active {
-  transform: scale(0.92);
+.ql-dock-tile.has-link:active {
+  transform: translateY(0) scale(0.97);
 }
 
-/* Tooltip — slides RIGHT from circle (left column) */
-.ql-tooltip {
-  position: absolute;
-  left: calc(100% + 14px);
-  top: 50%;
-  transform: translateY(-50%) translateX(-6px);
-  background: rgba(10, 15, 22, 0.93);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 8px;
-  padding: 5px 10px;
+/* Label underneath the tile */
+.ql-dock-label {
   font-size: 0.72rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.95);
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 86px;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  line-height: 1.2;
+  transition: color 0.18s ease;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.18s ease, transform 0.18s ease;
-  z-index: 200;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
 }
 
-/* Arrow pointing left (from tooltip back to circle) */
-.ql-tooltip::before {
-  content: '';
-  position: absolute;
-  right: 100%;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 5px solid transparent;
-  border-right-color: rgba(255, 255, 255, 0.14);
+.ql-dock-slot:hover .ql-dock-label {
+  color: rgba(255, 255, 255, 0.95);
 }
 
-.ql-tube-slot:hover .ql-tooltip {
-  opacity: 1;
-  transform: translateY(-50%) translateX(0);
-}
-
-/* Right column: tooltip slides LEFT instead */
-.widget-column-right .ql-tube-slot .ql-tooltip {
-  left: auto;
-  right: calc(100% + 14px);
-  transform: translateY(-50%) translateX(6px);
-}
-
-.widget-column-right .ql-tube-slot .ql-tooltip::before {
-  right: auto;
-  left: 100%;
-  border-right-color: transparent;
-  border-left-color: rgba(255, 255, 255, 0.14);
-}
-
-.widget-column-right .ql-tube-slot:hover .ql-tooltip {
-  transform: translateY(-50%) translateX(0);
-}
-
-/* Empty slot — smaller dashed circle */
-.ql-circle.is-empty {
-  width: 44px;
-  height: 44px;
+/* Empty slot — dashed squircle tile */
+.ql-dock-tile.is-empty {
   background: transparent;
-  border: 1.5px dashed rgba(255, 255, 255, 0.2);
+  border: 1.5px dashed rgba(255, 255, 255, 0.18);
   box-shadow: none;
-  cursor: pointer;
 }
 
-.ql-circle.is-empty:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.45);
-  transform: scale(1.1);
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+.ql-dock-tile.is-empty:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+  box-shadow: none;
 }
 
-.ql-empty-icon {
-  font-size: 1.05rem;
+.ql-dock-empty-icon {
+  font-size: 1.15rem;
   color: rgba(255, 255, 255, 0.28);
   font-weight: 300;
   line-height: 1;
   transition: color 0.18s ease;
 }
 
-.ql-circle.is-empty:hover .ql-empty-icon {
-  color: rgba(255, 255, 255, 0.65);
+.ql-dock-tile.is-empty:hover .ql-dock-empty-icon {
+  color: rgba(255, 255, 255, 0.55);
 }
 
 /* Edit toggle btn in widget header */
@@ -585,31 +525,22 @@
   background: rgba(0, 255, 135, 0.15);
 }
 
-/* Edit mode — tube glows green */
-.ql-tube.edit-mode {
-  border-color: rgba(0, 255, 135, 0.28);
-  box-shadow:
-    0 8px 36px rgba(0, 0, 0, 0.32),
-    0 0 28px rgba(0, 255, 135, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.11);
+/* Edit mode — tiles get green tint */
+.ql-dock-grid.edit-mode .ql-dock-tile.has-link {
+  border-color: rgba(0, 255, 135, 0.35);
+  background: rgba(0, 255, 135, 0.08);
 }
 
-/* Edit mode — filled circles get green tint */
-.ql-tube.edit-mode .ql-circle.has-link {
-  border-color: rgba(0, 255, 135, 0.3);
-  background: rgba(0, 255, 135, 0.07);
-}
-
-/* Delete badge — top-right of circle, only visible in edit mode */
+/* Delete badge on squircle tile */
 .ql-edit-badge {
   position: absolute;
-  top: -3px;
-  right: -3px;
+  top: -4px;
+  right: -4px;
   display: none;
   z-index: 10;
 }
 
-.ql-tube.edit-mode .ql-edit-badge {
+.ql-dock-grid.edit-mode .ql-edit-badge {
   display: flex;
 }
 
@@ -632,357 +563,12 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.38);
 }
 
-/* ==========================================
-   QUICK LINKS — LAYOUT 2: CAPSULE STACK
-   ========================================== */
-.ql-capsule-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 6px 4px;
-  justify-content: center;
+.ql-edit-badge-btn:hover {
+  background: rgba(255, 80, 80, 0.3);
+  border-color: rgba(255, 80, 80, 0.88);
+  color: rgb(255, 140, 140);
+  transform: scale(1.18);
 }
-
-.ql-capsule-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
-  padding: 8px 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  position: relative;
-  text-decoration: none;
-  color: inherit;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.ql-capsule-row:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(0, 255, 135, 0.45);
-  transform: translateX(3px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 0 16px rgba(0, 255, 135, 0.1);
-}
-
-.ql-capsule-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-size: 1rem;
-}
-
-.ql-capsule-icon img {
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  object-fit: contain;
-}
-
-.ql-capsule-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  text-align: left;
-}
-
-.ql-capsule-name {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.95);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.ql-capsule-url {
-  font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.45);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.ql-capsule-arrow {
-  color: rgba(255, 255, 255, 0.3);
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-  line-height: 1;
-}
-
-.ql-capsule-row:hover .ql-capsule-arrow {
-  color: #00ff87;
-  transform: translateX(2px);
-}
-
-.ql-capsule-row.is-empty {
-  border: 1.5px dashed rgba(255, 255, 255, 0.18);
-  background: transparent;
-  justify-content: center;
-  gap: 6px;
-  color: rgba(255, 255, 255, 0.35);
-  font-size: 0.74rem;
-  padding: 10px 12px;
-}
-
-.ql-capsule-row.is-empty:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.45);
-  color: rgba(255, 255, 255, 0.8);
-  transform: none;
-}
-
-/* Edit mode for Capsule Stack */
-.ql-capsule-container.edit-mode .ql-capsule-row:not(.is-empty) {
-  border-color: rgba(0, 255, 135, 0.35);
-  background: rgba(0, 255, 135, 0.05);
-}
-
-.ql-capsule-container.edit-mode .ql-edit-badge {
-  display: flex;
-}
-
-/* ==========================================
-   QUICK LINKS — LAYOUT 3: GLASS ORBS (2x2)
-   ========================================== */
-.ql-orbs-grid {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 16px;
-  padding: 14px 4px;
-  align-items: center;
-  justify-items: center;
-}
-
-.ql-orbs-slot {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 86px;
-  height: 86px;
-}
-
-.ql-orbs-circle {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  padding: 0;
-}
-
-.ql-orbs-circle img {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
-  object-fit: contain;
-}
-
-.ql-orbs-circle .ql-circle-emoji {
-  font-size: 1.7rem;
-}
-
-.ql-orbs-circle:hover {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(0, 255, 135, 0.55);
-  transform: scale(1.08);
-  box-shadow: 0 0 0 2px rgba(0, 255, 135, 0.15), 0 6px 24px rgba(0, 0, 0, 0.3), 0 0 18px rgba(0, 255, 135, 0.2);
-}
-
-.ql-orbs-circle.is-empty {
-  border: 1.5px dashed rgba(255, 255, 255, 0.22);
-  background: transparent;
-  box-shadow: none;
-}
-
-.ql-orbs-circle.is-empty:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: scale(1.06);
-}
-
-/* Edit mode for Orbs */
-.ql-orbs-grid.edit-mode .ql-orbs-circle:not(.is-empty) {
-  border-color: rgba(0, 255, 135, 0.35);
-  background: rgba(0, 255, 135, 0.08);
-}
-
-.ql-orbs-grid.edit-mode .ql-edit-badge {
-  display: flex;
-}
-
-/* ==========================================
-   QUICK LINKS — LAYOUT 4: APP DOCK (2x3)
-   ========================================== */
-.ql-dock-grid {
-  flex: 1;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px 10px;
-  padding: 10px 6px;
-  align-content: center;
-}
-
-.ql-dock-slot {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-
-.ql-dock-tile {
-  width: 60px;
-  height: 60px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  padding: 0;
-}
-
-.ql-dock-tile img {
-  width: 24px;
-  height: 24px;
-  border-radius: 5px;
-  object-fit: contain;
-}
-
-.ql-dock-tile .ql-circle-emoji {
-  font-size: 1.3rem;
-}
-
-.ql-dock-tile:hover {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(0, 255, 135, 0.55);
-  transform: translateY(-3px) scale(1.06);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 16px rgba(0, 255, 135, 0.18);
-}
-
-.ql-dock-tile.is-empty {
-  border: 1.5px dashed rgba(255, 255, 255, 0.22);
-  background: transparent;
-  box-shadow: none;
-}
-
-.ql-dock-tile.is-empty:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: translateY(-2px);
-}
-
-.ql-dock-label {
-  font-size: 0.68rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.8);
-  max-width: 72px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: center;
-}
-
-/* Edit mode for App Dock */
-.ql-dock-grid.edit-mode .ql-dock-tile:not(.is-empty) {
-  border-color: rgba(0, 255, 135, 0.35);
-  background: rgba(0, 255, 135, 0.08);
-}
-
-.ql-dock-grid.edit-mode .ql-edit-badge {
-  display: flex;
-}
-
-/* ==========================================
-   QUICK LINKS — LAYOUT STYLE SWITCHER POPOVER
-   ========================================== */
-.ql-style-popover {
-  position: absolute;
-  top: 38px;
-  right: 8px;
-  background: rgba(14, 18, 26, 0.96);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 12px;
-  padding: 6px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
-  z-index: 300;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 175px;
-  animation: qlPickerIn 0.18s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.ql-style-popover.hidden {
-  display: none;
-}
-
-.ql-style-option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 10px;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 0.74rem;
-  font-weight: 500;
-  font-family: inherit;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  text-align: left;
-  width: 100%;
-}
-
-.ql-style-option:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-}
-
-.ql-style-option.active {
-  background: rgba(0, 255, 135, 0.15);
-  border-color: rgba(0, 255, 135, 0.4);
-  color: #00ff87;
-  font-weight: 600;
-}
-
-.ql-style-option-icon {
-  font-size: 0.95rem;
-}
-
 
 /* Quick Links Glass Modal */
 .ql-modal-content {
@@ -1412,15 +998,16 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 9px;
-  padding: 3px 6px;
-  transition: border-color 0.2s ease;
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 4px 6px;
+  transition: all 0.2s ease;
 }
 
 .someday-input-row:focus-within {
-  border-color: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.25);
 }
 
 .someday-input {
@@ -1429,14 +1016,14 @@
   background: transparent;
   border: none;
   outline: none;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.85);
   font-family: inherit;
   font-size: 0.8rem;
   padding: 4px 6px;
 }
 
 .someday-input::placeholder {
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.3);
   font-size: 0.78rem;
 }
 
@@ -1444,9 +1031,9 @@
   width: 24px;
   height: 24px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.5);
   font-size: 1rem;
   line-height: 1;
   display: flex;
@@ -1458,9 +1045,9 @@
 }
 
 .someday-add-btn:hover {
-  background: rgba(46, 204, 113, 0.18);
-  border-color: rgba(46, 204, 113, 0.35);
-  color: #86efac;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .someday-add-btn:active {
@@ -1487,11 +1074,11 @@
   align-items: center;
   gap: 4px;
   padding: 3px 8px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 6px;
   font-size: 0.68rem;
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.4);
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.15s ease;
@@ -1499,16 +1086,16 @@
 }
 
 .someday-tag-chip:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.8);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.7);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
-/* Selected Tag Chip: Distinct, Soft, Highlighted */
+/* Selected Tag Chip: Subtle Soft Glow */
 .someday-tag-chip.active {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.28);
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.85);
   font-weight: 500;
 }
 
@@ -1518,11 +1105,11 @@
   justify-content: center;
   padding: 0 8px;
   height: 22px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px dashed rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
   border-radius: 6px;
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.35);
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.15s ease;
@@ -1530,55 +1117,61 @@
 }
 
 .someday-tag-chip-add:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.75);
 }
 
-/* Soft Muted Tag Colors (Only for active tag or list pills) */
+/* Muted Pastel Tag Colors for Active Chip */
 .someday-tag-chip.active.tag-emerald {
-  background: rgba(46, 204, 113, 0.14);
-  border-color: rgba(46, 204, 113, 0.32);
-  color: #86efac;
+  background: rgba(46, 204, 113, 0.07);
+  border-color: rgba(46, 204, 113, 0.22);
+  color: rgba(167, 243, 208, 0.8);
 }
 
 .someday-tag-chip.active.tag-cyan {
-  background: rgba(56, 189, 248, 0.14);
-  border-color: rgba(56, 189, 248, 0.32);
-  color: #93c5fd;
+  background: rgba(56, 189, 248, 0.07);
+  border-color: rgba(56, 189, 248, 0.22);
+  color: rgba(186, 230, 253, 0.8);
 }
 
 .someday-tag-chip.active.tag-purple {
-  background: rgba(192, 132, 252, 0.14);
-  border-color: rgba(192, 132, 252, 0.32);
-  color: #d8b4fe;
+  background: rgba(192, 132, 252, 0.07);
+  border-color: rgba(192, 132, 252, 0.22);
+  color: rgba(233, 213, 255, 0.8);
 }
 
 .someday-tag-chip.active.tag-amber {
-  background: rgba(251, 191, 36, 0.14);
-  border-color: rgba(251, 191, 36, 0.32);
-  color: #fde047;
+  background: rgba(251, 191, 36, 0.07);
+  border-color: rgba(251, 191, 36, 0.22);
+  color: rgba(254, 240, 138, 0.8);
 }
 
 .someday-tag-chip.active.tag-blue {
-  background: rgba(96, 165, 250, 0.14);
-  border-color: rgba(96, 165, 250, 0.32);
-  color: #bfdbfe;
+  background: rgba(96, 165, 250, 0.07);
+  border-color: rgba(96, 165, 250, 0.22);
+  color: rgba(191, 219, 254, 0.8);
 }
 
-/* Border Accent Colors (For Someday Items) */
-.someday-item.border-emerald { border-left-color: #2ecc71; }
-.someday-item.border-cyan { border-left-color: #38bdf8; }
-.someday-item.border-purple { border-left-color: #c084fc; }
-.someday-item.border-amber { border-left-color: #fbbf24; }
-.someday-item.border-blue { border-left-color: #60a5fa; }
+/* Subtle, Muted Border Accent Colors (Reduced contrast for dim theme) */
+.someday-item.border-emerald { border-left-color: rgba(46, 204, 113, 0.35); }
+.someday-item.border-cyan { border-left-color: rgba(56, 189, 248, 0.35); }
+.someday-item.border-purple { border-left-color: rgba(192, 132, 252, 0.35); }
+.someday-item.border-amber { border-left-color: rgba(251, 191, 36, 0.35); }
+.someday-item.border-blue { border-left-color: rgba(96, 165, 250, 0.35); }
 
-/* Text Colors (For Someday Item Tags) */
-.text-emerald { color: #86efac; }
-.text-cyan { color: #93c5fd; }
-.text-purple { color: #d8b4fe; }
-.text-amber { color: #fde047; }
-.text-blue { color: #bfdbfe; }
+.someday-item:hover.border-emerald { border-left-color: rgba(46, 204, 113, 0.6); }
+.someday-item:hover.border-cyan { border-left-color: rgba(56, 189, 248, 0.6); }
+.someday-item:hover.border-purple { border-left-color: rgba(192, 132, 252, 0.6); }
+.someday-item:hover.border-amber { border-left-color: rgba(251, 191, 36, 0.6); }
+.someday-item:hover.border-blue { border-left-color: rgba(96, 165, 250, 0.6); }
+
+/* Dimmed Text Colors for Someday Item Tags */
+.text-emerald { color: rgba(167, 243, 208, 0.5); }
+.text-cyan { color: rgba(186, 230, 253, 0.5); }
+.text-purple { color: rgba(233, 213, 255, 0.5); }
+.text-amber { color: rgba(254, 240, 138, 0.5); }
+.text-blue { color: rgba(191, 219, 254, 0.5); }
 
 
 /* List Items */
@@ -1596,7 +1189,7 @@
 }
 
 .someday-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 4px;
 }
 
@@ -1605,18 +1198,18 @@
   align-items: center;
   justify-content: space-between;
   gap: 6px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-left-width: 4px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-left-width: 3px;
   border-radius: 8px;
-  padding: 7px 8px 7px 12px;
+  padding: 7px 8px 7px 11px;
   transition: all 0.2s ease;
   text-align: left;
 }
 
 .someday-item:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .someday-item-content {
@@ -1624,25 +1217,30 @@
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
-  gap: 6px;
+  gap: 5px;
   min-width: 0;
   flex: 1;
 }
 
 .someday-item-text {
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.95);
+  color: rgba(255, 255, 255, 0.75);
   word-break: break-word;
   line-height: 1.3;
   text-align: left;
+  transition: color 0.2s ease;
+}
+
+.someday-item:hover .someday-item-text {
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .someday-item-tag-text {
   font-size: 0.55rem;
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  opacity: 0.8;
+  letter-spacing: 0.8px;
+  opacity: 0.75;
 }
 
 .someday-actions {
@@ -1650,12 +1248,12 @@
   align-items: center;
   gap: 2px;
   flex-shrink: 0;
-  opacity: 0.7;
+  opacity: 0;
   transition: opacity 0.2s ease;
 }
 
 .someday-item:hover .someday-actions {
-  opacity: 1;
+  opacity: 0.85;
 }
 
 .someday-action-btn {
