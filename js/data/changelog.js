@@ -4,6 +4,15 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.6.1",
+    date: "2026-08-27",
+    items: [
+      { type: "fix", text: "Optimized GitHub update checker interval to 15m with robust cache busting." },
+      { type: "fix", text: "Fixed script loading order to ensure version comparison functions are globally available." },
+      { type: "fix", text: "Added instant cached update indicator badge display on tab load." }
+    ]
+  },
+  {
     version: "1.6.0",
     date: "2026-08-27",
     items: [

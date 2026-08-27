@@ -4,7 +4,7 @@
 
 const UPDATER_CONFIG = {
   repoRawUrl: "https://raw.githubusercontent.com/doltonsedward/productive-tab-extension/main/manifest.json",
-  checkIntervalMs: 12 * 60 * 60 * 1000, // 12 hours
+  checkIntervalMs: 15 * 60 * 1000, // 15 minutes (fast & responsive)
   storageKeys: {
     lastCheck: "updater_lastCheck",
     remoteVersion: "updater_remoteVersion",
@@ -13,6 +13,7 @@ const UPDATER_CONFIG = {
 };
 
 function compareVersions(local, remote) {
+  if (!local || !remote) return false;
   const parse = (v) => String(v).split(".").map(Number);
   const [lParts, rParts] = [parse(local), parse(remote)];
   const len = Math.max(lParts.length, rParts.length);
@@ -27,8 +28,13 @@ function compareVersions(local, remote) {
 
 async function fetchRemoteVersion() {
   try {
-    const res = await fetch(UPDATER_CONFIG.repoRawUrl + "?t=" + Date.now(), {
+    const cacheBuster = `?t=${Date.now()}&_r=${Math.random().toString(36).substring(7)}`;
+    const res = await fetch(UPDATER_CONFIG.repoRawUrl + cacheBuster, {
       cache: "no-store",
+      headers: {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Pragma": "no-cache",
+      },
     });
     if (!res.ok) return null;
     const data = await res.json();
@@ -38,12 +44,12 @@ async function fetchRemoteVersion() {
   }
 }
 
-async function checkForUpdates() {
+async function checkForUpdates(force = false) {
   const keys = UPDATER_CONFIG.storageKeys;
   const now = Date.now();
   const lastCheck = parseInt(localStorage.getItem(keys.lastCheck) || "0", 10);
 
-  if (now - lastCheck < UPDATER_CONFIG.checkIntervalMs) {
+  if (!force && now - lastCheck < UPDATER_CONFIG.checkIntervalMs) {
     // Use cached result
     const hasUpdate = localStorage.getItem(keys.hasUpdate) === "true";
     if (hasUpdate) {
@@ -80,7 +86,7 @@ function getLocalVersion() {
   // Fallback for local web development
   const el = document.getElementById("settingsVersionText");
   if (el && el.dataset.version) return el.dataset.version;
-  return "1.1.0";
+  return "1.6.1";
 }
 
 function renderVersionText() {
@@ -118,6 +124,12 @@ function initUpdater() {
   // Render current local version on settings footer
   renderVersionText();
 
-  // Check for updates automatically in the background
-  setTimeout(checkForUpdates, 3000);
+  // Instant cached check if previous update was already detected
+  const cachedHasUpdate = localStorage.getItem(UPDATER_CONFIG.storageKeys.hasUpdate) === "true";
+  if (cachedHasUpdate) {
+    showUpdateIndicator(localStorage.getItem(UPDATER_CONFIG.storageKeys.remoteVersion));
+  }
+
+  // Check for updates in the background shortly after load
+  setTimeout(() => checkForUpdates(), 500);
 }

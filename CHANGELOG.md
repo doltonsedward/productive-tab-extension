@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.6.1] - 2026-08-27
+### Fixed
+- **Optimized GitHub Update Checker Interval**: Shortened update check frequency to 15 minutes with multi-layer cache busting for instant detection.
+- **Script Dependency Order**: Reordered script loading sequence so version comparison utilities are initialized before settings drawer.
+- **Instant Badge Rendering**: Added instant rendering of cached update indicator upon opening new tabs.
+
+---
+
 ## [1.6.0] - 2026-08-27
 ### Added
 - **🌱 Someday Box Widget**: New dedicated widget to capture ideas, backlog items, and future tasks without cluttering today's main Todo list.
