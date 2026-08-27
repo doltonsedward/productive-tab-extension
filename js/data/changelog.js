@@ -4,6 +4,20 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.8.1",
+    date: "2026-08-27",
+    items: [
+      { type: "change", text: "Moved Focus Mode toggle to bottom-right corner with Stopwatch on its left, and softened the active indicator to a very calm, dim tone." }
+    ]
+  },
+  {
+    version: "1.8.0",
+    date: "2026-08-27",
+    items: [
+      { type: "feat", text: "Global Focus Mode (Minimize All Widgets): Added a floating 👁️ button to quickly hide all active side widgets with smooth slide & blur animation, leaving pure focus on the Todo List." }
+    ]
+  },
+  {
     version: "1.7.2",
     date: "2026-08-27",
     items: [

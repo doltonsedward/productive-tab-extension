@@ -1412,3 +1412,59 @@ function closeWidgetPicker() {
   const modal = document.getElementById("widgetPickerModal");
   if (modal) modal.classList.add("hidden");
 }
+
+// ==========================================
+// FOCUS MODE / WIDGETS MINIMIZE CONTROLLER
+// ==========================================
+
+function toggleWidgetsMinimize(forceState = null, showNotification = true) {
+  const layout = document.getElementById("workspaceLayout");
+  const btn = document.getElementById("toggleFocusModeBtn");
+  if (!layout) return;
+
+  const isCurrentlyMinimized = layout.classList.contains("widgets-minimized");
+  const willMinimize = forceState !== null ? Boolean(forceState) : !isCurrentlyMinimized;
+
+  if (willMinimize) {
+    layout.classList.add("widgets-minimized");
+    if (btn) {
+      btn.classList.add("is-minimized");
+      btn.title = "Restore Widgets (Show All)";
+      btn.setAttribute("aria-label", "Restore Widgets");
+      btn.innerHTML = "👁️‍🗨️";
+    }
+    saveWidgetsMinimized(true);
+    if (showNotification) {
+      showToast("🎯 Focus Mode active · Widgets minimized", "info", 2200);
+    }
+  } else {
+    layout.classList.remove("widgets-minimized");
+    if (btn) {
+      btn.classList.remove("is-minimized");
+      btn.title = "Focus Mode: Minimize Widgets";
+      btn.setAttribute("aria-label", "Focus Mode: Minimize Widgets");
+      btn.innerHTML = "👁️";
+    }
+    saveWidgetsMinimized(false);
+    if (showNotification) {
+      showToast("🧩 Widgets restored", "success", 2200);
+    }
+  }
+}
+
+function initFocusMode() {
+  const btn = document.getElementById("toggleFocusModeBtn");
+  const isMinimized = typeof loadWidgetsMinimized === "function" ? loadWidgetsMinimized() : false;
+
+  // Apply initial saved state without toast notification
+  if (isMinimized) {
+    toggleWidgetsMinimize(true, false);
+  }
+
+  if (btn && !btn.dataset.focusInit) {
+    btn.dataset.focusInit = "true";
+    btn.addEventListener("click", () => {
+      toggleWidgetsMinimize();
+    });
+  }
+}

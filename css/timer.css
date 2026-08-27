@@ -2,7 +2,7 @@
 .global-timer-widget {
   position: fixed;
   bottom: 25px;
-  right: 25px;
+  right: 78px;
   z-index: 100;
   display: flex;
   flex-direction: column;

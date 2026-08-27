@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.8.1] - 2026-08-27
+### Changed
+- **Bottom-Right Action Dock Alignment**: Moved the Focus Mode toggle button to the furthest bottom-right corner and placed the Stopwatch/Timer FAB to its left for a clean, cohesive action dock.
+- **Subdued Focus Mode Indicator**: Softened the active Focus Mode indicator to a very calm, dim emerald tint with no pulsating glow or harsh saturation, keeping the workspace distraction-free.
+
+---
+
+## [1.8.0] - 2026-08-27
+### Added
+- **🎯 Global Focus Mode (Minimize All Widgets)**: Added a floating action button (`👁️`) in the bottom-left corner to quickly minimize and restore all active side widgets. When activated, side columns and "Add Widget" buttons slide smoothly out of view with a gentle blur and scale transition, giving a clutter-free, distractionless workspace focused entirely on the main Todo List. Minimized state persists across tabs and restarts.
+
+---
+
 ## [1.7.2] - 2026-08-27
 ### Changed
 - **Subdued Someday Box Aesthetics**: Softened all colors, borders, and tags in the Someday Box widget with lower contrast and muted pastel accents. Item action buttons now hide when idle and only appear on hover, keeping the user's primary focus squarely on the main Todo List.

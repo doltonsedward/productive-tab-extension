@@ -63,6 +63,18 @@ function saveIsHidden() {
   localStorage.setItem("isHidden", isHidden);
 }
 
+function loadWidgetsMinimized() {
+  try {
+    return localStorage.getItem("widgetsMinimized") === "true";
+  } catch {
+    return false;
+  }
+}
+
+function saveWidgetsMinimized(val) {
+  localStorage.setItem("widgetsMinimized", String(Boolean(val)));
+}
+
 // --- MILESTONE STORAGE ---
 function loadMilestone() {
   try {

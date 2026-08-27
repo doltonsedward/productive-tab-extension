@@ -41,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initialize Widgets, Calendar & Settings Drawer
   try { renderWidgets(); } catch (e) { console.error("Widgets render error:", e); }
+  try { initFocusMode(); } catch (e) { console.error("Focus mode init error:", e); }
   try { initSettingsDrawer(); } catch (e) { console.error("Drawer init error:", e); }
   try { initCalendarEvents(); } catch (e) { console.error("Calendar init error:", e); }
   try { setupObsidianExport(); } catch (e) { console.error("Obsidian export init error:", e); }
