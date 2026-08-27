@@ -54,9 +54,10 @@ async function checkForUpdates() {
   }
 
   const remoteVersion = await fetchRemoteVersion();
-  localStorage.setItem(keys.lastCheck, String(now));
-
   if (!remoteVersion) return;
+
+  // Only record lastCheck timestamp if fetch succeeded
+  localStorage.setItem(keys.lastCheck, String(now));
 
   const localVersion = getLocalVersion();
   const hasUpdate = compareVersions(localVersion, remoteVersion);
@@ -72,10 +73,23 @@ async function checkForUpdates() {
 }
 
 function getLocalVersion() {
-  // Read from the version element in settings footer if available
+  // Use Chrome extension API if available
+  if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.getManifest) {
+    return chrome.runtime.getManifest().version;
+  }
+  // Fallback for local web development
   const el = document.getElementById("settingsVersionText");
   if (el && el.dataset.version) return el.dataset.version;
-  return "1.0";
+  return "1.1.0";
+}
+
+function renderVersionText() {
+  const el = document.getElementById("settingsVersionText");
+  if (el) {
+    const version = getLocalVersion();
+    el.textContent = `Productive Tab · v${version}`;
+    el.dataset.version = version;
+  }
 }
 
 function showUpdateIndicator(remoteVersion) {
@@ -99,6 +113,9 @@ function clearUpdateIndicator() {
 }
 
 function initUpdater() {
+  // Render current local version on settings footer
+  renderVersionText();
+
   // Check for updates automatically in the background
   setTimeout(checkForUpdates, 3000);
 }
