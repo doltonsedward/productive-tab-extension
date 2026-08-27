@@ -367,7 +367,7 @@ function bindSettingsControls() {
           const ctx = canvas.getContext("2d");
           ctx.drawImage(img, 0, 0, width, height);
           const dataUrl = canvas.toDataURL("image/jpeg", 0.7);
-          
+
           document.querySelectorAll("[data-bg]").forEach(b => b.classList.remove("active"));
           appSettings.bgType = "custom";
           appSettings.bgVal = dataUrl;
@@ -485,4 +485,64 @@ function bindSettingsControls() {
       setTimeout(() => location.reload(), 2200);
     });
   }
+
+  initChangelog();
+}
+
+function initChangelog() {
+  const openBtn = document.getElementById("openChangelogBtn");
+  const modal = document.getElementById("changelogModal");
+  const closeBtn = document.getElementById("closeChangelogBtn");
+  const listEl = document.getElementById("changelogList");
+  const currentVerEl = document.getElementById("changelogCurrentVersion");
+
+  if (!modal || !openBtn) return;
+
+  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.4.0";
+  if (currentVerEl) currentVerEl.textContent = `v${currentVersion}`;
+
+  const renderChangelog = () => {
+    if (!listEl) return;
+    const entries = (typeof CHANGELOG_DATA !== "undefined" && Array.isArray(CHANGELOG_DATA)) ? CHANGELOG_DATA : [];
+    if (entries.length === 0) {
+      listEl.innerHTML = '<div style="color: rgba(255,255,255,0.4); text-align:center; padding: 20px;">No changelog records found.</div>';
+      return;
+    }
+
+    listEl.innerHTML = entries.map(ver => {
+      const isCurrent = ver.version === currentVersion;
+      const itemsHtml = (ver.items || []).map(item => `
+        <li class="changelog-item">
+          <span class="changelog-pill ${escapeHtml(item.type || 'feat')}">${escapeHtml(item.type || 'feat')}</span>
+          <span>${escapeHtml(item.text)}</span>
+        </li>
+      `).join("");
+
+      return `
+        <div class="changelog-version-card ${isCurrent ? 'is-current' : ''}">
+          <div class="changelog-version-title-row">
+            <span class="changelog-ver-num">v${escapeHtml(ver.version)} ${isCurrent ? '<span class="changelog-latest-tag" style="margin-left:6px;">Current</span>' : ''}</span>
+            <span class="changelog-ver-date">${escapeHtml(ver.date)}</span>
+          </div>
+          <ul class="changelog-items-list">
+            ${itemsHtml}
+          </ul>
+        </div>
+      `;
+    }).join("");
+  };
+
+  openBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    renderChangelog();
+    modal.classList.remove("hidden");
+  });
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
+  }
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) modal.classList.add("hidden");
+  });
 }

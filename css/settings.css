@@ -531,6 +531,9 @@
   padding: 14px 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .settings-version {
@@ -538,6 +541,23 @@
   color: rgba(255, 255, 255, 0.2);
   font-weight: 400;
   letter-spacing: 0.5px;
+}
+
+.settings-changelog-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.68rem;
+  padding: 3px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.settings-changelog-btn:hover {
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 /* UPDATE INDICATOR DOT ON FAB */
@@ -746,6 +766,170 @@
   font-weight: 600;
   padding: 9px 18px;
   border-radius: 8px;
+}
+
+/* ==========================================
+   WHAT'S NEW / CHANGELOG MODAL
+   ========================================== */
+.glass-modal-content.changelog-modal {
+  max-width: 480px;
+  width: 92%;
+  max-height: 82vh;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  padding: 22px 24px;
+}
+
+.changelog-modal-header {
+  flex-shrink: 0;
+  margin-bottom: 8px;
+}
+
+.changelog-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.changelog-latest-tag {
+  font-size: 0.65rem;
+  background: rgba(0, 255, 135, 0.15);
+  color: #00ff87;
+  border: 1px solid rgba(0, 255, 135, 0.3);
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.changelog-subtitle {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+}
+
+.changelog-list {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 6px;
+  margin: 10px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 380px;
+}
+
+.changelog-list::-webkit-scrollbar {
+  width: 5px;
+}
+.changelog-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+}
+.changelog-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.changelog-version-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  padding: 12px 14px;
+  transition: all 0.2s ease;
+}
+
+.changelog-version-card.is-current {
+  border-color: rgba(0, 255, 135, 0.25);
+  background: rgba(0, 255, 135, 0.04);
+}
+
+.changelog-version-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.changelog-ver-num {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: white;
+}
+
+.changelog-ver-date {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.changelog-items-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.changelog-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.35;
+}
+
+.changelog-pill {
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  letter-spacing: 0.3px;
+  margin-top: 1px;
+}
+
+.changelog-pill.feat {
+  background: rgba(0, 255, 135, 0.15);
+  color: #00ff87;
+  border: 1px solid rgba(0, 255, 135, 0.3);
+}
+
+.changelog-pill.fix {
+  background: rgba(255, 170, 0, 0.15);
+  color: #ffaa00;
+  border: 1px solid rgba(255, 170, 0, 0.3);
+}
+
+.changelog-pill.refactor {
+  background: rgba(80, 160, 255, 0.15);
+  color: #70b0ff;
+  border: 1px solid rgba(80, 160, 255, 0.3);
+}
+
+.changelog-modal-footer {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.changelog-github-link {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+}
+
+.changelog-github-link:hover {
+  color: white;
+  text-decoration: underline;
 }
 
 
