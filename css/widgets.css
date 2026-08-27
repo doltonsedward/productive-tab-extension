@@ -356,10 +356,10 @@
 }
 
 /* ==========================================
-   QUICK LINKS WIDGET
+   QUICK LINKS WIDGET — CYLINDRICAL TUBE DOCK
    ========================================== */
 
-/* Large widget card — occupies full column height to match todo list */
+/* Large widget card — full column height, overflow visible for tooltip */
 .widget-card.widget-card-large {
   flex: 1 1 auto;
   display: flex;
@@ -367,50 +367,67 @@
   overflow: visible;
 }
 
-/* 2x2 grid container */
-.ql-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 16px;
+/* Centers the tube in the 250px column */
+.ql-tube-container {
   flex: 1;
-  padding: 8px 0 10px;
+  display: flex;
   align-items: center;
-  justify-items: center;
+  justify-content: center;
+  padding: 6px 0 12px;
 }
 
-/* Individual circle wrapper — handles tooltip positioning */
-.ql-slot {
+/* The cylindrical pill dock — sized for 5 slots */
+.ql-tube {
+  width: 114px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 13px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 999px;
+  padding: 24px 16px;
+  box-shadow:
+    0 8px 36px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.11),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12);
+  position: relative;
+  overflow: visible;
+  transition: border-color 0.28s ease, box-shadow 0.28s ease;
+}
+
+/* Individual slot wrapper — tooltip context */
+.ql-tube-slot {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 90px;
-  height: 90px;
+  flex-shrink: 0;
 }
 
-/* The glass circle button */
+/* The glass circle */
 .ql-circle {
-  width: 84px;
-  height: 84px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.07);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    0 2px 14px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition:
-    background 0.22s ease,
-    border-color 0.22s ease,
-    box-shadow 0.22s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
     transform 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  position: relative;
   overflow: visible;
   font-size: 0;
   padding: 0;
@@ -419,56 +436,56 @@
   appearance: none;
 }
 
-/* Favicon / emoji icon inside the circle */
+/* Favicon img */
 .ql-circle-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
   object-fit: contain;
   display: block;
   pointer-events: none;
   transition: transform 0.18s ease;
 }
 
-/* Emoji fallback */
+/* Emoji icon */
 .ql-circle-emoji {
-  font-size: 1.7rem;
+  font-size: 1.1rem;
   line-height: 1;
   pointer-events: none;
   transition: transform 0.18s ease;
 }
 
-/* Hover state — filled circle */
+/* Has-link hover — neon green glow */
 .ql-circle.has-link:hover {
-  background: rgba(255, 255, 255, 0.13);
-  border-color: rgba(0, 255, 135, 0.5);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(0, 255, 135, 0.55);
   box-shadow:
-    0 0 0 2px rgba(0, 255, 135, 0.15),
-    0 6px 24px rgba(0, 0, 0, 0.3),
-    0 0 16px rgba(0, 255, 135, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  transform: scale(1.06);
+    0 0 0 2px rgba(0, 255, 135, 0.13),
+    0 4px 18px rgba(0, 0, 0, 0.26),
+    0 0 18px rgba(0, 255, 135, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  transform: scale(1.14);
 }
 
 .ql-circle.has-link:hover .ql-circle-icon,
 .ql-circle.has-link:hover .ql-circle-emoji {
-  transform: scale(1.08);
+  transform: scale(1.1);
 }
 
 .ql-circle.has-link:active {
-  transform: scale(0.96);
+  transform: scale(0.92);
 }
 
-/* Tooltip label — floats above circle on hover */
+/* Tooltip — slides RIGHT from circle (left column) */
 .ql-tooltip {
   position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%) translateY(4px);
-  background: rgba(10, 15, 20, 0.9);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  left: calc(100% + 14px);
+  top: 50%;
+  transform: translateY(-50%) translateX(-6px);
+  background: rgba(10, 15, 22, 0.93);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 8px;
   padding: 5px 10px;
   font-size: 0.72rem;
@@ -478,28 +495,48 @@
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.18s ease, transform 0.18s ease;
-  z-index: 100;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  z-index: 200;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
 }
 
-/* Tooltip arrow */
-.ql-tooltip::after {
+/* Arrow pointing left (from tooltip back to circle) */
+.ql-tooltip::before {
   content: '';
   position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
   border: 5px solid transparent;
-  border-top-color: rgba(255, 255, 255, 0.15);
+  border-right-color: rgba(255, 255, 255, 0.14);
 }
 
-.ql-slot:hover .ql-tooltip {
+.ql-tube-slot:hover .ql-tooltip {
   opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(-50%) translateX(0);
 }
 
-/* Empty slot — dashed circle with + */
+/* Right column: tooltip slides LEFT instead */
+.widget-column-right .ql-tube-slot .ql-tooltip {
+  left: auto;
+  right: calc(100% + 14px);
+  transform: translateY(-50%) translateX(6px);
+}
+
+.widget-column-right .ql-tube-slot .ql-tooltip::before {
+  right: auto;
+  left: 100%;
+  border-right-color: transparent;
+  border-left-color: rgba(255, 255, 255, 0.14);
+}
+
+.widget-column-right .ql-tube-slot:hover .ql-tooltip {
+  transform: translateY(-50%) translateX(0);
+}
+
+/* Empty slot — smaller dashed circle */
 .ql-circle.is-empty {
+  width: 44px;
+  height: 44px;
   background: transparent;
   border: 1.5px dashed rgba(255, 255, 255, 0.2);
   box-shadow: none;
@@ -509,24 +546,23 @@
 .ql-circle.is-empty:hover {
   background: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.45);
-  transform: scale(1.05);
-  box-shadow: 0 0 16px rgba(255, 255, 255, 0.06);
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
 }
 
 .ql-empty-icon {
-  font-size: 1.5rem;
-  color: rgba(255, 255, 255, 0.3);
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.28);
   font-weight: 300;
   line-height: 1;
-  transition: color 0.18s ease, transform 0.18s ease;
+  transition: color 0.18s ease;
 }
 
 .ql-circle.is-empty:hover .ql-empty-icon {
-  color: rgba(255, 255, 255, 0.75);
-  transform: scale(1.1);
+  color: rgba(255, 255, 255, 0.65);
 }
 
-/* Edit mode — header pencil btn */
+/* Edit toggle btn in widget header */
 .ql-edit-toggle-btn {
   border: none;
   background: none;
@@ -549,38 +585,43 @@
   background: rgba(0, 255, 135, 0.15);
 }
 
-/* Edit mode — circle styling and badges */
-.ql-grid.edit-mode .ql-circle.has-link {
-  border-color: rgba(0, 255, 135, 0.4);
-  background: rgba(0, 255, 135, 0.08);
+/* Edit mode — tube glows green */
+.ql-tube.edit-mode {
+  border-color: rgba(0, 255, 135, 0.28);
+  box-shadow:
+    0 8px 36px rgba(0, 0, 0, 0.32),
+    0 0 28px rgba(0, 255, 135, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.11);
 }
 
-.ql-grid.edit-mode .ql-circle.is-empty {
-  border-color: rgba(255, 255, 255, 0.35);
+/* Edit mode — filled circles get green tint */
+.ql-tube.edit-mode .ql-circle.has-link {
+  border-color: rgba(0, 255, 135, 0.3);
+  background: rgba(0, 255, 135, 0.07);
 }
 
+/* Delete badge — top-right of circle, only visible in edit mode */
 .ql-edit-badge {
   position: absolute;
-  top: -2px;
-  right: -2px;
+  top: -3px;
+  right: -3px;
   display: none;
-  gap: 3px;
   z-index: 10;
 }
 
-.ql-grid.edit-mode .ql-edit-badge {
+.ql-tube.edit-mode .ql-edit-badge {
   display: flex;
 }
 
 .ql-edit-badge-btn {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: rgba(15, 20, 30, 0.95);
+  border: 1px solid rgba(255, 80, 80, 0.55);
+  background: rgba(15, 20, 30, 0.96);
   backdrop-filter: blur(8px);
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 0.65rem;
+  color: rgba(255, 110, 110, 0.9);
+  font-size: 0.55rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -588,26 +629,17 @@
   transition: all 0.15s ease;
   padding: 0;
   line-height: 1;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.38);
 }
 
 .ql-edit-badge-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  transform: scale(1.12);
-}
-
-.ql-edit-badge-btn.del {
-  border-color: rgba(255, 80, 80, 0.5);
-}
-
-.ql-edit-badge-btn.del:hover {
   background: rgba(255, 80, 80, 0.3);
-  border-color: rgba(255, 80, 80, 0.8);
-  color: rgb(255, 130, 130);
+  border-color: rgba(255, 80, 80, 0.88);
+  color: rgb(255, 140, 140);
+  transform: scale(1.18);
 }
 
-/* Quick Links Modal Content */
+/* Quick Links Glass Modal */
 .ql-modal-content {
   max-width: 380px !important;
   text-align: left;

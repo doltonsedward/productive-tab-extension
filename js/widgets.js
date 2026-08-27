@@ -199,14 +199,15 @@ const WIDGET_REGISTRY = {
     id: "quicklinks",
     name: "Quick Links",
     icon: "🔗",
-    desc: "4 shortcut circles to your fav pages",
+    desc: "5 shortcut circles in a sleek tube dock",
     large: true, // occupies full column — prevents other widgets alongside
 
     _storageKey: "quickLinksData",
+    _slotCount: 5,
     _modalInitialized: false,
 
     _defaultLinks() {
-      return [null, null, null, null];
+      return Array(this._slotCount).fill(null);
     },
 
     _load() {
@@ -214,7 +215,11 @@ const WIDGET_REGISTRY = {
         const raw = localStorage.getItem(this._storageKey);
         if (raw) {
           const data = JSON.parse(raw);
-          if (Array.isArray(data) && data.length === 4) return data;
+          if (Array.isArray(data)) {
+            // Pad or trim to current slot count (migration-safe)
+            while (data.length < this._slotCount) data.push(null);
+            return data.slice(0, this._slotCount);
+          }
         }
       } catch (e) {}
       return this._defaultLinks();
@@ -237,29 +242,29 @@ const WIDGET_REGISTRY = {
       const modal = document.getElementById("quickLinksModal");
       if (!modal) return;
 
-      const titleEl = document.getElementById("qlModalTitle");
-      const nameInput = document.getElementById("qlInputName");
-      const urlInput = document.getElementById("qlInputUrl");
+      const titleEl  = document.getElementById("qlModalTitle");
+      const nameInput  = document.getElementById("qlInputName");
+      const urlInput   = document.getElementById("qlInputUrl");
       const emojiInput = document.getElementById("qlInputEmoji");
       const emojiPreview = document.getElementById("qlModalEmojiPreview");
-      const deleteBtn = document.getElementById("qlDeleteBtn");
+      const deleteBtn  = document.getElementById("qlDeleteBtn");
 
       modal.dataset.slotIdx = idx;
 
       if (existingData && existingData.url) {
-        if (titleEl) titleEl.textContent = `Edit Shortcut (Slot ${idx + 1})`;
-        if (nameInput) nameInput.value = existingData.name || "";
-        if (urlInput) urlInput.value = existingData.url || "";
-        if (emojiInput) emojiInput.value = existingData.emoji || "";
-        if (emojiPreview) emojiPreview.textContent = existingData.emoji || "🌐";
-        if (deleteBtn) deleteBtn.classList.remove("hidden");
+        if (titleEl)      titleEl.textContent      = `Edit Shortcut (Slot ${idx + 1})`;
+        if (nameInput)    nameInput.value           = existingData.name  || "";
+        if (urlInput)     urlInput.value            = existingData.url   || "";
+        if (emojiInput)   emojiInput.value          = existingData.emoji || "";
+        if (emojiPreview) emojiPreview.textContent  = existingData.emoji || "🌐";
+        if (deleteBtn)    deleteBtn.classList.remove("hidden");
       } else {
-        if (titleEl) titleEl.textContent = `Add Shortcut (Slot ${idx + 1})`;
-        if (nameInput) nameInput.value = "";
-        if (urlInput) urlInput.value = "";
-        if (emojiInput) emojiInput.value = "";
-        if (emojiPreview) emojiPreview.textContent = "🌐";
-        if (deleteBtn) deleteBtn.classList.add("hidden");
+        if (titleEl)      titleEl.textContent      = `Add Shortcut (Slot ${idx + 1})`;
+        if (nameInput)    nameInput.value           = "";
+        if (urlInput)     urlInput.value            = "";
+        if (emojiInput)   emojiInput.value          = "";
+        if (emojiPreview) emojiPreview.textContent  = "🌐";
+        if (deleteBtn)    deleteBtn.classList.add("hidden");
       }
 
       this._initModalListeners();
@@ -280,14 +285,14 @@ const WIDGET_REGISTRY = {
       if (this._modalInitialized) return;
       this._modalInitialized = true;
 
-      const modal = document.getElementById("quickLinksModal");
-      const nameInput = document.getElementById("qlInputName");
-      const urlInput = document.getElementById("qlInputUrl");
+      const modal      = document.getElementById("quickLinksModal");
+      const nameInput  = document.getElementById("qlInputName");
+      const urlInput   = document.getElementById("qlInputUrl");
       const emojiInput = document.getElementById("qlInputEmoji");
       const emojiPreview = document.getElementById("qlModalEmojiPreview");
-      const saveBtn = document.getElementById("qlSaveBtn");
-      const deleteBtn = document.getElementById("qlDeleteBtn");
-      const cancelBtn = document.getElementById("qlCancelBtn");
+      const saveBtn    = document.getElementById("qlSaveBtn");
+      const deleteBtn  = document.getElementById("qlDeleteBtn");
+      const cancelBtn  = document.getElementById("qlCancelBtn");
 
       if (emojiInput && emojiPreview) {
         emojiInput.addEventListener("input", () => {
@@ -324,13 +329,13 @@ const WIDGET_REGISTRY = {
         const links = this._load();
         links[idx] = { name, url: fullUrl, emoji };
         this._save(links);
-
         this.closeModal();
         this._rerender();
         showToast("🔗 Shortcut saved!", "success", 2000);
       };
 
-      if (saveBtn) saveBtn.addEventListener("click", handleSave);
+      if (saveBtn)   saveBtn.addEventListener("click", handleSave);
+      if (cancelBtn) cancelBtn.addEventListener("click", () => this.closeModal());
 
       if (deleteBtn) {
         deleteBtn.addEventListener("click", () => {
@@ -345,8 +350,6 @@ const WIDGET_REGISTRY = {
         });
       }
 
-      if (cancelBtn) cancelBtn.addEventListener("click", () => this.closeModal());
-
       if (modal) {
         modal.addEventListener("click", (e) => {
           if (e.target === modal) this.closeModal();
@@ -356,12 +359,8 @@ const WIDGET_REGISTRY = {
       [nameInput, urlInput, emojiInput].forEach(inp => {
         if (inp) {
           inp.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              handleSave();
-            } else if (e.key === "Escape") {
-              this.closeModal();
-            }
+            if (e.key === "Enter") { e.preventDefault(); handleSave(); }
+            else if (e.key === "Escape") this.closeModal();
           });
         }
       });
@@ -369,18 +368,17 @@ const WIDGET_REGISTRY = {
 
     _renderSlot(idx, linkData) {
       const slotEl = document.createElement("div");
-      slotEl.className = "ql-slot";
+      slotEl.className = "ql-tube-slot";
       slotEl.dataset.idx = idx;
 
       const hasLink = linkData && linkData.url;
 
-      // Circle button
       const circle = document.createElement("button");
       circle.className = `ql-circle ${hasLink ? "has-link" : "is-empty"}`;
       circle.type = "button";
 
       if (hasLink) {
-        // Icon — emoji override or favicon
+        // Icon — emoji override or auto favicon
         if (linkData.emoji) {
           const emojiEl = document.createElement("span");
           emojiEl.className = "ql-circle-emoji";
@@ -409,43 +407,28 @@ const WIDGET_REGISTRY = {
           }
         }
 
-        // Tooltip
+        // Side tooltip
         const tooltip = document.createElement("span");
         tooltip.className = "ql-tooltip";
         try {
           tooltip.textContent = linkData.name || new URL(linkData.url).hostname;
-        } catch(e) {
+        } catch (e) {
           tooltip.textContent = linkData.name || linkData.url;
         }
         slotEl.appendChild(tooltip);
 
-        // Edit badge (shown in edit mode)
+        // Delete badge (✕ shown in edit mode)
         const badge = document.createElement("div");
         badge.className = "ql-edit-badge";
-        
-        const editBtn = document.createElement("button");
-        editBtn.className = "ql-edit-badge-btn";
-        editBtn.type = "button";
-        editBtn.title = "Edit shortcut";
-        editBtn.textContent = "✎";
-        badge.appendChild(editBtn);
-
         const delBtn = document.createElement("button");
-        delBtn.className = "ql-edit-badge-btn del";
+        delBtn.className = "ql-edit-badge-btn";
         delBtn.type = "button";
         delBtn.title = "Remove shortcut";
         delBtn.textContent = "✕";
         badge.appendChild(delBtn);
-
         slotEl.appendChild(badge);
 
-        // Wire: edit btn -> open modal
-        editBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          WIDGET_REGISTRY.quicklinks.openModal(idx, linkData);
-        });
-
-        // Wire: del btn -> remove link
+        // Delete badge click
         delBtn.addEventListener("click", (e) => {
           e.stopPropagation();
           const links = WIDGET_REGISTRY.quicklinks._load();
@@ -455,11 +438,11 @@ const WIDGET_REGISTRY = {
           showToast("Shortcut removed.", "info", 2000);
         });
 
-        // Wire: circle click -> open URL (or open modal if in edit mode)
+        // Circle click: open URL normally; open modal in edit mode
         circle.addEventListener("click", (e) => {
           e.stopPropagation();
-          const grid = slotEl.closest(".ql-grid");
-          if (grid && grid.classList.contains("edit-mode")) {
+          const tube = slotEl.closest(".ql-tube");
+          if (tube && tube.classList.contains("edit-mode")) {
             WIDGET_REGISTRY.quicklinks.openModal(idx, linkData);
             return;
           }
@@ -467,13 +450,12 @@ const WIDGET_REGISTRY = {
         });
 
       } else {
-        // Empty slot — show + icon
+        // Empty slot — + icon
         const plusIcon = document.createElement("span");
         plusIcon.className = "ql-empty-icon";
         plusIcon.textContent = "+";
         circle.appendChild(plusIcon);
 
-        // Wire: circle click -> open modal for new shortcut
         circle.addEventListener("click", (e) => {
           e.stopPropagation();
           WIDGET_REGISTRY.quicklinks.openModal(idx, null);
@@ -490,7 +472,7 @@ const WIDGET_REGISTRY = {
       this._rerenderTimeout = setTimeout(() => {
         const existing = document.querySelector('.widget-card[data-widget-id="quicklinks"]');
         if (!existing) return;
-        const side = existing.dataset.side;
+        const side  = existing.dataset.side;
         const index = parseInt(existing.dataset.index, 10);
         const fresh = renderCardForSlot("quicklinks", side, index);
         if (fresh) {
@@ -502,7 +484,7 @@ const WIDGET_REGISTRY = {
 
     render() {
       const links = this._load();
-      const card = document.createElement("div");
+      const card  = document.createElement("div");
       card.className = "widget-card widget-card-large";
       card.dataset.widgetId = "quicklinks";
 
@@ -511,52 +493,55 @@ const WIDGET_REGISTRY = {
       header.className = "widget-header";
       card.appendChild(header);
 
-      // 2x2 grid
-      const grid = document.createElement("div");
-      grid.className = "ql-grid";
-      grid.id = "qlGrid";
+      // Outer container (flex center)
+      const container = document.createElement("div");
+      container.className = "ql-tube-container";
+
+      // The pill tube
+      const tube = document.createElement("div");
+      tube.className = "ql-tube";
+      tube.id = "qlTube";
 
       links.forEach((linkData, i) => {
-        grid.appendChild(this._renderSlot(i, linkData));
+        tube.appendChild(this._renderSlot(i, linkData));
       });
 
-      card.appendChild(grid);
+      container.appendChild(tube);
+      card.appendChild(container);
       return card;
     },
 
     afterRender() {
-      const grid = document.getElementById("qlGrid");
-      if (!grid) return;
+      const tube = document.getElementById("qlTube");
+      if (!tube) return;
 
-      const card = grid.closest(".widget-card");
+      const card = tube.closest(".widget-card");
       if (!card) return;
 
-      // Inject edit-toggle btn into widget-card-actions
+      // Inject ✎ edit-toggle button into widget-card-actions
       const actionsEl = card.querySelector(".widget-card-actions");
       if (actionsEl && !actionsEl.querySelector(".ql-edit-toggle-btn")) {
         const editToggle = document.createElement("button");
         editToggle.className = "ql-edit-toggle-btn widget-action-btn";
-        editToggle.type = "button";
+        editToggle.type  = "button";
         editToggle.title = "Edit shortcuts";
         editToggle.textContent = "✎";
 
         editToggle.addEventListener("click", (e) => {
           e.stopPropagation();
-          grid.classList.toggle("edit-mode");
-          editToggle.classList.toggle("active", grid.classList.contains("edit-mode"));
+          tube.classList.toggle("edit-mode");
+          editToggle.classList.toggle("active", tube.classList.contains("edit-mode"));
         });
 
         const removeBtn = actionsEl.querySelector(".widget-remove-btn");
-        if (removeBtn) {
-          actionsEl.insertBefore(editToggle, removeBtn);
-        } else {
-          actionsEl.appendChild(editToggle);
-        }
+        if (removeBtn) actionsEl.insertBefore(editToggle, removeBtn);
+        else actionsEl.appendChild(editToggle);
       }
     }
   },
 
   timer: {
+
     id: "timer",
     name: "Timer Panel",
     icon: "⏱️",
@@ -754,9 +739,20 @@ function setupWidgetDragAndDrop(card, side, index, widgetId) {
     if (srcSide === side && srcIndex === index) return;
 
     const targetWidgetId = appSettings.widgetSlots[side][index];
+    const isSrcLarge = !!WIDGET_REGISTRY[srcWidgetId]?.large;
+    const isTargetLarge = !!WIDGET_REGISTRY[targetWidgetId]?.large;
 
-    appSettings.widgetSlots[srcSide][srcIndex] = targetWidgetId;
-    appSettings.widgetSlots[side][index] = srcWidgetId;
+    if (isSrcLarge || isTargetLarge) {
+      // Large widget involved across columns -> swap the full columns
+      if (srcSide !== side) {
+        const tempSrc = [...appSettings.widgetSlots[srcSide]];
+        appSettings.widgetSlots[srcSide] = [...appSettings.widgetSlots[side]];
+        appSettings.widgetSlots[side] = tempSrc;
+      }
+    } else {
+      appSettings.widgetSlots[srcSide][srcIndex] = targetWidgetId;
+      appSettings.widgetSlots[side][index] = srcWidgetId;
+    }
 
     saveSettings();
     renderWidgets();
@@ -795,14 +791,32 @@ function setupColumnDropTarget(columnEl, side) {
 
     if (srcSide === side) return;
 
+    const srcArray = appSettings.widgetSlots[srcSide];
     const targetArray = appSettings.widgetSlots[side];
-    if (targetArray.length >= MAX_WIDGETS_PER_SIDE) {
+    const isSrcLarge = !!WIDGET_REGISTRY[srcWidgetId]?.large;
+    const hasLargeInTarget = targetArray.some(id => WIDGET_REGISTRY[id]?.large);
+
+    // If source is large and target has any widgets -> swap entire columns
+    if (isSrcLarge && targetArray.length > 0) {
+      const tempTarget = [...targetArray];
+      appSettings.widgetSlots[side] = [srcWidgetId];
+      srcArray.splice(srcIndex, 1);
+      appSettings.widgetSlots[srcSide] = tempTarget;
+    }
+    // If target has a large widget -> swap entire columns
+    else if (hasLargeInTarget) {
+      const tempSrc = [...srcArray];
+      appSettings.widgetSlots[srcSide] = [...targetArray];
+      appSettings.widgetSlots[side] = tempSrc;
+    }
+    // Standard normal widget logic
+    else if (targetArray.length >= MAX_WIDGETS_PER_SIDE) {
       showToast(`⚠️ ${side === 'left' ? 'Left' : 'Right'} side is full (max 2 widgets).`, "warning", 2500);
       return;
+    } else {
+      srcArray.splice(srcIndex, 1);
+      targetArray.push(srcWidgetId);
     }
-
-    appSettings.widgetSlots[srcSide].splice(srcIndex, 1);
-    targetArray.push(srcWidgetId);
 
     saveSettings();
     renderWidgets();
@@ -815,8 +829,24 @@ function moveWidgetToOtherSide(currentSide, index) {
   const targetArray = appSettings.widgetSlots[otherSide];
 
   const widgetId = srcArray[index];
+  const isSrcLarge = !!WIDGET_REGISTRY[widgetId]?.large;
+  const hasLargeInTarget = targetArray.some(id => WIDGET_REGISTRY[id]?.large);
 
-  if (targetArray.length >= MAX_WIDGETS_PER_SIDE) {
+  // If source is large and target has any widgets -> swap entire columns
+  if (isSrcLarge && targetArray.length > 0) {
+    const tempTarget = [...targetArray];
+    appSettings.widgetSlots[otherSide] = [widgetId];
+    srcArray.splice(index, 1);
+    appSettings.widgetSlots[currentSide] = tempTarget;
+  }
+  // If target has a large widget -> swap entire columns
+  else if (hasLargeInTarget) {
+    const tempSrc = [...srcArray];
+    appSettings.widgetSlots[currentSide] = [...targetArray];
+    appSettings.widgetSlots[otherSide] = tempSrc;
+  }
+  // Standard normal widget logic
+  else if (targetArray.length >= MAX_WIDGETS_PER_SIDE) {
     const swappedId = targetArray[0];
     targetArray[0] = widgetId;
     srcArray[index] = swappedId;
