@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.5.1] - 2026-08-27
+### Added
+- Synchronized unread changelog dot indicator with the main Settings floating action button (⚙️), alerting users to newly published updates.
+
+---
+
 ## [1.5.0] - 2026-08-27
 ### Added
 - Unread update glowing dot indicator on the "What's New" button in Settings drawer footer that automatically clears once viewed.

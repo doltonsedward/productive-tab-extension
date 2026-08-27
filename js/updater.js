@@ -106,7 +106,9 @@ function showUpdateIndicator(remoteVersion) {
 
 function clearUpdateIndicator() {
   const fab = document.getElementById("toggleSettingsBtn");
-  if (fab) fab.classList.remove("has-update");
+  const openChangelogBtn = document.getElementById("openChangelogBtn");
+  const hasUnreadChangelog = openChangelogBtn && openChangelogBtn.classList.contains("has-unread-dot");
+  if (fab && !hasUnreadChangelog) fab.classList.remove("has-update");
 
   const banner = document.getElementById("updateBanner");
   if (banner) banner.classList.add("hidden");

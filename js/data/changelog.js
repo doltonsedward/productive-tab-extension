@@ -4,6 +4,13 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.5.1",
+    date: "2026-08-27",
+    items: [
+      { type: "feat", text: "Synchronized unread update indicator dot with main Settings FAB button." }
+    ]
+  },
+  {
     version: "1.5.0",
     date: "2026-08-27",
     items: [

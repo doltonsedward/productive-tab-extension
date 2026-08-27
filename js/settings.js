@@ -498,19 +498,31 @@ function initChangelog() {
 
   if (!modal || !openBtn) return;
 
-  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.5.0";
+  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.5.1";
   if (currentVerEl) currentVerEl.textContent = `v${currentVersion}`;
 
-  // Check and display unread update indicator dot
+  // Check and display unread update indicator dot on button & settings FAB
   const checkUnreadChangelog = () => {
     const lastViewed = localStorage.getItem(STORAGE_KEY);
     const hasUnread = !lastViewed || (typeof compareVersions === "function" ? compareVersions(lastViewed, currentVersion) : lastViewed !== currentVersion);
     openBtn.classList.toggle("has-unread-dot", hasUnread);
+
+    const fab = document.getElementById("toggleSettingsBtn");
+    if (fab && hasUnread) {
+      fab.classList.add("has-update");
+    }
   };
 
   const markChangelogAsRead = () => {
     localStorage.setItem(STORAGE_KEY, currentVersion);
     openBtn.classList.remove("has-unread-dot");
+
+    // Clear settings FAB dot unless remote github update is pending
+    const fab = document.getElementById("toggleSettingsBtn");
+    const hasRemoteUpdate = localStorage.getItem("updater_hasUpdate") === "true";
+    if (fab && !hasRemoteUpdate) {
+      fab.classList.remove("has-update");
+    }
   };
 
   checkUnreadChangelog();
