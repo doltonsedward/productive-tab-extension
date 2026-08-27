@@ -7,7 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.6.6] - 2026-08-27
+### Changed
+- **Expanded Widget Column Width**: Increased widget column width from `250px` to `290px` to give widgets like the Someday Box, Quick Links, and Notes more breathing room and prevent text from wrapping prematurely.
+
+---
+
+## [1.6.5] - 2026-08-27
+### Fixed
+- **🌱 Someday Box Typography Tweak**: Adjusted the tag text spacing and font size inside the list items to prevent it from feeling cramped against the task name. The tag is now slightly smaller and bolder for a sleeker dashboard look.
+
+---
+
+## [1.6.4] - 2026-08-27
+### Changed
+- **🌱 Someday Box List Redesign**: Updated Someday Box list items to a modern "dashboard" style (Option 3). Ideas now feature an elegant color-accented left border based on their tag category, and tag pills have been simplified to clean, uppercase ghost text for a sleeker, lightweight look.
+
+---
+
+## [1.6.3] - 2026-08-27
+### Fixed
+- **🌱 Someday Box Alignment Fix**: Fixed an issue where list item text and tags were awkwardly centered instead of cleanly left-aligned.
+- **Removed Active Tag List Dot**: Removed the unnecessary `●` active indicator symbol inside tag chips for a cleaner layout, relying on soft filled backgrounds and bold text instead.
+
+---
+
+## [1.6.2] - 2026-08-27
+### Changed
+- **🌱 Someday Box Visual Polish**: Softened tag colors into gentle, muted pastel tones and removed harsh neon borders/shadows.
+- **Clear Active Tag Indicator**: Unselected tags are now dim and translucent by default; the active tag is clearly distinguished with a filled highlight and active indicator dot (`●`).
+- **Subtle Counter Badge & Input**: Refined input container border and count badge for a calm, distraction-free aesthetic.
+
+---
+
 ## [1.6.1] - 2026-08-27
+### Changed
+- **🌱 Someday Box Redesign (Option A: Sleek Quick-Capture Feed)**: Replaced cramped inline dropdown with a full-width input row and horizontal scrolling tag chip selector bar.
+- **Color-Coded Tag Badges**: Added distinctive visual neon accents for tags (`Idea`, `Learn`, `Next Week`, `Project`, `Someday`).
 ### Fixed
 - **Optimized GitHub Update Checker Interval**: Shortened update check frequency to 15 minutes with multi-layer cache busting for instant detection.
 - **Script Dependency Order**: Reordered script loading sequence so version comparison utilities are initialized before settings drawer.

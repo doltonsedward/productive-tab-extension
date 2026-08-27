@@ -749,6 +749,15 @@ const WIDGET_REGISTRY = {
       localStorage.setItem(this._tagsKey, JSON.stringify(tags));
     },
 
+    _getTagColorClass(tag = "") {
+      const lower = tag.toLowerCase();
+      if (lower.includes("idea") || lower.includes("💡")) return "tag-cyan";
+      if (lower.includes("learn") || lower.includes("📚")) return "tag-purple";
+      if (lower.includes("next") || lower.includes("week") || lower.includes("📅")) return "tag-amber";
+      if (lower.includes("project") || lower.includes("🎯")) return "tag-blue";
+      return "tag-emerald";
+    },
+
     _renderListHtml() {
       const tasks = this._loadTasks();
       const filtered = this._activeFilter === "ALL"
@@ -766,40 +775,40 @@ const WIDGET_REGISTRY = {
 
       return filtered.map(t => {
         const tagText = t.tag || "🌱 Someday";
+        const colorClass = this._getTagColorClass(tagText); // e.g. "tag-cyan"
+        const borderClass = colorClass.replace('tag-', 'border-');
+        const textClass = colorClass.replace('tag-', 'text-');
+        
         return `
-          <div class="someday-item" data-id="${t.id}">
+          <div class="someday-item ${borderClass}" data-id="${t.id}">
             <div class="someday-item-content">
               <span class="someday-item-text" title="${escapeHtml(t.text)}">${escapeHtml(t.text)}</span>
-              <span class="someday-tag-pill" data-tag="${escapeHtml(tagText)}">${escapeHtml(tagText)}</span>
+              <span class="someday-item-tag-text ${textClass}">${escapeHtml(tagText)}</span>
             </div>
             <div class="someday-actions">
-              <button class="someday-action-btn move-btn" data-action="move" data-id="${t.id}" title="Move to Today's Todo List">🚀</button>
-              <button class="someday-action-btn edit-btn" data-action="edit" data-id="${t.id}" title="Edit item">✏️</button>
-              <button class="someday-action-btn delete-btn" data-action="delete" data-id="${t.id}" title="Delete item">✕</button>
+              <button type="button" class="someday-action-btn move-btn" data-action="move" data-id="${t.id}" title="Move to Today's Todo List">🚀</button>
+              <button type="button" class="someday-action-btn edit-btn" data-action="edit" data-id="${t.id}" title="Edit item">✏️</button>
+              <button type="button" class="someday-action-btn delete-btn" data-action="delete" data-id="${t.id}" title="Delete item">✕</button>
             </div>
           </div>
         `;
       }).join("");
     },
 
-    _renderFilterChipsHtml() {
-      const tasks = this._loadTasks();
+    _renderTagSelectorHtml() {
       const tags = this._loadTags();
-      const usedTags = Array.from(new Set(tasks.map(t => t.tag || "🌱 Someday")));
-      if (usedTags.length === 0) return "";
-
-      const chips = ["ALL", ...tags.filter(t => usedTags.includes(t))];
-      if (!chips.includes(this._activeFilter)) {
-        this._activeFilter = "ALL";
-      }
-
       return `
-        <div class="someday-filter-bar" id="somedayFilterBar">
-          ${chips.map(chip => `
-            <button type="button" class="someday-filter-chip ${chip === this._activeFilter ? 'active' : ''}" data-filter="${escapeHtml(chip)}">
-              ${chip === 'ALL' ? 'All' : escapeHtml(chip)}
-            </button>
-          `).join("")}
+        <div class="someday-tag-chip-bar" id="somedayTagChipBar">
+          ${tags.map(tag => {
+            const isSelected = tag === this._selectedTag;
+            const colorClass = isSelected ? this._getTagColorClass(tag) : "";
+            return `
+              <button type="button" class="someday-tag-chip ${colorClass} ${isSelected ? 'active' : ''}" data-tag="${escapeHtml(tag)}" title="Tag: ${escapeHtml(tag)}">
+                <span>${escapeHtml(tag)}</span>
+              </button>
+            `;
+          }).join("")}
+          <button type="button" class="someday-tag-chip-add" id="somedayAddCustomTagBtn" title="Create new tag">+</button>
         </div>
       `;
     },
@@ -833,31 +842,11 @@ const WIDGET_REGISTRY = {
               placeholder="Add idea or future task..."
               maxlength="120"
             />
-            <button type="button" id="somedayTagBtn" class="someday-tag-picker-btn" title="Choose or add reusable tag">
-              <span id="somedaySelectedTagLabel">${escapeHtml(this._selectedTag)}</span> ▾
-            </button>
             <button type="button" id="somedayAddBtn" class="someday-add-btn" title="Add to Someday Box">+</button>
           </div>
-
-          <div class="someday-tag-dropdown hidden" id="somedayTagDropdown">
-            <div class="someday-tag-dropdown-title">Select or Create Tag</div>
-            <div class="someday-tag-options-list" id="somedayTagOptionsList">
-              ${tags.map(tag => `
-                <div class="someday-tag-option ${tag === this._selectedTag ? 'active' : ''}" data-tag="${escapeHtml(tag)}">
-                  <span class="someday-tag-option-label">${escapeHtml(tag)}</span>
-                  ${this._defaultTags.includes(tag) ? '' : `<button class="someday-tag-del-btn" data-del-tag="${escapeHtml(tag)}" title="Delete tag">✕</button>`}
-                </div>
-              `).join("")}
-            </div>
-            <div class="someday-new-tag-row">
-              <input type="text" id="somedayNewTagInput" class="someday-new-tag-input" placeholder="New tag (e.g. 🎨 Design)" maxlength="25" />
-              <button type="button" id="somedayNewTagBtn" class="someday-new-tag-btn">+ Tag</button>
-            </div>
+          <div id="somedayTagSelectorContainer">
+            ${this._renderTagSelectorHtml()}
           </div>
-        </div>
-
-        <div id="somedayFilterContainer">
-          ${this._renderFilterChipsHtml()}
         </div>
 
         <div class="someday-list" id="somedayList">
@@ -876,13 +865,13 @@ const WIDGET_REGISTRY = {
       const listEl = document.getElementById("somedayList");
       const badgeEl = document.getElementById("somedayCountBadge");
       const statsEl = document.getElementById("somedayFooterStats");
-      const filterContainer = document.getElementById("somedayFilterContainer");
+      const tagContainer = document.getElementById("somedayTagSelectorContainer");
 
       const tasks = this._loadTasks();
       if (listEl) listEl.innerHTML = this._renderListHtml();
       if (badgeEl) badgeEl.textContent = tasks.length;
       if (statsEl) statsEl.textContent = `${tasks.length} item${tasks.length === 1 ? '' : 's'} in backlog`;
-      if (filterContainer) filterContainer.innerHTML = this._renderFilterChipsHtml();
+      if (tagContainer) tagContainer.innerHTML = this._renderTagSelectorHtml();
 
       const footer = document.querySelector(".someday-footer");
       if (footer) {
@@ -916,13 +905,8 @@ const WIDGET_REGISTRY = {
     afterRender() {
       const input = document.getElementById("somedayInput");
       const addBtn = document.getElementById("somedayAddBtn");
-      const tagBtn = document.getElementById("somedayTagBtn");
-      const tagDropdown = document.getElementById("somedayTagDropdown");
-      const tagLabel = document.getElementById("somedaySelectedTagLabel");
-      const newTagInput = document.getElementById("somedayNewTagInput");
-      const newTagBtn = document.getElementById("somedayNewTagBtn");
+      const tagContainer = document.getElementById("somedayTagSelectorContainer");
       const listEl = document.getElementById("somedayList");
-      const filterContainer = document.getElementById("somedayFilterContainer");
       const clearBtn = document.getElementById("somedayClearAllBtn");
 
       const handleAdd = () => {
@@ -959,58 +943,35 @@ const WIDGET_REGISTRY = {
         clearBtn.onclick = () => this._handleClearAll();
       }
 
-      if (tagBtn && tagDropdown) {
-        tagBtn.onclick = (e) => {
-          e.stopPropagation();
-          tagDropdown.classList.toggle("hidden");
-        };
-
-        document.addEventListener("click", (e) => {
-          if (!tagDropdown.contains(e.target) && e.target !== tagBtn) {
-            tagDropdown.classList.add("hidden");
+      // Tag Chip Selection & New Tag Addition
+      if (tagContainer) {
+        tagContainer.onclick = (e) => {
+          const addCustomBtn = e.target.closest("#somedayAddCustomTagBtn");
+          if (addCustomBtn) {
+            const newTagName = prompt("Enter new tag name (e.g. 🎨 Design, ⚡ High):");
+            if (newTagName && newTagName.trim()) {
+              const trimmed = newTagName.trim();
+              const tags = this._loadTags();
+              if (!tags.includes(trimmed)) {
+                tags.push(trimmed);
+                this._saveTags(tags);
+              }
+              this._selectedTag = trimmed;
+              this._updateView();
+              showToast(`🏷️ Tag "${trimmed}" created!`, "success", 2000);
+            }
+            return;
           }
-        });
-      }
 
-      const handleAddNewTag = () => {
-        if (!newTagInput) return;
-        const val = newTagInput.value.trim();
-        if (!val) return;
-
-        const tags = this._loadTags();
-        if (!tags.includes(val)) {
-          tags.push(val);
-          this._saveTags(tags);
-        }
-        this._selectedTag = val;
-        if (tagLabel) tagLabel.textContent = val;
-        newTagInput.value = "";
-        this._renderTagDropdownOptions();
-        if (tagDropdown) tagDropdown.classList.add("hidden");
-        this._updateView();
-      };
-
-      if (newTagBtn) newTagBtn.onclick = handleAddNewTag;
-      if (newTagInput) {
-        newTagInput.onkeydown = (e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            handleAddNewTag();
+          const chip = e.target.closest(".someday-tag-chip");
+          if (chip && chip.dataset.tag) {
+            this._selectedTag = chip.dataset.tag;
+            this._updateView();
           }
         };
       }
 
-      this._bindDropdownTagEvents();
-
-      if (filterContainer) {
-        filterContainer.onclick = (e) => {
-          const chip = e.target.closest(".someday-filter-chip");
-          if (!chip) return;
-          this._activeFilter = chip.dataset.filter || "ALL";
-          this._updateView();
-        };
-      }
-
+      // List Item Actions: Move, Edit, Delete
       if (listEl) {
         listEl.onclick = (e) => {
           const btn = e.target.closest(".someday-action-btn");
@@ -1056,54 +1017,6 @@ const WIDGET_REGISTRY = {
           }
         };
       }
-    },
-
-    _bindDropdownTagEvents() {
-      const optionsList = document.getElementById("somedayTagOptionsList");
-      const tagDropdown = document.getElementById("somedayTagDropdown");
-      const tagLabel = document.getElementById("somedaySelectedTagLabel");
-
-      if (!optionsList) return;
-
-      optionsList.onclick = (e) => {
-        const delBtn = e.target.closest(".someday-tag-del-btn");
-        if (delBtn) {
-          e.stopPropagation();
-          const tagToDel = delBtn.dataset.delTag;
-          let tags = this._loadTags().filter(t => t !== tagToDel);
-          this._saveTags(tags);
-          if (this._selectedTag === tagToDel) {
-            this._selectedTag = tags[0] || "🌱 Someday";
-            if (tagLabel) tagLabel.textContent = this._selectedTag;
-          }
-          this._renderTagDropdownOptions();
-          this._updateView();
-          return;
-        }
-
-        const opt = e.target.closest(".someday-tag-option");
-        if (opt) {
-          const selected = opt.dataset.tag;
-          if (selected) {
-            this._selectedTag = selected;
-            if (tagLabel) tagLabel.textContent = selected;
-            this._renderTagDropdownOptions();
-            if (tagDropdown) tagDropdown.classList.add("hidden");
-          }
-        }
-      };
-    },
-
-    _renderTagDropdownOptions() {
-      const optionsList = document.getElementById("somedayTagOptionsList");
-      if (!optionsList) return;
-      const tags = this._loadTags();
-      optionsList.innerHTML = tags.map(tag => `
-        <div class="someday-tag-option ${tag === this._selectedTag ? 'active' : ''}" data-tag="${escapeHtml(tag)}">
-          <span class="someday-tag-option-label">${escapeHtml(tag)}</span>
-          ${this._defaultTags.includes(tag) ? '' : `<button type="button" class="someday-tag-del-btn" data-del-tag="${escapeHtml(tag)}" title="Delete tag">✕</button>`}
-        </div>
-      `).join("");
     }
   }
 };

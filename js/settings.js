@@ -502,7 +502,7 @@ function initChangelog() {
 
   if (!modal || !openBtn) return;
 
-  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.6.0";
+  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.6.6";
   if (currentVerEl) currentVerEl.textContent = `v${currentVersion}`;
 
   // Check and display unread update indicator dot on button & settings FAB

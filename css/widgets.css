@@ -9,7 +9,7 @@
   align-items: flex-start;
   justify-content: center;
   width: 100%;
-  max-width: 1350px;
+  max-width: 1420px;
   margin: 0 auto;
 }
 
@@ -23,7 +23,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  width: 250px;
+  width: 290px;
   min-height: 120px;
   padding: 4px;
   border-radius: 14px;
@@ -632,12 +632,357 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.38);
 }
 
-.ql-edit-badge-btn:hover {
-  background: rgba(255, 80, 80, 0.3);
-  border-color: rgba(255, 80, 80, 0.88);
-  color: rgb(255, 140, 140);
-  transform: scale(1.18);
+/* ==========================================
+   QUICK LINKS — LAYOUT 2: CAPSULE STACK
+   ========================================== */
+.ql-capsule-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 6px 4px;
+  justify-content: center;
 }
+
+.ql-capsule-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ql-capsule-row:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(0, 255, 135, 0.45);
+  transform: translateX(3px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), 0 0 16px rgba(0, 255, 135, 0.1);
+}
+
+.ql-capsule-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+
+.ql-capsule-icon img {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  object-fit: contain;
+}
+
+.ql-capsule-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  text-align: left;
+}
+
+.ql-capsule-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ql-capsule-url {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.45);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ql-capsule-arrow {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.ql-capsule-row:hover .ql-capsule-arrow {
+  color: #00ff87;
+  transform: translateX(2px);
+}
+
+.ql-capsule-row.is-empty {
+  border: 1.5px dashed rgba(255, 255, 255, 0.18);
+  background: transparent;
+  justify-content: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.74rem;
+  padding: 10px 12px;
+}
+
+.ql-capsule-row.is-empty:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.8);
+  transform: none;
+}
+
+/* Edit mode for Capsule Stack */
+.ql-capsule-container.edit-mode .ql-capsule-row:not(.is-empty) {
+  border-color: rgba(0, 255, 135, 0.35);
+  background: rgba(0, 255, 135, 0.05);
+}
+
+.ql-capsule-container.edit-mode .ql-edit-badge {
+  display: flex;
+}
+
+/* ==========================================
+   QUICK LINKS — LAYOUT 3: GLASS ORBS (2x2)
+   ========================================== */
+.ql-orbs-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 16px;
+  padding: 14px 4px;
+  align-items: center;
+  justify-items: center;
+}
+
+.ql-orbs-slot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 86px;
+  height: 86px;
+}
+
+.ql-orbs-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.ql-orbs-circle img {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: contain;
+}
+
+.ql-orbs-circle .ql-circle-emoji {
+  font-size: 1.7rem;
+}
+
+.ql-orbs-circle:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(0, 255, 135, 0.55);
+  transform: scale(1.08);
+  box-shadow: 0 0 0 2px rgba(0, 255, 135, 0.15), 0 6px 24px rgba(0, 0, 0, 0.3), 0 0 18px rgba(0, 255, 135, 0.2);
+}
+
+.ql-orbs-circle.is-empty {
+  border: 1.5px dashed rgba(255, 255, 255, 0.22);
+  background: transparent;
+  box-shadow: none;
+}
+
+.ql-orbs-circle.is-empty:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.06);
+}
+
+/* Edit mode for Orbs */
+.ql-orbs-grid.edit-mode .ql-orbs-circle:not(.is-empty) {
+  border-color: rgba(0, 255, 135, 0.35);
+  background: rgba(0, 255, 135, 0.08);
+}
+
+.ql-orbs-grid.edit-mode .ql-edit-badge {
+  display: flex;
+}
+
+/* ==========================================
+   QUICK LINKS — LAYOUT 4: APP DOCK (2x3)
+   ========================================== */
+.ql-dock-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 10px;
+  padding: 10px 6px;
+  align-content: center;
+}
+
+.ql-dock-slot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.ql-dock-tile {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  padding: 0;
+}
+
+.ql-dock-tile img {
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  object-fit: contain;
+}
+
+.ql-dock-tile .ql-circle-emoji {
+  font-size: 1.3rem;
+}
+
+.ql-dock-tile:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(0, 255, 135, 0.55);
+  transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 16px rgba(0, 255, 135, 0.18);
+}
+
+.ql-dock-tile.is-empty {
+  border: 1.5px dashed rgba(255, 255, 255, 0.22);
+  background: transparent;
+  box-shadow: none;
+}
+
+.ql-dock-tile.is-empty:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.ql-dock-label {
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 72px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+/* Edit mode for App Dock */
+.ql-dock-grid.edit-mode .ql-dock-tile:not(.is-empty) {
+  border-color: rgba(0, 255, 135, 0.35);
+  background: rgba(0, 255, 135, 0.08);
+}
+
+.ql-dock-grid.edit-mode .ql-edit-badge {
+  display: flex;
+}
+
+/* ==========================================
+   QUICK LINKS — LAYOUT STYLE SWITCHER POPOVER
+   ========================================== */
+.ql-style-popover {
+  position: absolute;
+  top: 38px;
+  right: 8px;
+  background: rgba(14, 18, 26, 0.96);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 175px;
+  animation: qlPickerIn 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ql-style-popover.hidden {
+  display: none;
+}
+
+.ql-style-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.74rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.ql-style-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.ql-style-option.active {
+  background: rgba(0, 255, 135, 0.15);
+  border-color: rgba(0, 255, 135, 0.4);
+  color: #00ff87;
+  font-weight: 600;
+}
+
+.ql-style-option-icon {
+  font-size: 0.95rem;
+}
+
 
 /* Quick Links Glass Modal */
 .ql-modal-content {
@@ -1032,7 +1377,7 @@
 }
 
 /* ==========================================
-   SOMEDAY BOX WIDGET (Ideas & Backlog)
+   SOMEDAY BOX WIDGET (Option A: Sleek & Soft Feed)
    ========================================== */
 
 .someday-widget-card {
@@ -1045,20 +1390,19 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
-  background: rgba(0, 255, 135, 0.15);
-  color: #00ff87;
-  border: 1px solid rgba(0, 255, 135, 0.3);
-  border-radius: 10px;
-  font-size: 0.7rem;
-  font-weight: 600;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9px;
+  font-size: 0.68rem;
+  font-weight: 500;
   margin-left: 6px;
 }
 
 .someday-input-container {
-  position: relative;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -1068,16 +1412,15 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 10px;
-  padding: 4px 6px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9px;
+  padding: 3px 6px;
+  transition: border-color 0.2s ease;
 }
 
 .someday-input-row:focus-within {
-  border-color: rgba(0, 255, 135, 0.5);
-  box-shadow: 0 0 12px rgba(0, 255, 135, 0.15);
+  border-color: rgba(255, 255, 255, 0.22);
 }
 
 .someday-input {
@@ -1086,49 +1429,25 @@
   background: transparent;
   border: none;
   outline: none;
-  color: white;
+  color: rgba(255, 255, 255, 0.9);
   font-family: inherit;
-  font-size: 0.82rem;
-  padding: 4px 2px;
+  font-size: 0.8rem;
+  padding: 4px 6px;
 }
 
 .someday-input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.35);
   font-size: 0.78rem;
 }
 
-.someday-tag-picker-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 6px;
-  padding: 3px 6px;
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 0.7rem;
-  cursor: pointer;
-  white-space: nowrap;
-  max-width: 90px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: all 0.2s ease;
-}
-
-.someday-tag-picker-btn:hover {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: white;
-}
-
 .someday-add-btn {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   border-radius: 6px;
-  background: rgba(0, 255, 135, 0.2);
-  border: 1px solid rgba(0, 255, 135, 0.4);
-  color: #00ff87;
-  font-size: 1.1rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1rem;
   line-height: 1;
   display: flex;
   align-items: center;
@@ -1139,181 +1458,135 @@
 }
 
 .someday-add-btn:hover {
-  background: rgba(0, 255, 135, 0.35);
-  transform: scale(1.05);
+  background: rgba(46, 204, 113, 0.18);
+  border-color: rgba(46, 204, 113, 0.35);
+  color: #86efac;
 }
 
 .someday-add-btn:active {
   transform: scale(0.95);
 }
 
-/* Tag Popover Dropdown */
-.someday-tag-dropdown {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  background: rgba(24, 28, 36, 0.95);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 10px;
-  padding: 8px;
-  z-index: 50;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  animation: fadeIn 0.15s ease;
-}
-
-.someday-tag-dropdown.hidden {
-  display: none;
-}
-
-.someday-tag-dropdown-title {
-  font-size: 0.68rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.5);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 2px 4px;
-}
-
-.someday-tag-options-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  max-height: 110px;
-  overflow-y: auto;
-  padding: 2px;
-}
-
-.someday-tag-option {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 6px;
-  padding: 3px 8px;
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.85);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.someday-tag-option:hover {
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: white;
-}
-
-.someday-tag-option.active {
-  background: rgba(0, 255, 135, 0.18);
-  border-color: rgba(0, 255, 135, 0.5);
-  color: #00ff87;
-}
-
-.someday-tag-del-btn {
-  background: transparent;
-  border: none;
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 0.65rem;
-  cursor: pointer;
-  padding: 0 2px;
-  line-height: 1;
-}
-
-.someday-tag-del-btn:hover {
-  color: #ff5252;
-}
-
-.someday-new-tag-row {
-  display: flex;
-  gap: 4px;
-  margin-top: 4px;
-  padding-top: 6px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.someday-new-tag-input {
-  flex: 1;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 6px;
-  padding: 4px 6px;
-  font-size: 0.72rem;
-  color: white;
-  outline: none;
-}
-
-.someday-new-tag-input:focus {
-  border-color: rgba(0, 255, 135, 0.5);
-}
-
-.someday-new-tag-btn {
-  padding: 4px 8px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 6px;
-  color: white;
-  font-size: 0.72rem;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.someday-new-tag-btn:hover {
-  background: rgba(0, 255, 135, 0.2);
-  color: #00ff87;
-}
-
-/* Filter Bar */
-.someday-filter-bar {
+/* Horizontal Tag Chip Selector Bar */
+.someday-tag-chip-bar {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   overflow-x: auto;
-  padding: 2px 0 4px;
+  padding: 1px 0 3px;
   scrollbar-width: none;
 }
 
-.someday-filter-bar::-webkit-scrollbar {
+.someday-tag-chip-bar::-webkit-scrollbar {
   display: none;
 }
 
-.someday-filter-chip {
+/* Unselected Tag Chips: Dim & Subtle */
+.someday-tag-chip {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
-  background: rgba(255, 255, 255, 0.05);
+  gap: 4px;
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+  border-radius: 6px;
   font-size: 0.68rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.45);
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.15s ease;
+  flex-shrink: 0;
 }
 
-.someday-filter-chip:hover {
+.someday-tag-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.8);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Selected Tag Chip: Distinct, Soft, Highlighted */
+.someday-tag-chip.active {
   background: rgba(255, 255, 255, 0.12);
-  color: white;
-}
-
-.someday-filter-chip.active {
-  background: rgba(0, 255, 135, 0.15);
-  border-color: rgba(0, 255, 135, 0.4);
-  color: #00ff87;
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
   font-weight: 500;
 }
+
+.someday-tag-chip-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.someday-tag-chip-add:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Soft Muted Tag Colors (Only for active tag or list pills) */
+.someday-tag-chip.active.tag-emerald {
+  background: rgba(46, 204, 113, 0.14);
+  border-color: rgba(46, 204, 113, 0.32);
+  color: #86efac;
+}
+
+.someday-tag-chip.active.tag-cyan {
+  background: rgba(56, 189, 248, 0.14);
+  border-color: rgba(56, 189, 248, 0.32);
+  color: #93c5fd;
+}
+
+.someday-tag-chip.active.tag-purple {
+  background: rgba(192, 132, 252, 0.14);
+  border-color: rgba(192, 132, 252, 0.32);
+  color: #d8b4fe;
+}
+
+.someday-tag-chip.active.tag-amber {
+  background: rgba(251, 191, 36, 0.14);
+  border-color: rgba(251, 191, 36, 0.32);
+  color: #fde047;
+}
+
+.someday-tag-chip.active.tag-blue {
+  background: rgba(96, 165, 250, 0.14);
+  border-color: rgba(96, 165, 250, 0.32);
+  color: #bfdbfe;
+}
+
+/* Border Accent Colors (For Someday Items) */
+.someday-item.border-emerald { border-left-color: #2ecc71; }
+.someday-item.border-cyan { border-left-color: #38bdf8; }
+.someday-item.border-purple { border-left-color: #c084fc; }
+.someday-item.border-amber { border-left-color: #fbbf24; }
+.someday-item.border-blue { border-left-color: #60a5fa; }
+
+/* Text Colors (For Someday Item Tags) */
+.text-emerald { color: #86efac; }
+.text-cyan { color: #93c5fd; }
+.text-purple { color: #d8b4fe; }
+.text-amber { color: #fde047; }
+.text-blue { color: #bfdbfe; }
+
 
 /* List Items */
 .someday-list {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  max-height: 200px;
+  max-height: 220px;
   overflow-y: auto;
   padding-right: 2px;
 }
@@ -1334,39 +1607,42 @@
   gap: 6px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left-width: 4px;
   border-radius: 8px;
-  padding: 6px 8px;
+  padding: 7px 8px 7px 12px;
   transition: all 0.2s ease;
+  text-align: left;
 }
 
 .someday-item:hover {
   background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.16);
 }
 
 .someday-item-content {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  align-items: flex-start;
+  text-align: left;
+  gap: 6px;
   min-width: 0;
   flex: 1;
 }
 
 .someday-item-text {
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.95);
   word-break: break-word;
   line-height: 1.3;
+  text-align: left;
 }
 
-.someday-tag-pill {
-  align-self: flex-start;
-  font-size: 0.65rem;
-  padding: 1px 6px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.someday-item-tag-text {
+  font-size: 0.55rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.8;
 }
 
 .someday-actions {
@@ -1419,7 +1695,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px 10px;
+  padding: 24px 10px;
   text-align: center;
   gap: 6px;
   color: rgba(255, 255, 255, 0.4);

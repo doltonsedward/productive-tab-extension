@@ -4,9 +4,48 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.6.6",
+    date: "2026-08-27",
+    items: [
+      { type: "change", text: "Widened the widget columns from 250px to 290px for a more spacious and comfortable layout." }
+    ]
+  },
+  {
+    version: "1.6.5",
+    date: "2026-08-27",
+    items: [
+      { type: "fix", text: "Tweaked typography in Someday Box list items: tag text is now smaller and properly spaced from the task name." }
+    ]
+  },
+  {
+    version: "1.6.4",
+    date: "2026-08-27",
+    items: [
+      { type: "change", text: "Redesigned Someday Box list items to a modern 'dashboard' style with elegant color-accented left borders and minimal tag text." }
+    ]
+  },
+  {
+    version: "1.6.3",
+    date: "2026-08-27",
+    items: [
+      { type: "fix", text: "Fixed Someday Box item text and tag alignment (now correctly left-aligned)." },
+      { type: "fix", text: "Removed unnecessary dot symbol from active tag chips for a cleaner look." }
+    ]
+  },
+  {
+    version: "1.6.2",
+    date: "2026-08-27",
+    items: [
+      { type: "refactor", text: "Polished 🌱 Someday Box with soft, muted pastel tones and calm contrast." },
+      { type: "feat", text: "Dim unselected tags by default with a clear active dot indicator on the selected tag." }
+    ]
+  },
+  {
     version: "1.6.1",
     date: "2026-08-27",
     items: [
+      { type: "refactor", text: "Redesigned 🌱 Someday Box with a full-width input and horizontal tag chip selector bar." },
+      { type: "feat", text: "Added vibrant color-coded badge pills for distinct tag categories." },
       { type: "fix", text: "Optimized GitHub update checker interval to 15m with robust cache busting." },
       { type: "fix", text: "Fixed script loading order to ensure version comparison functions are globally available." },
       { type: "fix", text: "Added instant cached update indicator badge display on tab load." }
