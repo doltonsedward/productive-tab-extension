@@ -494,11 +494,26 @@ function initChangelog() {
   const modal = document.getElementById("changelogModal");
   const listEl = document.getElementById("changelogList");
   const currentVerEl = document.getElementById("changelogCurrentVersion");
+  const STORAGE_KEY = "lastViewedChangelogVersion";
 
   if (!modal || !openBtn) return;
 
-  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.4.3";
+  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.5.0";
   if (currentVerEl) currentVerEl.textContent = `v${currentVersion}`;
+
+  // Check and display unread update indicator dot
+  const checkUnreadChangelog = () => {
+    const lastViewed = localStorage.getItem(STORAGE_KEY);
+    const hasUnread = !lastViewed || (typeof compareVersions === "function" ? compareVersions(lastViewed, currentVersion) : lastViewed !== currentVersion);
+    openBtn.classList.toggle("has-unread-dot", hasUnread);
+  };
+
+  const markChangelogAsRead = () => {
+    localStorage.setItem(STORAGE_KEY, currentVersion);
+    openBtn.classList.remove("has-unread-dot");
+  };
+
+  checkUnreadChangelog();
 
   const renderChangelog = () => {
     if (!listEl) return;
@@ -508,7 +523,8 @@ function initChangelog() {
       return;
     }
 
-    listEl.innerHTML = entries.map(ver => {
+    listEl.innerHTML = entries.map((ver, idx) => {
+      const isLatest = idx === 0;
       const isCurrent = ver.version === currentVersion;
       const itemsHtml = (ver.items || []).map(item => `
         <li class="changelog-item">
@@ -517,10 +533,14 @@ function initChangelog() {
         </li>
       `).join("");
 
+      const badgeHtml = isLatest
+        ? '<span class="changelog-latest-tag" style="margin-left:8px;">✨ Latest</span>'
+        : (isCurrent ? '<span class="changelog-current-tag" style="margin-left:8px;">● Installed</span>' : '');
+
       return `
-        <div class="changelog-version-card ${isCurrent ? 'is-current' : ''}">
+        <div class="changelog-version-card ${isLatest ? 'is-latest' : ''} ${isCurrent ? 'is-current' : ''}">
           <div class="changelog-version-title-row">
-            <span class="changelog-ver-num">v${escapeHtml(ver.version)} ${isCurrent ? '<span class="changelog-latest-tag" style="margin-left:6px;">Current</span>' : ''}</span>
+            <span class="changelog-ver-num">v${escapeHtml(ver.version)} ${badgeHtml}</span>
             <span class="changelog-ver-date">${escapeHtml(ver.date)}</span>
           </div>
           <ul class="changelog-items-list">
@@ -533,6 +553,7 @@ function initChangelog() {
 
   openBtn.addEventListener("click", (e) => {
     e.stopPropagation();
+    markChangelogAsRead();
     renderChangelog();
     modal.classList.remove("hidden");
   });

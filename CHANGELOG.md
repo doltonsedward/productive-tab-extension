@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.5.0] - 2026-08-27
+### Added
+- Unread update glowing dot indicator on the "What's New" button in Settings drawer footer that automatically clears once viewed.
+- Distinct `✨ Latest` badge and glowing status indicator highlighting the newest release in the What's New timeline.
+
+---
+
 ## [1.4.3] - 2026-08-27
 ### Fixed
 - Fixed opaque modal background by applying true translucent frosted glassmorphism with subtle top neon gradient sheen.

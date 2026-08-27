@@ -4,6 +4,14 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.5.0",
+    date: "2026-08-27",
+    items: [
+      { type: "feat", text: "Added unread update glowing dot indicator on What's New button." },
+      { type: "feat", text: "Highlighted latest release with vibrant ✨ Latest badge and glowing status node." }
+    ]
+  },
+  {
     version: "1.4.3",
     date: "2026-08-27",
     items: [
