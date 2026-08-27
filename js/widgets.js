@@ -195,6 +195,367 @@ const WIDGET_REGISTRY = {
     afterRender() {}
   },
 
+  quicklinks: {
+    id: "quicklinks",
+    name: "Quick Links",
+    icon: "🔗",
+    desc: "4 shortcut circles to your fav pages",
+    large: true, // occupies full column — prevents other widgets alongside
+
+    _storageKey: "quickLinksData",
+    _modalInitialized: false,
+
+    _defaultLinks() {
+      return [null, null, null, null];
+    },
+
+    _load() {
+      try {
+        const raw = localStorage.getItem(this._storageKey);
+        if (raw) {
+          const data = JSON.parse(raw);
+          if (Array.isArray(data) && data.length === 4) return data;
+        }
+      } catch (e) {}
+      return this._defaultLinks();
+    },
+
+    _save(links) {
+      localStorage.setItem(this._storageKey, JSON.stringify(links));
+    },
+
+    _faviconUrl(url) {
+      try {
+        const domain = new URL(url).hostname;
+        return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+      } catch (e) {
+        return null;
+      }
+    },
+
+    openModal(idx, existingData = null) {
+      const modal = document.getElementById("quickLinksModal");
+      if (!modal) return;
+
+      const titleEl = document.getElementById("qlModalTitle");
+      const nameInput = document.getElementById("qlInputName");
+      const urlInput = document.getElementById("qlInputUrl");
+      const emojiInput = document.getElementById("qlInputEmoji");
+      const emojiPreview = document.getElementById("qlModalEmojiPreview");
+      const deleteBtn = document.getElementById("qlDeleteBtn");
+
+      modal.dataset.slotIdx = idx;
+
+      if (existingData && existingData.url) {
+        if (titleEl) titleEl.textContent = `Edit Shortcut (Slot ${idx + 1})`;
+        if (nameInput) nameInput.value = existingData.name || "";
+        if (urlInput) urlInput.value = existingData.url || "";
+        if (emojiInput) emojiInput.value = existingData.emoji || "";
+        if (emojiPreview) emojiPreview.textContent = existingData.emoji || "🌐";
+        if (deleteBtn) deleteBtn.classList.remove("hidden");
+      } else {
+        if (titleEl) titleEl.textContent = `Add Shortcut (Slot ${idx + 1})`;
+        if (nameInput) nameInput.value = "";
+        if (urlInput) urlInput.value = "";
+        if (emojiInput) emojiInput.value = "";
+        if (emojiPreview) emojiPreview.textContent = "🌐";
+        if (deleteBtn) deleteBtn.classList.add("hidden");
+      }
+
+      this._initModalListeners();
+      modal.classList.remove("hidden");
+
+      setTimeout(() => {
+        if (urlInput && !urlInput.value) urlInput.focus();
+        else if (nameInput) nameInput.focus();
+      }, 100);
+    },
+
+    closeModal() {
+      const modal = document.getElementById("quickLinksModal");
+      if (modal) modal.classList.add("hidden");
+    },
+
+    _initModalListeners() {
+      if (this._modalInitialized) return;
+      this._modalInitialized = true;
+
+      const modal = document.getElementById("quickLinksModal");
+      const nameInput = document.getElementById("qlInputName");
+      const urlInput = document.getElementById("qlInputUrl");
+      const emojiInput = document.getElementById("qlInputEmoji");
+      const emojiPreview = document.getElementById("qlModalEmojiPreview");
+      const saveBtn = document.getElementById("qlSaveBtn");
+      const deleteBtn = document.getElementById("qlDeleteBtn");
+      const cancelBtn = document.getElementById("qlCancelBtn");
+
+      if (emojiInput && emojiPreview) {
+        emojiInput.addEventListener("input", () => {
+          emojiPreview.textContent = emojiInput.value.trim() || "🌐";
+        });
+      }
+
+      const handleSave = () => {
+        const idx = parseInt(modal.dataset.slotIdx, 10);
+        if (isNaN(idx)) return;
+
+        const url = urlInput.value.trim();
+        if (!url) {
+          showToast("⚠️ Please enter a website URL.", "warning", 2000);
+          urlInput.focus();
+          return;
+        }
+
+        let fullUrl = url;
+        if (!fullUrl.startsWith("http://") && !fullUrl.startsWith("https://")) {
+          fullUrl = "https://" + fullUrl;
+        }
+
+        let name = nameInput.value.trim();
+        if (!name) {
+          try {
+            name = new URL(fullUrl).hostname.replace(/^www\./, "");
+          } catch (e) {
+            name = fullUrl;
+          }
+        }
+
+        const emoji = emojiInput.value.trim() || null;
+        const links = this._load();
+        links[idx] = { name, url: fullUrl, emoji };
+        this._save(links);
+
+        this.closeModal();
+        this._rerender();
+        showToast("🔗 Shortcut saved!", "success", 2000);
+      };
+
+      if (saveBtn) saveBtn.addEventListener("click", handleSave);
+
+      if (deleteBtn) {
+        deleteBtn.addEventListener("click", () => {
+          const idx = parseInt(modal.dataset.slotIdx, 10);
+          if (isNaN(idx)) return;
+          const links = this._load();
+          links[idx] = null;
+          this._save(links);
+          this.closeModal();
+          this._rerender();
+          showToast("Shortcut removed.", "info", 2000);
+        });
+      }
+
+      if (cancelBtn) cancelBtn.addEventListener("click", () => this.closeModal());
+
+      if (modal) {
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) this.closeModal();
+        });
+      }
+
+      [nameInput, urlInput, emojiInput].forEach(inp => {
+        if (inp) {
+          inp.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleSave();
+            } else if (e.key === "Escape") {
+              this.closeModal();
+            }
+          });
+        }
+      });
+    },
+
+    _renderSlot(idx, linkData) {
+      const slotEl = document.createElement("div");
+      slotEl.className = "ql-slot";
+      slotEl.dataset.idx = idx;
+
+      const hasLink = linkData && linkData.url;
+
+      // Circle button
+      const circle = document.createElement("button");
+      circle.className = `ql-circle ${hasLink ? "has-link" : "is-empty"}`;
+      circle.type = "button";
+
+      if (hasLink) {
+        // Icon — emoji override or favicon
+        if (linkData.emoji) {
+          const emojiEl = document.createElement("span");
+          emojiEl.className = "ql-circle-emoji";
+          emojiEl.textContent = linkData.emoji;
+          circle.appendChild(emojiEl);
+        } else {
+          const faviconUrl = this._faviconUrl(linkData.url);
+          if (faviconUrl) {
+            const img = document.createElement("img");
+            img.className = "ql-circle-icon";
+            img.src = faviconUrl;
+            img.alt = linkData.name || "";
+            img.onerror = () => {
+              img.remove();
+              const fallback = document.createElement("span");
+              fallback.className = "ql-circle-emoji";
+              fallback.textContent = "🌐";
+              circle.appendChild(fallback);
+            };
+            circle.appendChild(img);
+          } else {
+            const fallback = document.createElement("span");
+            fallback.className = "ql-circle-emoji";
+            fallback.textContent = "🌐";
+            circle.appendChild(fallback);
+          }
+        }
+
+        // Tooltip
+        const tooltip = document.createElement("span");
+        tooltip.className = "ql-tooltip";
+        try {
+          tooltip.textContent = linkData.name || new URL(linkData.url).hostname;
+        } catch(e) {
+          tooltip.textContent = linkData.name || linkData.url;
+        }
+        slotEl.appendChild(tooltip);
+
+        // Edit badge (shown in edit mode)
+        const badge = document.createElement("div");
+        badge.className = "ql-edit-badge";
+        
+        const editBtn = document.createElement("button");
+        editBtn.className = "ql-edit-badge-btn";
+        editBtn.type = "button";
+        editBtn.title = "Edit shortcut";
+        editBtn.textContent = "✎";
+        badge.appendChild(editBtn);
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "ql-edit-badge-btn del";
+        delBtn.type = "button";
+        delBtn.title = "Remove shortcut";
+        delBtn.textContent = "✕";
+        badge.appendChild(delBtn);
+
+        slotEl.appendChild(badge);
+
+        // Wire: edit btn -> open modal
+        editBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          WIDGET_REGISTRY.quicklinks.openModal(idx, linkData);
+        });
+
+        // Wire: del btn -> remove link
+        delBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const links = WIDGET_REGISTRY.quicklinks._load();
+          links[idx] = null;
+          WIDGET_REGISTRY.quicklinks._save(links);
+          WIDGET_REGISTRY.quicklinks._rerender();
+          showToast("Shortcut removed.", "info", 2000);
+        });
+
+        // Wire: circle click -> open URL (or open modal if in edit mode)
+        circle.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const grid = slotEl.closest(".ql-grid");
+          if (grid && grid.classList.contains("edit-mode")) {
+            WIDGET_REGISTRY.quicklinks.openModal(idx, linkData);
+            return;
+          }
+          window.open(linkData.url, "_blank", "noopener,noreferrer");
+        });
+
+      } else {
+        // Empty slot — show + icon
+        const plusIcon = document.createElement("span");
+        plusIcon.className = "ql-empty-icon";
+        plusIcon.textContent = "+";
+        circle.appendChild(plusIcon);
+
+        // Wire: circle click -> open modal for new shortcut
+        circle.addEventListener("click", (e) => {
+          e.stopPropagation();
+          WIDGET_REGISTRY.quicklinks.openModal(idx, null);
+        });
+      }
+
+      slotEl.appendChild(circle);
+      return slotEl;
+    },
+
+    _rerenderTimeout: null,
+    _rerender() {
+      clearTimeout(this._rerenderTimeout);
+      this._rerenderTimeout = setTimeout(() => {
+        const existing = document.querySelector('.widget-card[data-widget-id="quicklinks"]');
+        if (!existing) return;
+        const side = existing.dataset.side;
+        const index = parseInt(existing.dataset.index, 10);
+        const fresh = renderCardForSlot("quicklinks", side, index);
+        if (fresh) {
+          existing.replaceWith(fresh);
+          WIDGET_REGISTRY.quicklinks.afterRender();
+        }
+      }, 0);
+    },
+
+    render() {
+      const links = this._load();
+      const card = document.createElement("div");
+      card.className = "widget-card widget-card-large";
+      card.dataset.widgetId = "quicklinks";
+
+      // Header placeholder (populated by renderCardForSlot)
+      const header = document.createElement("div");
+      header.className = "widget-header";
+      card.appendChild(header);
+
+      // 2x2 grid
+      const grid = document.createElement("div");
+      grid.className = "ql-grid";
+      grid.id = "qlGrid";
+
+      links.forEach((linkData, i) => {
+        grid.appendChild(this._renderSlot(i, linkData));
+      });
+
+      card.appendChild(grid);
+      return card;
+    },
+
+    afterRender() {
+      const grid = document.getElementById("qlGrid");
+      if (!grid) return;
+
+      const card = grid.closest(".widget-card");
+      if (!card) return;
+
+      // Inject edit-toggle btn into widget-card-actions
+      const actionsEl = card.querySelector(".widget-card-actions");
+      if (actionsEl && !actionsEl.querySelector(".ql-edit-toggle-btn")) {
+        const editToggle = document.createElement("button");
+        editToggle.className = "ql-edit-toggle-btn widget-action-btn";
+        editToggle.type = "button";
+        editToggle.title = "Edit shortcuts";
+        editToggle.textContent = "✎";
+
+        editToggle.addEventListener("click", (e) => {
+          e.stopPropagation();
+          grid.classList.toggle("edit-mode");
+          editToggle.classList.toggle("active", grid.classList.contains("edit-mode"));
+        });
+
+        const removeBtn = actionsEl.querySelector(".widget-remove-btn");
+        if (removeBtn) {
+          actionsEl.insertBefore(editToggle, removeBtn);
+        } else {
+          actionsEl.appendChild(editToggle);
+        }
+      }
+    }
+  },
+
   timer: {
     id: "timer",
     name: "Timer Panel",
@@ -273,7 +634,8 @@ function renderWidgets() {
   });
 
   if (addBtnLeft) {
-    const isFull = appSettings.widgetSlots.left.length >= MAX_WIDGETS_PER_SIDE;
+    const hasLargeLeft = appSettings.widgetSlots.left.some(id => WIDGET_REGISTRY[id]?.large);
+    const isFull = appSettings.widgetSlots.left.length >= MAX_WIDGETS_PER_SIDE || hasLargeLeft;
     const isEmpty = appSettings.widgetSlots.left.length === 0;
     addBtnLeft.classList.toggle("hidden", isFull);
     addBtnLeft.classList.toggle("empty-column-btn", isEmpty);
@@ -282,7 +644,8 @@ function renderWidgets() {
   }
 
   if (addBtnRight) {
-    const isFull = appSettings.widgetSlots.right.length >= MAX_WIDGETS_PER_SIDE;
+    const hasLargeRight = appSettings.widgetSlots.right.some(id => WIDGET_REGISTRY[id]?.large);
+    const isFull = appSettings.widgetSlots.right.length >= MAX_WIDGETS_PER_SIDE || hasLargeRight;
     const isEmpty = appSettings.widgetSlots.right.length === 0;
     addBtnRight.classList.toggle("hidden", isFull);
     addBtnRight.classList.toggle("empty-column-btn", isEmpty);
@@ -486,9 +849,23 @@ function addWidget(widgetId, side = "right") {
 
   const targetArray = appSettings.widgetSlots[side];
   const allActive = [...appSettings.widgetSlots.left, ...appSettings.widgetSlots.right];
+  const def = WIDGET_REGISTRY[widgetId];
 
   if (allActive.includes(widgetId)) {
     showToast("This widget is already active.", "info", 2000);
+    return;
+  }
+
+  // Large widget: column must be empty
+  if (def?.large && targetArray.length > 0) {
+    showToast(`🔗 Quick Links needs an empty column (remove existing widgets first).`, "warning", 3000);
+    return;
+  }
+
+  // Column already has a large widget: cannot add alongside
+  const hasLargeInTarget = targetArray.some(id => WIDGET_REGISTRY[id]?.large);
+  if (hasLargeInTarget) {
+    showToast(`⚠️ This column is taken by Quick Links. Move it first or use the other side.`, "warning", 3000);
     return;
   }
 
@@ -526,18 +903,30 @@ function openWidgetPicker(side = "right") {
 
   list.innerHTML = "";
   const allActive = [...leftSlots, ...rightSlots];
+  const hasLargeInTarget = targetSlots.some(id => WIDGET_REGISTRY[id]?.large);
 
   Object.values(WIDGET_REGISTRY).forEach(def => {
     const isActive = allActive.includes(def.id);
     const isTargetFull = targetSlots.length >= MAX_WIDGETS_PER_SIDE;
+    // Large widget needs empty column; normal widget can't go in a large-widget column
+    const isBlockedByLarge = def.large
+      ? targetSlots.length > 0
+      : hasLargeInTarget;
+    const isDisabled = isActive || isTargetFull || isBlockedByLarge;
+
+    let descText = def.desc;
+    if (isActive) descText = "Active";
+    else if (isBlockedByLarge && def.large) descText = "Needs empty column";
+    else if (isBlockedByLarge) descText = "Column taken by Quick Links";
+
     const item = document.createElement("button");
-    item.className = `widget-picker-item${isActive || isTargetFull ? " disabled" : ""}`;
+    item.className = `widget-picker-item${isDisabled ? " disabled" : ""}`;
     item.innerHTML = `
       <span class="widget-picker-item-icon">${def.icon}</span>
       <span class="widget-picker-item-name">${def.name}</span>
-      <span class="widget-picker-item-desc">${isActive ? "Active" : def.desc}</span>
+      <span class="widget-picker-item-desc">${descText}</span>
     `;
-    if (!isActive && !isTargetFull) {
+    if (!isDisabled) {
       item.addEventListener("click", () => addWidget(def.id, targetAddSide));
     }
     list.appendChild(item);

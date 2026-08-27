@@ -242,7 +242,7 @@
       </div>
 
       <div class="settings-drawer-footer">
-        <span class="settings-version" id="settingsVersionText" data-version="1.1.0">Productive Tab · v1.1.0</span>
+        <span class="settings-version" id="settingsVersionText" data-version="1.2.1">Productive Tab · v1.2.1</span>
       </div>
     </div>
 
@@ -342,6 +342,40 @@
           <button id="saveWelcomeNameBtn" class="glass-btn success welcome-btn-save">
             Get Started →
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Links Edit Modal -->
+    <div id="quickLinksModal" class="modal-overlay hidden">
+      <div class="glass-modal-content ql-modal-content">
+        <span class="track-badge">🔗 Quick Links</span>
+        <h4 id="qlModalTitle" class="track-task-title" style="margin-bottom: 16px;">Add Shortcut</h4>
+        
+        <div class="ql-modal-form">
+          <div class="ql-modal-field">
+            <label for="qlInputName">Display Name</label>
+            <input type="text" id="qlInputName" class="settings-input" placeholder="e.g. GitHub, Notion, Gmail..." maxlength="30" autocomplete="off" />
+          </div>
+
+          <div class="ql-modal-field">
+            <label for="qlInputUrl">Website URL</label>
+            <input type="url" id="qlInputUrl" class="settings-input" placeholder="https://github.com" autocomplete="off" />
+          </div>
+
+          <div class="ql-modal-field">
+            <label for="qlInputEmoji">Custom Emoji (Optional)</label>
+            <div class="ql-modal-emoji-row">
+              <div id="qlModalEmojiPreview" class="ql-modal-emoji-preview">🌐</div>
+              <input type="text" id="qlInputEmoji" class="settings-input" placeholder="Leave empty for auto favicon" maxlength="4" style="flex:1;" autocomplete="off" />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions" style="margin-top: 18px;">
+          <button id="qlSaveBtn" class="glass-btn success">Save Shortcut</button>
+          <button id="qlDeleteBtn" class="glass-btn danger hidden">Remove Shortcut</button>
+          <button id="qlCancelBtn" class="glass-btn secondary">Cancel</button>
         </div>
       </div>
     </div>
