@@ -242,7 +242,7 @@
       </div>
 
       <div class="settings-drawer-footer">
-        <span class="settings-version" id="settingsVersionText" data-version="1.2.3">Productive Tab · v1.2.3</span>
+        <span class="settings-version" id="settingsVersionText" data-version="1.3.1">Productive Tab · v1.3.1</span>
       </div>
     </div>
 
@@ -360,14 +360,21 @@
 
           <div class="ql-modal-field">
             <label for="qlInputUrl">Website URL</label>
-            <input type="url" id="qlInputUrl" class="settings-input" placeholder="https://github.com" autocomplete="off" />
-          </div>
+            <div class="ql-url-with-icon-row">
+              <button type="button" id="qlIconPickerBtn" class="ql-icon-picker-btn" title="Choose Icon / Emoji">
+                <span id="qlSelectedIconPreview" class="ql-selected-icon">🌐</span>
+              </button>
+              <input type="url" id="qlInputUrl" class="settings-input" placeholder="https://github.com" autocomplete="off" />
+            </div>
 
-          <div class="ql-modal-field">
-            <label for="qlInputEmoji">Custom Emoji (Optional)</label>
-            <div class="ql-modal-emoji-row">
-              <div id="qlModalEmojiPreview" class="ql-modal-emoji-preview">🌐</div>
-              <input type="text" id="qlInputEmoji" class="settings-input" placeholder="Leave empty for auto favicon" maxlength="4" style="flex:1;" autocomplete="off" />
+            <!-- Searchable Emoji / Icon Popover Picker -->
+            <div id="qlEmojiPickerPopover" class="ql-emoji-picker-popover hidden">
+              <div class="ql-picker-header">
+                <input type="text" id="qlEmojiSearchInput" class="ql-picker-search" placeholder="🔍 Search or type/paste any emoji..." autocomplete="off" />
+                <button type="button" id="qlResetFaviconBtn" class="ql-reset-favicon-btn" title="Reset to auto website favicon">🌐 Auto Favicon</button>
+              </div>
+              <div id="qlCustomEmojiRow" class="ql-custom-emoji-row hidden"></div>
+              <div id="qlEmojiGrid" class="ql-emoji-grid"></div>
             </div>
           </div>
         </div>

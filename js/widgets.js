@@ -238,33 +238,246 @@ const WIDGET_REGISTRY = {
       }
     },
 
+    _selectedEmoji: null,
+
+    _curatedIcons: [
+      // Tech, Dev & Web
+      { emoji: "💻", name: "laptop computer code coding dev programmer developer tech github koding pc mac" },
+      { emoji: "🚀", name: "rocket launch startup fast speed roket cepat gas project" },
+      { emoji: "⚡", name: "lightning bolt energy flash kilat listrik fast quick instant" },
+      { emoji: "🤖", name: "robot bot ai artificial intelligence chatgpt claude gemini openai automation pintar" },
+      { emoji: "🧠", name: "brain mind ai think smart thought pintar ide idea" },
+      { emoji: "⚙️", name: "gear settings config configuration options admin system tools pengaturan" },
+      { emoji: "🛠️", name: "tools wrench hammer build fix dev project perkakas alat" },
+      { emoji: "🔒", name: "lock secure security auth password safety private key rahasia gembok" },
+      { emoji: "🔑", name: "key access login password token security unlock kunci sandi" },
+      { emoji: "🌐", name: "globe web internet browser website online link dunia jaringan" },
+      { emoji: "📦", name: "package box repo repository delivery npm git cargo paket" },
+      { emoji: "🧪", name: "test science lab beaker experiment kimia riset" },
+      { emoji: "🔥", name: "fire hot flame urgent trend popular api panas semangat viral" },
+      { emoji: "💡", name: "idea bulb light insight tip creative learn ide lampu terang" },
+      { emoji: "📱", name: "phone mobile app smartphone ios android hp handphone telepon" },
+      { emoji: "🔌", name: "plugin electric power api connect integration colokan" },
+      { emoji: "💾", name: "floppy disk save backup drive storage simpan" },
+      { emoji: "📡", name: "satellite signal network wifi internet live antena sinyal" },
+      { emoji: "🛡️", name: "shield protect security defense safe tameng aman" },
+      { emoji: "🖥️", name: "monitor desktop screen computer pc display layar" },
+      { emoji: "🖨️", name: "printer print document cetak" },
+      { emoji: "⌨️", name: "keyboard type typing input ketik" },
+
+      // Work, Documents & Productivity
+      { emoji: "📝", name: "note document memo notion write paper doc catatan tulis memo" },
+      { emoji: "📄", name: "page file doc text document kertas lembar" },
+      { emoji: "📑", name: "tabs bookmark document files berkas" },
+      { emoji: "📋", name: "clipboard todo task list check checklist daftar tugas" },
+      { emoji: "📂", name: "folder files directory drive cloud docs berkas arsip" },
+      { emoji: "📊", name: "chart analytics stats graph metrics data report diagram grafik data" },
+      { emoji: "📈", name: "growth trend increase profit stock market finance naik cuan untung" },
+      { emoji: "📉", name: "decrease loss trend chart turun" },
+      { emoji: "💼", name: "briefcase work job business portfolio office kerja kantor bisnis" },
+      { emoji: "📅", name: "calendar date schedule event meeting gcal kalender jadwal agenda" },
+      { emoji: "🗓️", name: "calendar dates schedule agenda hari bulan" },
+      { emoji: "📌", name: "pin bookmark remember save sticky tag pin tanda ingat" },
+      { emoji: "🎯", name: "target goal aim focus priority mission sasaran tujuan fokus" },
+      { emoji: "⏰", name: "clock time alarm timer pomodoro deadline jam waktu beker" },
+      { emoji: "⏳", name: "hourglass sand time wait loading tunggu waktu" },
+      { emoji: "🏆", name: "trophy win award achievement milestone winner juara menang piala" },
+      { emoji: "🥇", name: "medal gold first champion pertama emas" },
+      { emoji: "⭐️", name: "star favorite bookmark starred best rating bintang favorit" },
+      { emoji: "🌟", name: "glowing star bright shiny special luar biasa" },
+      { emoji: "✨", name: "sparkles magic shiny new clean featured ai kilau bersih ajaib" },
+      { emoji: "🖋️", name: "pen fountain write signature author blog pena tulis pulpen" },
+      { emoji: "🔍", name: "search explore look find discover filter zoom cari temukan" },
+      { emoji: "🔎", name: "search glass magnify find periksa kaca pembesar" },
+      { emoji: "🏷️", name: "tag label coupon discount price category promo kategori tiket" },
+      { emoji: "🔖", name: "bookmark ribbon read save pembatas buku" },
+
+      // Communication & Social
+      { emoji: "💬", name: "chat message slack discord discussion forum talk obrolan pesan wa" },
+      { emoji: "🗨️", name: "speech bubble talk comment chat suara" },
+      { emoji: "📧", name: "email mail letter gmail inbox outlook message surat surel pesan" },
+      { emoji: "✉️", name: "envelope letter mail postal surat amplop" },
+      { emoji: "📬", name: "mailbox inbox mail received kotak surat" },
+      { emoji: "👥", name: "users team people group social community meet tim komunitas anggota" },
+      { emoji: "👤", name: "user profile account person member akun orang profil" },
+      { emoji: "📣", name: "megaphone announcement alert news broadcast shout pengumuman berita" },
+      { emoji: "🔔", name: "bell notification alert reminder sound ring lonceng notifikasi pemberitahuan" },
+      { emoji: "📞", name: "phone call contact telephone ring support telepon hubungi" },
+      { emoji: "🐦", name: "twitter bird x social post tweet feed burung" },
+      { emoji: "📷", name: "camera instagram photo image gallery snapshot foto gambar kamera" },
+      { emoji: "📸", name: "camera flash photo snap motret" },
+
+      // Media, Design & Entertainment
+      { emoji: "🎨", name: "palette art design figma draw colors graphic ui lukis gambar warna" },
+      { emoji: "🖌️", name: "paintbrush art design draw kuas lukis" },
+      { emoji: "📐", name: "ruler triangle measure math design penggaris ukur" },
+      { emoji: "🎬", name: "movie film video cinema youtube netflix watch nonton bioskop" },
+      { emoji: "📺", name: "tv television stream show series monitor screen tontonan layar" },
+      { emoji: "▶️", name: "play video button youtube stream putar mulai" },
+      { emoji: "🍿", name: "popcorn movie snack cinema nonton camilan" },
+      { emoji: "🎵", name: "music note song audio spotify track sound soundcloud lagu musik nada" },
+      { emoji: "🎶", name: "music notes singing melody irama lagu" },
+      { emoji: "🎧", name: "headphones audio listen podcast music beats dengar musik earphone" },
+      { emoji: "🎙️", name: "microphone mic podcast audio voice record stream rekaman suara" },
+      { emoji: "📻", name: "radio broadcast audio fm radio" },
+      { emoji: "🎮", name: "game gamepad controller play gaming steam twitch main gim" },
+      { emoji: "🕹️", name: "joystick arcade retro game main" },
+      { emoji: "🎲", name: "dice game chance luck dadu judi tebak" },
+      { emoji: "📚", name: "book library reading learn education docs wiki study buku bacaan belajar" },
+      { emoji: "📖", name: "open book read study novel baca kitab" },
+      { emoji: "🎓", name: "graduation cap university study college student wisuda kuliah sarjana" },
+      { emoji: "📰", name: "newspaper news feed article medium blog post koran berita tulisan" },
+
+      // Finance, Shopping & Commerce
+      { emoji: "🛒", name: "cart shopping store shop buy amazon order ecommerce keranjang belanja toko" },
+      { emoji: "🛍️", name: "shopping bags store boutique mall belanjaan kantong" },
+      { emoji: "💳", name: "credit card pay payment stripe bank visa money kartu debit bayar" },
+      { emoji: "💰", name: "money bag cash dollar crypto bitcoin currency wealth duit uang kaya kas" },
+      { emoji: "💵", name: "dollar bill cash currency uang kertas" },
+      { emoji: "🪙", name: "coin crypto token gold koin uang logam" },
+      { emoji: "💎", name: "diamond gem luxury crypto premium crystal rare berlian permata mewah" },
+      { emoji: "🏦", name: "bank finance building institution bank kantor" },
+
+      // Food & Drink
+      { emoji: "☕", name: "coffee cup tea drink morning break cafe energy kopi ngopi teh kafe" },
+      { emoji: "🍵", name: "green tea matcha cup healthy teh hijau" },
+      { emoji: "🧋", name: "boba bubble tea milk tea minuman boba" },
+      { emoji: "🍕", name: "pizza food meal italian restaurant order makan lezat" },
+      { emoji: "🍔", name: "burger hamburger fast food meal makan" },
+      { emoji: "🍜", name: "ramen noodles soup bowl mie ramen kuah" },
+      { emoji: "🍰", name: "cake sweet dessert birthday bakery kue manis" },
+      { emoji: "🍎", name: "apple fruit healthy fresh fruit apel buah sehat" },
+      { emoji: "🥑", name: "avocado healthy food green alpukat" },
+
+      // Home, Travel & Places
+      { emoji: "🏠", name: "home dashboard main house homepage base rumah beranda utama" },
+      { emoji: "🏡", name: "house garden residential villa rumah taman" },
+      { emoji: "🏢", name: "building office city company corporate gedung kantor" },
+      { emoji: "🗺️", name: "map location travel navigate places gps peta lokasi jalan" },
+      { emoji: "📍", name: "location pin map point place gps lokasi titik" },
+      { emoji: "✈️", name: "airplane flight travel holiday trip vacation airport pesawat terbang liburan" },
+      { emoji: "🚗", name: "car auto drive ride transport vehicle mobil jalan" },
+      { emoji: "🚆", name: "train railway transit metro subway kereta stasiun" },
+      { emoji: "🏖️", name: "beach summer vacation holiday sea pantai laut libur" },
+      { emoji: "🏕️", name: "camping tent nature outdoor camp kemah alam" },
+      { emoji: "🌍", name: "earth world international globe bumi dunia" },
+
+      // Feelings, Health & Lifestyle
+      { emoji: "❤️", name: "heart love favorite like health passion cinta hati suka" },
+      { emoji: "💖", name: "sparkling heart love affection sayang kasih" },
+      { emoji: "🧘", name: "meditation zen calm relax health habit mind wellness meditasi tenang santai" },
+      { emoji: "🏋️", name: "gym workout fitness exercise training muscle olahraga fitnes otot" },
+      { emoji: "🏃", name: "running run fitness sprint sport lari jalan" },
+      { emoji: "🚴", name: "cycling bicycle bike ride sport sepeda gowes" },
+      { emoji: "😊", name: "smile happy face friendly senyum senang gembira" },
+      { emoji: "😎", name: "cool sunglasses swag style keren kacamata" },
+      { emoji: "🥳", name: "party celebrate celebration birthday pesta selamat perayaan" },
+      { emoji: "🤔", name: "thinking pondering consider wonder mikir bingung tanya" },
+      { emoji: "🌤️", name: "sun weather cloud sky morning forecast day cuaca cerah awan" },
+      { emoji: "🌙", name: "moon night dark sleep evening bulan malam tidur" },
+      { emoji: "🌈", name: "rainbow colorful dream peace pelangi warna indah" },
+      { emoji: "🐶", name: "dog puppy pet animal friend anjing hewan peliharaan" },
+      { emoji: "🐱", name: "cat kitty pet animal meow kucing hewan peliharaan" },
+      { emoji: "🦊", name: "fox clever animal rubah cerdas" },
+      { emoji: "🦁", name: "lion brave strong king singa kuat" },
+      { emoji: "🦄", name: "unicorn magic fantasy dream kuda terbang impian" }
+    ],
+
+    _renderEmojiGrid(query = "") {
+      const grid = document.getElementById("qlEmojiGrid");
+      const customRow = document.getElementById("qlCustomEmojiRow");
+      if (!grid) return;
+
+      const raw = query.trim();
+      const q = raw.toLowerCase();
+
+      // Show custom emoji shortcut button if input is typed/pasted
+      if (customRow) {
+        if (raw.length > 0) {
+          customRow.innerHTML = `
+            <button type="button" class="ql-use-custom-btn" id="qlUseCustomBtn">
+              ✨ Use "<span class="ql-custom-char">${escapeHtml(raw)}</span>" as icon
+            </button>
+          `;
+          customRow.classList.remove("hidden");
+          const customBtn = document.getElementById("qlUseCustomBtn");
+          if (customBtn) {
+            customBtn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              this._selectEmoji(raw);
+            });
+          }
+        } else {
+          customRow.innerHTML = "";
+          customRow.classList.add("hidden");
+        }
+      }
+
+      // Filter curated icon list
+      const filtered = q
+        ? this._curatedIcons.filter(item => item.name.includes(q) || item.emoji.includes(q))
+        : this._curatedIcons;
+
+      grid.innerHTML = "";
+      if (filtered.length === 0) {
+        if (raw.length > 0) {
+          grid.innerHTML = `<div class="ql-emoji-empty">Press <strong>Enter</strong> or click above to use "${escapeHtml(raw)}"</div>`;
+        } else {
+          grid.innerHTML = `<div class="ql-emoji-empty">No icons found</div>`;
+        }
+        return;
+      }
+
+      filtered.forEach(item => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = `ql-emoji-item${this._selectedEmoji === item.emoji ? " active" : ""}`;
+        btn.textContent = item.emoji;
+        btn.title = item.name.split(" ")[0];
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this._selectEmoji(item.emoji);
+        });
+        grid.appendChild(btn);
+      });
+    },
+
+    _selectEmoji(emoji) {
+      this._selectedEmoji = emoji || null;
+      const preview = document.getElementById("qlSelectedIconPreview");
+      const pickerBtn = document.getElementById("qlIconPickerBtn");
+      const popover = document.getElementById("qlEmojiPickerPopover");
+
+      if (preview) preview.textContent = emoji || "🌐";
+      if (pickerBtn) pickerBtn.classList.toggle("is-custom", !!emoji);
+      if (popover) popover.classList.add("hidden");
+    },
+
     openModal(idx, existingData = null) {
       const modal = document.getElementById("quickLinksModal");
       if (!modal) return;
 
-      const titleEl  = document.getElementById("qlModalTitle");
-      const nameInput  = document.getElementById("qlInputName");
-      const urlInput   = document.getElementById("qlInputUrl");
-      const emojiInput = document.getElementById("qlInputEmoji");
-      const emojiPreview = document.getElementById("qlModalEmojiPreview");
-      const deleteBtn  = document.getElementById("qlDeleteBtn");
+      const titleEl   = document.getElementById("qlModalTitle");
+      const nameInput = document.getElementById("qlInputName");
+      const urlInput  = document.getElementById("qlInputUrl");
+      const deleteBtn = document.getElementById("qlDeleteBtn");
+      const popover   = document.getElementById("qlEmojiPickerPopover");
 
       modal.dataset.slotIdx = idx;
+      if (popover) popover.classList.add("hidden");
 
       if (existingData && existingData.url) {
-        if (titleEl)      titleEl.textContent      = `Edit Shortcut (Slot ${idx + 1})`;
-        if (nameInput)    nameInput.value           = existingData.name  || "";
-        if (urlInput)     urlInput.value            = existingData.url   || "";
-        if (emojiInput)   emojiInput.value          = existingData.emoji || "";
-        if (emojiPreview) emojiPreview.textContent  = existingData.emoji || "🌐";
-        if (deleteBtn)    deleteBtn.classList.remove("hidden");
+        if (titleEl)   titleEl.textContent = `Edit Shortcut (Slot ${idx + 1})`;
+        if (nameInput) nameInput.value      = existingData.name || "";
+        if (urlInput)  urlInput.value       = existingData.url  || "";
+        this._selectEmoji(existingData.emoji || null);
+        if (deleteBtn) deleteBtn.classList.remove("hidden");
       } else {
-        if (titleEl)      titleEl.textContent      = `Add Shortcut (Slot ${idx + 1})`;
-        if (nameInput)    nameInput.value           = "";
-        if (urlInput)     urlInput.value            = "";
-        if (emojiInput)   emojiInput.value          = "";
-        if (emojiPreview) emojiPreview.textContent  = "🌐";
-        if (deleteBtn)    deleteBtn.classList.add("hidden");
+        if (titleEl)   titleEl.textContent = `Add Shortcut (Slot ${idx + 1})`;
+        if (nameInput) nameInput.value      = "";
+        if (urlInput)  urlInput.value       = "";
+        this._selectEmoji(null);
+        if (deleteBtn) deleteBtn.classList.add("hidden");
       }
 
       this._initModalListeners();
@@ -277,26 +490,87 @@ const WIDGET_REGISTRY = {
     },
 
     closeModal() {
-      const modal = document.getElementById("quickLinksModal");
-      if (modal) modal.classList.add("hidden");
+      const modal   = document.getElementById("quickLinksModal");
+      const popover = document.getElementById("qlEmojiPickerPopover");
+      if (popover) popover.classList.add("hidden");
+      if (modal)   modal.classList.add("hidden");
     },
 
     _initModalListeners() {
       if (this._modalInitialized) return;
       this._modalInitialized = true;
 
-      const modal      = document.getElementById("quickLinksModal");
-      const nameInput  = document.getElementById("qlInputName");
-      const urlInput   = document.getElementById("qlInputUrl");
-      const emojiInput = document.getElementById("qlInputEmoji");
-      const emojiPreview = document.getElementById("qlModalEmojiPreview");
-      const saveBtn    = document.getElementById("qlSaveBtn");
-      const deleteBtn  = document.getElementById("qlDeleteBtn");
-      const cancelBtn  = document.getElementById("qlCancelBtn");
+      const modal        = document.getElementById("quickLinksModal");
+      const nameInput    = document.getElementById("qlInputName");
+      const urlInput     = document.getElementById("qlInputUrl");
+      const pickerBtn    = document.getElementById("qlIconPickerBtn");
+      const popover      = document.getElementById("qlEmojiPickerPopover");
+      const searchInput  = document.getElementById("qlEmojiSearchInput");
+      const resetFavBtn  = document.getElementById("qlResetFaviconBtn");
+      const saveBtn      = document.getElementById("qlSaveBtn");
+      const deleteBtn    = document.getElementById("qlDeleteBtn");
+      const cancelBtn    = document.getElementById("qlCancelBtn");
 
-      if (emojiInput && emojiPreview) {
-        emojiInput.addEventListener("input", () => {
-          emojiPreview.textContent = emojiInput.value.trim() || "🌐";
+      // Toggle emoji popover
+      if (pickerBtn && popover) {
+        pickerBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const isHidden = popover.classList.contains("hidden");
+          if (isHidden) {
+            popover.classList.remove("hidden");
+            if (searchInput) {
+              searchInput.value = "";
+              this._renderEmojiGrid("");
+              setTimeout(() => searchInput.focus(), 60);
+            }
+          } else {
+            popover.classList.add("hidden");
+          }
+        });
+      }
+
+      // Search input typing & Enter key support
+      if (searchInput) {
+        searchInput.addEventListener("input", () => {
+          this._renderEmojiGrid(searchInput.value);
+        });
+
+        searchInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            const val = searchInput.value.trim();
+            if (!val) return;
+
+            const grid = document.getElementById("qlEmojiGrid");
+            const firstItem = grid ? grid.querySelector(".ql-emoji-item") : null;
+            // If there is a matched emoji and it's not a custom literal emoji entered directly
+            if (firstItem && !val.match(/\p{Extended_Pictographic}/u)) {
+              firstItem.click();
+            } else {
+              // Direct custom emoji or fallback
+              this._selectEmoji(val);
+            }
+          } else if (e.key === "Escape") {
+            if (popover) popover.classList.add("hidden");
+          }
+        });
+      }
+
+      // Reset to auto favicon button
+      if (resetFavBtn) {
+        resetFavBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          this._selectEmoji(null);
+        });
+      }
+
+      // Close popover when clicking elsewhere inside modal
+      if (modal) {
+        modal.addEventListener("click", (e) => {
+          if (!e.target.closest("#qlEmojiPickerPopover") && !e.target.closest("#qlIconPickerBtn")) {
+            if (popover) popover.classList.add("hidden");
+          }
+          if (e.target === modal) this.closeModal();
         });
       }
 
@@ -325,7 +599,7 @@ const WIDGET_REGISTRY = {
           }
         }
 
-        const emoji = emojiInput.value.trim() || null;
+        const emoji = this._selectedEmoji || null;
         const links = this._load();
         links[idx] = { name, url: fullUrl, emoji };
         this._save(links);
@@ -350,13 +624,7 @@ const WIDGET_REGISTRY = {
         });
       }
 
-      if (modal) {
-        modal.addEventListener("click", (e) => {
-          if (e.target === modal) this.closeModal();
-        });
-      }
-
-      [nameInput, urlInput, emojiInput].forEach(inp => {
+      [nameInput, urlInput].forEach(inp => {
         if (inp) {
           inp.addEventListener("keydown", (e) => {
             if (e.key === "Enter") { e.preventDefault(); handleSave(); }
