@@ -4,6 +4,16 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.6.0",
+    date: "2026-08-27",
+    items: [
+      { type: "feat", text: "Added 🌱 Someday Box widget to capture future ideas and backlog items." },
+      { type: "feat", text: "Reusable custom tags & filter chips for easy organization." },
+      { type: "feat", text: "1-Click Move to Today (🚀) button directly promoting tasks to Todo list." },
+      { type: "feat", text: "Integrated Someday Box data into Settings Backup & Restore." }
+    ]
+  },
+  {
     version: "1.5.1",
     date: "2026-08-27",
     items: [

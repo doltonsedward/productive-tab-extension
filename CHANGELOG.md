@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.6.0] - 2026-08-27
+### Added
+- **🌱 Someday Box Widget**: New dedicated widget to capture ideas, backlog items, and future tasks without cluttering today's main Todo list.
+- **🏷️ Reusable Custom Tags**: Categorize someday ideas using built-in presets (`🌱 Someday`, `💡 Idea`, `📅 Next Week`, `🎯 Project`, `📚 Learn`) or create custom tags that persist for reuse.
+- **🚀 1-Click "Move to Today"**: Instantly promote any someday task into today's active Todo list in the center with a single click.
+- **🔍 Interactive Tag Filter Chips**: Quick filtering to view all backlog items or narrow down by specific tags.
+- Integrated Someday Box tasks and custom tags into the Backup & Restore system.
+
+---
+
 ## [1.5.1] - 2026-08-27
 ### Added
 - Synchronized unread changelog dot indicator with the main Settings floating action button (⚙️), alerting users to newly published updates.

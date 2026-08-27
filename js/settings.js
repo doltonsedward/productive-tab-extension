@@ -434,6 +434,8 @@ function bindSettingsControls() {
         milestone: JSON.parse(localStorage.getItem("milestone") || "null"),
         appSettings: JSON.parse(localStorage.getItem("appSettings") || "{}"),
         quickNotes: localStorage.getItem("quickNotes") || "",
+        somedayBoxTasks: JSON.parse(localStorage.getItem("somedayBoxTasks") || "[]"),
+        somedayBoxTags: JSON.parse(localStorage.getItem("somedayBoxTags") || "[]"),
         isHidden: localStorage.getItem("isHidden") || "false",
         exportedAt: new Date().toISOString(),
       };
@@ -463,6 +465,8 @@ function bindSettingsControls() {
           if (data.milestone) localStorage.setItem("milestone", JSON.stringify(data.milestone));
           if (data.appSettings) localStorage.setItem("appSettings", JSON.stringify(data.appSettings));
           if (data.quickNotes !== undefined) localStorage.setItem("quickNotes", data.quickNotes);
+          if (data.somedayBoxTasks) localStorage.setItem("somedayBoxTasks", JSON.stringify(data.somedayBoxTasks));
+          if (data.somedayBoxTags) localStorage.setItem("somedayBoxTags", JSON.stringify(data.somedayBoxTags));
           if (data.isHidden !== undefined) localStorage.setItem("isHidden", data.isHidden);
           showToast("📥 Data imported successfully! Reloading page...", "success", 2000);
           setTimeout(() => location.reload(), 2200);
@@ -498,7 +502,7 @@ function initChangelog() {
 
   if (!modal || !openBtn) return;
 
-  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.5.1";
+  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.6.0";
   if (currentVerEl) currentVerEl.textContent = `v${currentVersion}`;
 
   // Check and display unread update indicator dot on button & settings FAB
