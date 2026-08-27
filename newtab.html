@@ -242,7 +242,7 @@
       </div>
 
       <div class="settings-drawer-footer">
-        <span class="settings-version" id="settingsVersionText" data-version="1.4.0">Productive Tab · v1.4.0</span>
+        <span class="settings-version" id="settingsVersionText" data-version="1.4.3">Productive Tab · v1.4.3</span>
         <button type="button" id="openChangelogBtn" class="settings-changelog-btn" title="View Release Notes">What's New</button>
       </div>
     </div>
@@ -404,21 +404,22 @@
     <div id="changelogModal" class="modal-overlay hidden">
       <div class="glass-modal-content changelog-modal">
         <div class="changelog-modal-header">
-          <div class="changelog-badge-row">
-            <span class="track-badge">📋 Release Notes</span>
-            <span class="changelog-latest-tag" id="changelogCurrentVersion">v1.4.0</span>
+          <div class="changelog-header-top">
+            <div class="changelog-title-group">
+              <span class="track-badge">📋 What's New</span>
+              <span class="changelog-latest-tag" id="changelogCurrentVersion">v1.4.3</span>
+            </div>
+            <a href="https://github.com/doltonsedward/productive-tab-extension" target="_blank" rel="noopener noreferrer" class="changelog-github-link" title="Open GitHub Repository">
+              <span>🐙</span> GitHub ↗
+            </a>
           </div>
-          <h4 class="track-task-title" style="margin: 6px 0 2px 0;">What's New</h4>
-          <p class="changelog-subtitle">Recent features, improvements, and updates</p>
+          <p class="changelog-subtitle">Release notes & recent dashboard improvements</p>
         </div>
 
         <div id="changelogList" class="changelog-list"></div>
 
-        <div class="modal-actions changelog-modal-footer">
-          <a href="https://github.com/doltonsedward/productive-tab-extension" target="_blank" rel="noopener noreferrer" class="changelog-github-link">
-            <span>🐙</span> GitHub
-          </a>
-          <button id="closeChangelogBtn" class="glass-btn secondary">Close</button>
+        <div class="changelog-modal-hint">
+          <span>Click outside or press <kbd>Esc</kbd> to close</span>
         </div>
       </div>
     </div>

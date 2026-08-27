@@ -4,6 +4,29 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.4.3",
+    date: "2026-08-27",
+    items: [
+      { type: "fix", text: "Upgraded What's New modal with true translucent glassmorphism and top neon sheen." }
+    ]
+  },
+  {
+    version: "1.4.2",
+    date: "2026-08-27",
+    items: [
+      { type: "refactor", text: "Expanded What's New modal with ultra-rich glassmorphism and increased width." },
+      { type: "feat", text: "Added smooth fade-in and fade-out scale transitions across all dashboard modals." }
+    ]
+  },
+  {
+    version: "1.4.1",
+    date: "2026-08-27",
+    items: [
+      { type: "refactor", text: "Redesigned What's New modal into a modern glowing vertical timeline." },
+      { type: "fix", text: "Removed redundant Close button and enabled click-outside / Esc key dismissal." }
+    ]
+  },
+  {
     version: "1.4.0",
     date: "2026-08-27",
     items: [

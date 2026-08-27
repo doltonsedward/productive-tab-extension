@@ -148,38 +148,56 @@
   background: rgba(0, 255, 135, 0.3);
 }
 
-/* Task Tracking Modal */
+/* Modals Overlay & Glass Content Transitions */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.32);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   color: white;
-  animation: fadeIn 0.2s ease;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              backdrop-filter 0.24s ease;
 }
 
 .modal-overlay.hidden {
-  display: none;
+  display: flex;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .glass-modal-content {
   background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(25px);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 16px;
+  border-radius: 18px;
   padding: 24px;
   width: 90%;
-  max-width: 360px;
+  max-width: 380px;
   text-align: center;
   color: white;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-overlay.hidden .glass-modal-content {
+  transform: scale(0.93) translateY(14px);
+  opacity: 0;
 }
 
 .track-badge {

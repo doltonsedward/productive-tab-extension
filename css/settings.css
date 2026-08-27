@@ -769,98 +769,181 @@
 }
 
 /* ==========================================
-   WHAT'S NEW / CHANGELOG MODAL
+   WHAT'S NEW / CHANGELOG MODAL (V2 TIMELINE DESIGN)
    ========================================== */
 .glass-modal-content.changelog-modal {
-  max-width: 480px;
-  width: 92%;
-  max-height: 82vh;
+  max-width: 620px;
+  width: 94%;
+  max-height: 85vh;
   display: flex;
   flex-direction: column;
   text-align: left;
-  padding: 22px 24px;
+  padding: 26px 32px 18px;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 20px;
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 0 35px rgba(0, 255, 135, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-modal-content.changelog-modal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 135, 0.85), rgba(96, 239, 255, 0.85), transparent);
 }
 
 .changelog-modal-header {
   flex-shrink: 0;
-  margin-bottom: 8px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.changelog-badge-row {
+.changelog-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.changelog-title-group {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 2px;
+  gap: 10px;
 }
 
 .changelog-latest-tag {
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   background: rgba(0, 255, 135, 0.15);
   color: #00ff87;
-  border: 1px solid rgba(0, 255, 135, 0.3);
-  padding: 1px 6px;
+  border: 1px solid rgba(0, 255, 135, 0.35);
+  padding: 2px 8px;
   border-radius: 10px;
   font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.changelog-github-link {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(10px);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.changelog-github-link:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
 }
 
 .changelog-subtitle {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.48);
   margin: 0;
 }
 
 .changelog-list {
   flex: 1;
   overflow-y: auto;
-  padding-right: 6px;
-  margin: 10px 0;
+  padding: 16px 10px 16px 4px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-height: 380px;
+  gap: 16px;
+  max-height: 460px;
+  position: relative;
 }
 
 .changelog-list::-webkit-scrollbar {
   width: 5px;
 }
 .changelog-list::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.02);
   border-radius: 4px;
 }
 .changelog-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.16);
   border-radius: 4px;
 }
+.changelog-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
 
+/* Version Timeline Card */
 .changelog-version-card {
+  position: relative;
+  padding: 10px 14px 10px 24px;
+  border-left: 2px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0 10px 10px 0;
+  margin-left: 6px;
   background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 10px;
-  padding: 12px 14px;
   transition: all 0.2s ease;
 }
 
+.changelog-version-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
 .changelog-version-card.is-current {
-  border-color: rgba(0, 255, 135, 0.25);
-  background: rgba(0, 255, 135, 0.04);
+  border-left-color: #00ff87;
+  background: rgba(0, 255, 135, 0.05);
+}
+
+.changelog-version-card::before {
+  content: '';
+  position: absolute;
+  left: -6px;
+  top: 14px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #181c24;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  transition: all 0.2s ease;
+}
+
+.changelog-version-card.is-current::before {
+  background: #00ff87;
+  border-color: #00ff87;
+  box-shadow: 0 0 12px rgba(0, 255, 135, 0.9);
 }
 
 .changelog-version-title-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
   margin-bottom: 8px;
 }
 
 .changelog-ver-num {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 700;
   color: white;
+  display: inline-flex;
+  align-items: center;
 }
 
 .changelog-ver-date {
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: inherit;
 }
 
 .changelog-items-list {
@@ -869,27 +952,27 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .changelog-item {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.8);
-  line-height: 1.35;
+  gap: 9px;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.45;
 }
 
 .changelog-pill {
   font-size: 0.62rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  padding: 1px 5px;
+  padding: 1px 6px;
   border-radius: 4px;
   flex-shrink: 0;
-  letter-spacing: 0.3px;
-  margin-top: 1px;
+  letter-spacing: 0.4px;
+  margin-top: 2px;
 }
 
 .changelog-pill.feat {
@@ -910,26 +993,23 @@
   border: 1px solid rgba(80, 160, 255, 0.3);
 }
 
-.changelog-modal-footer {
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
+.changelog-modal-hint {
+  flex-shrink: 0;
+  text-align: center;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.35);
 }
 
-.changelog-github-link {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.45);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: color 0.2s ease;
-}
-
-.changelog-github-link:hover {
-  color: white;
-  text-decoration: underline;
+.changelog-modal-hint kbd {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 0.66rem;
+  color: rgba(255, 255, 255, 0.65);
+  font-family: inherit;
 }
 
 

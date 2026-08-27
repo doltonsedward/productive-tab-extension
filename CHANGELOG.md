@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.4.3] - 2026-08-27
+### Fixed
+- Fixed opaque modal background by applying true translucent frosted glassmorphism with subtle top neon gradient sheen.
+
+---
+
+## [1.4.2] - 2026-08-27
+### Added
+- Smooth cubic-bezier fade-in and fade-out scale transitions across all dashboard modals on open and close.
+### Refactored
+- Expanded What's New modal dimensions (600px width) with deep frosted glassmorphism, saturation boost, and improved breathing room.
+
+---
+
+## [1.4.1] - 2026-08-27
+### Changed
+- Redesigned What's New modal into a clean, modern vertical timeline with glowing status nodes.
+- Removed redundant Close button and added click-outside and `Escape` key dismissal.
+- Placed GitHub repository link neatly in the header for a compact, distraction-free modal.
+
+---
+
 ## [1.4.0] - 2026-08-27
 ### Added
 - Discreet in-app **What's New / Release Notes** viewer modal accessible from the Settings drawer footer.

@@ -492,13 +492,12 @@ function bindSettingsControls() {
 function initChangelog() {
   const openBtn = document.getElementById("openChangelogBtn");
   const modal = document.getElementById("changelogModal");
-  const closeBtn = document.getElementById("closeChangelogBtn");
   const listEl = document.getElementById("changelogList");
   const currentVerEl = document.getElementById("changelogCurrentVersion");
 
   if (!modal || !openBtn) return;
 
-  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.4.0";
+  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.4.3";
   if (currentVerEl) currentVerEl.textContent = `v${currentVersion}`;
 
   const renderChangelog = () => {
@@ -538,11 +537,13 @@ function initChangelog() {
     modal.classList.remove("hidden");
   });
 
-  if (closeBtn) {
-    closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
-  }
-
   modal.addEventListener("click", (e) => {
     if (e.target === modal) modal.classList.add("hidden");
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !modal.classList.contains("hidden")) {
+      modal.classList.add("hidden");
+    }
   });
 }
