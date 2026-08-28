@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.14.0] - 2026-08-28
+### Added
+- **💡 Dynamic Tag-Based Input Placeholders**: Replaced static sentence starter buttons with intuitive dynamic input placeholders that update automatically whenever a category tag is clicked (`🧠 TIL` -> *"Today I learned..."*, `💡 Insight` -> *"I just realized that..."*, `📖 Quote` -> *"A quote or idea that resonated today..."*, etc.).
+### Changed
+- **🌐 Full English Standardization**: Standardized all UI copy, widget titles, placeholders, empty-state prompts, badges, and toasts to clear, modern English across the entire widget and codebase.
+- **🌱 Concise & Punchy Learning Nudge**: Shortened the empty-state prompt to a clean, inspiring prompt (*"Spend 5 mins reading or exploring something new. What's one thing you discovered today?"*).
+- **📋 Guidelines Update**: Added Rule 5 to `AGENTS.md` and `GEMINI.md` mandating universal English for all future UI text, documentation, and codebase developments.
+
+---
+
+## [1.13.1] - 2026-08-28
+### Fixed
+- **🧩 Widget Slot Ghost Occupancy & Sanitization**: Resolved an issue where legacy or deprecated widget IDs (e.g. `dailysparks`) remained in `widgetSlots` after renaming/removal, causing the Settings drawer to show phantom `(1/2)` counts without displaying any widget items. Added automatic legacy ID migration and orphan widget slot sanitization across `state.js`, `widgets.js`, and `settings.js`.
+
+---
+
+## [1.13.0] - 2026-08-28
+### Added
+- **🧠 Daily Learning Log Widget (TIL & Daily Accountability)**: Dedicated daily learning and knowledge capture widget designed to motivate users to learn and log at least one new insight every single day:
+  - **🌱 Daily Learning Accountability**: Dynamic header badge (`⏳ Belum Belajar` vs `✓ X Dipelajari`) paired with encouraging empty-state prompts to build consistent daily learning habits.
+  - **⚡ Instant Sentence Starters**: 1-click prompt chips (`[🧠 Today I learned...]`, `[💡 Baru sadar kalau...]`, `[📖 Kutipan: "..."]`, `[✨ Istilah: ...]`, `[🛠️ Metode: ...]`) to eliminate blank-page syndrome.
+  - **🏷️ Structured Learning Tags**: Organize learnings with default presets (`🧠 TIL`, `💡 Insight`, `📖 Kutipan`, `✨ Istilah`, `🛠️ Metode`) or create custom categories.
+  - **🔍 Interactive Category Filter Bar**: Filter active learnings by category pills with real-time counters.
+  - **📋 1-Click Obsidian Markdown Export**: Formats all active learnings into clean Daily Notes Markdown (`### 🧠 Daily Learning Log (YYYY-MM-DD)`) with auto-hashtagging ready to paste into Obsidian.
+  - **🔀 Drag & Drop Reordering**: Rearrange learning notes effortlessly with visual grab indicators and immediate local persistence.
+  - **💾 Backup & Restore Integration**: Fully incorporated `dailyLearningData` and `dailyLearningTags` into JSON backup and restore workflows.
+
+---
+
 ## [1.10.0] - 2026-08-28
 ### Added
 - **🔀 Someday Box Task Drag & Drop Reordering**: Enabled smooth drag-and-drop reordering for items in the Someday Box widget. Tasks can now be picked up and rearranged dynamically with intuitive visual grab feedback, dashed dragging state, and top drop indicator line, with order instantly persisted to local storage.

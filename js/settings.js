@@ -114,8 +114,20 @@ function renderSettingsWidgetList() {
   const list = document.getElementById("settingsWidgetList");
   if (!list) return;
 
-  const leftActive = appSettings?.widgetSlots?.left || [];
-  const rightActive = appSettings?.widgetSlots?.right || [];
+  // Sanitize slots against WIDGET_REGISTRY if available
+  if (typeof WIDGET_REGISTRY !== "undefined" && appSettings?.widgetSlots) {
+    const sanitize = (slots) => (Array.isArray(slots) ? slots.map(id => id === "dailysparks" ? "dailylearning" : id).filter(id => Boolean(WIDGET_REGISTRY[id])) : []);
+    const cleanL = sanitize(appSettings.widgetSlots.left);
+    const cleanR = sanitize(appSettings.widgetSlots.right);
+    if (cleanL.length !== (appSettings.widgetSlots.left || []).length || cleanR.length !== (appSettings.widgetSlots.right || []).length) {
+      appSettings.widgetSlots.left = cleanL;
+      appSettings.widgetSlots.right = cleanR;
+      if (typeof saveSettings === "function") saveSettings();
+    }
+  }
+
+  const leftActive = (appSettings?.widgetSlots?.left || []).filter(id => typeof WIDGET_REGISTRY === "undefined" || Boolean(WIDGET_REGISTRY[id]));
+  const rightActive = (appSettings?.widgetSlots?.right || []).filter(id => typeof WIDGET_REGISTRY === "undefined" || Boolean(WIDGET_REGISTRY[id]));
   const total = leftActive.length + rightActive.length;
 
   if (total === 0) {
@@ -130,7 +142,7 @@ function renderSettingsWidgetList() {
     html += `<div class="settings-hint" style="margin-bottom:8px;">(Empty)</div>`;
   } else {
     leftActive.forEach(id => {
-      const def = WIDGET_REGISTRY[id];
+      const def = typeof WIDGET_REGISTRY !== "undefined" ? WIDGET_REGISTRY[id] : null;
       if (!def) return;
       html += `
         <div class="settings-widget-item">
@@ -147,7 +159,7 @@ function renderSettingsWidgetList() {
     html += `<div class="settings-hint" style="margin-bottom:8px;">(Empty)</div>`;
   } else {
     rightActive.forEach(id => {
-      const def = WIDGET_REGISTRY[id];
+      const def = typeof WIDGET_REGISTRY !== "undefined" ? WIDGET_REGISTRY[id] : null;
       if (!def) return;
       html += `
         <div class="settings-widget-item">
@@ -436,6 +448,8 @@ function bindSettingsControls() {
         quickNotes: localStorage.getItem("quickNotes") || "",
         somedayBoxTasks: JSON.parse(localStorage.getItem("somedayBoxTasks") || "[]"),
         somedayBoxTags: JSON.parse(localStorage.getItem("somedayBoxTags") || "[]"),
+        dailyLearningData: JSON.parse(localStorage.getItem("dailyLearningData") || localStorage.getItem("dailySparksData") || "[]"),
+        dailyLearningTags: JSON.parse(localStorage.getItem("dailyLearningTags") || localStorage.getItem("dailySparksTags") || "[]"),
         isHidden: localStorage.getItem("isHidden") || "false",
         exportedAt: new Date().toISOString(),
       };
@@ -467,6 +481,10 @@ function bindSettingsControls() {
           if (data.quickNotes !== undefined) localStorage.setItem("quickNotes", data.quickNotes);
           if (data.somedayBoxTasks) localStorage.setItem("somedayBoxTasks", JSON.stringify(data.somedayBoxTasks));
           if (data.somedayBoxTags) localStorage.setItem("somedayBoxTags", JSON.stringify(data.somedayBoxTags));
+          if (data.dailyLearningData) localStorage.setItem("dailyLearningData", JSON.stringify(data.dailyLearningData));
+          else if (data.dailySparksData) localStorage.setItem("dailyLearningData", JSON.stringify(data.dailySparksData));
+          if (data.dailyLearningTags) localStorage.setItem("dailyLearningTags", JSON.stringify(data.dailyLearningTags));
+          else if (data.dailySparksTags) localStorage.setItem("dailyLearningTags", JSON.stringify(data.dailySparksTags));
           if (data.isHidden !== undefined) localStorage.setItem("isHidden", data.isHidden);
           showToast("📥 Data imported successfully! Reloading page...", "success", 2000);
           setTimeout(() => location.reload(), 2200);

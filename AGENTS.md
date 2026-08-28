@@ -39,3 +39,6 @@ All UI additions, tweaks, and widgets **MUST ALWAYS** follow these core design p
 - **Subdued Resting State**: Action buttons (such as delete, edit, move buttons, or colorful emojis) inside widget items should be hidden (`opacity: 0`) or very dim when idle, smoothly fading in (`opacity: 0.85 - 1`) only when the parent item is hovered.
 - **Micro-Interactions**: Hover animations must be subtle and calm (e.g. `translateY(-1.5px)` elevation, slight border lightening) instead of aggressive scaling or bouncy transitions.
 
+## 5. English Language Standard
+- **Universal English UI & Codebase**: All user-facing UI text, widget names, placeholders, labels, toasts, modals, tooltips, code comments, documentation, and changelog release notes **MUST ALWAYS be strictly written in English**.
+

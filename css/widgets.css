@@ -1441,6 +1441,491 @@
   color: #ff5252;
 }
 
+/* ==========================================
+   DAILY LEARNING LOG WIDGET (TIL & Accountability)
+   ========================================== */
+
+.learning-widget-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.learning-status-badge {
+  font-size: 0.62rem;
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  margin-left: 4px;
+  transition: all 0.25s ease;
+}
+
+.learning-status-badge.pending {
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  color: #fde68a;
+}
+
+.learning-status-badge.completed {
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  color: #a7f3d0;
+}
+
+.learning-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 8px;
+}
+
+.learning-input-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.learning-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.9);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.learning-input:focus {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+.learning-input::placeholder {
+  color: rgba(255, 255, 255, 0.32);
+  font-style: italic;
+}
+
+.learning-add-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.learning-add-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: white;
+  transform: translateY(-1px);
+}
+
+.learning-tag-chip-bar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.learning-tag-chip-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.learning-tag-chip {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 3px 8px;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s ease;
+}
+
+.learning-tag-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.learning-tag-chip.active {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: white;
+  font-weight: 500;
+}
+
+.learning-tag-chip-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+}
+
+.learning-tag-chip-add:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: white;
+}
+
+/* Tag Color Utilities */
+.learning-tag-cyan.active, .learning-filter-chip.learning-tag-cyan.active {
+  background: rgba(56, 189, 248, 0.14) !important;
+  border-color: rgba(56, 189, 248, 0.35) !important;
+  color: #7dd3fc !important;
+}
+.learning-border-cyan { border-left-color: rgba(56, 189, 248, 0.55) !important; }
+.learning-text-cyan { color: rgba(125, 211, 252, 0.75) !important; }
+
+.learning-tag-amber.active, .learning-filter-chip.learning-tag-amber.active {
+  background: rgba(251, 191, 36, 0.14) !important;
+  border-color: rgba(251, 191, 36, 0.35) !important;
+  color: #fde68a !important;
+}
+.learning-border-amber { border-left-color: rgba(251, 191, 36, 0.55) !important; }
+.learning-text-amber { color: rgba(253, 230, 138, 0.75) !important; }
+
+.learning-tag-purple.active, .learning-filter-chip.learning-tag-purple.active {
+  background: rgba(192, 132, 252, 0.14) !important;
+  border-color: rgba(192, 132, 252, 0.35) !important;
+  color: #e9d5ff !important;
+}
+.learning-border-purple { border-left-color: rgba(192, 132, 252, 0.55) !important; }
+.learning-text-purple { color: rgba(233, 213, 255, 0.75) !important; }
+
+.learning-tag-rose.active, .learning-filter-chip.learning-tag-rose.active {
+  background: rgba(251, 113, 133, 0.14) !important;
+  border-color: rgba(251, 113, 133, 0.35) !important;
+  color: #fecdd3 !important;
+}
+.learning-border-rose { border-left-color: rgba(251, 113, 133, 0.55) !important; }
+.learning-text-rose { color: rgba(254, 205, 211, 0.75) !important; }
+
+.learning-tag-emerald.active, .learning-filter-chip.learning-tag-emerald.active {
+  background: rgba(52, 211, 153, 0.14) !important;
+  border-color: rgba(52, 211, 153, 0.35) !important;
+  color: #a7f3d0 !important;
+}
+.learning-border-emerald { border-left-color: rgba(52, 211, 153, 0.55) !important; }
+.learning-text-emerald { color: rgba(167, 243, 208, 0.75) !important; }
+
+.learning-tag-slate.active, .learning-filter-chip.learning-tag-slate.active {
+  background: rgba(148, 163, 184, 0.14) !important;
+  border-color: rgba(148, 163, 184, 0.35) !important;
+  color: #cbd5e1 !important;
+}
+.learning-border-slate { border-left-color: rgba(148, 163, 184, 0.45) !important; }
+.learning-text-slate { color: rgba(203, 213, 225, 0.7) !important; }
+
+/* Filter Bar */
+.learning-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  overflow-x: auto;
+  padding: 2px 0 4px 0;
+  scrollbar-width: none;
+}
+
+.learning-filter-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.learning-filter-chip {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  padding: 2px 7px;
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.learning-filter-chip:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.learning-filter-chip.active {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 500;
+}
+
+/* List Items Container */
+.learning-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 2px 2px 2px 0;
+  margin-top: 2px;
+  margin-bottom: 4px;
+}
+
+.learning-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.learning-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.learning-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-left-width: 3px;
+  border-radius: 8px;
+  padding: 8px 10px 8px 11px;
+  transition: all 0.2s ease;
+  text-align: left;
+  cursor: grab;
+  user-select: none;
+}
+
+.learning-item:active {
+  cursor: grabbing;
+}
+
+.learning-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.learning-item.dragging {
+  opacity: 0.35;
+  transform: scale(0.98);
+  background: rgba(255, 255, 255, 0.08);
+  border-style: dashed;
+}
+
+.learning-item.drag-over {
+  border-top: 2px solid rgba(255, 255, 255, 0.6) !important;
+  transform: translateY(2px);
+}
+
+.learning-item-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 5px;
+  min-width: 0;
+  flex: 1;
+}
+
+.learning-item-text {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.75);
+  word-break: break-word;
+  line-height: 1.35;
+  text-align: left;
+  transition: color 0.2s ease;
+}
+
+.learning-item:hover .learning-item-text {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.learning-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.learning-item-tag-text {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  opacity: 0.85;
+  line-height: 1.2;
+}
+
+.learning-item-time {
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.32);
+}
+
+.learning-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.learning-item:hover .learning-actions {
+  opacity: 0.85;
+}
+
+.learning-action-btn {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.15s ease;
+}
+
+.learning-action-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  transform: scale(1.1);
+}
+
+.learning-action-btn.copy-btn:hover {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+}
+
+.learning-action-btn.edit-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: white;
+}
+
+.learning-action-btn.delete-btn:hover {
+  background: rgba(255, 82, 82, 0.2);
+  color: #ff5252;
+}
+
+/* Empty State / Daily Encouragement */
+.learning-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 10px;
+  text-align: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.learning-empty-icon {
+  font-size: 1.6rem;
+  opacity: 0.7;
+}
+
+.learning-empty-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.learning-empty-text {
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.45);
+  max-width: 250px;
+  margin: 0 auto;
+}
+
+.learning-quick-prompt {
+  font-size: 0.65rem;
+  font-style: italic;
+  color: rgba(251, 191, 36, 0.65);
+  margin-top: 4px;
+}
+
+/* Footer */
+.learning-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  margin-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.learning-obsidian-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 4px 9px;
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.learning-obsidian-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: white;
+  transform: translateY(-1px);
+}
+
+.learning-footer-count {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.learning-clear-all-btn {
+  background: transparent;
+  border: none;
+  font-size: 0.68rem;
+  color: rgba(255, 82, 82, 0.65);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.learning-clear-all-btn:hover {
+  background: rgba(255, 82, 82, 0.15);
+  color: #ff5252;
+}
+
 @media (max-width: 1280px) {
   .workspace-layout {
     display: flex;

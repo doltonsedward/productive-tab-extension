@@ -135,15 +135,20 @@ function loadSettings() {
     let leftSlots = [];
     let rightSlots = [];
 
+    const migrateWidgetId = (id) => {
+      if (id === "dailysparks") return "dailylearning";
+      return id;
+    };
+
     if (saved.widgetSlots) {
-      leftSlots = Array.isArray(saved.widgetSlots.left) ? saved.widgetSlots.left : [];
-      rightSlots = Array.isArray(saved.widgetSlots.right) ? saved.widgetSlots.right : [];
+      leftSlots = Array.isArray(saved.widgetSlots.left) ? saved.widgetSlots.left.map(migrateWidgetId) : [];
+      rightSlots = Array.isArray(saved.widgetSlots.right) ? saved.widgetSlots.right.map(migrateWidgetId) : [];
     } else if (Array.isArray(saved.activeWidgets)) {
-      leftSlots = saved.activeWidgets.slice(0, 2);
-      rightSlots = saved.activeWidgets.slice(2, 4);
+      leftSlots = saved.activeWidgets.slice(0, 2).map(migrateWidgetId);
+      rightSlots = saved.activeWidgets.slice(2, 4).map(migrateWidgetId);
     } else if (saved.activeWidgets && typeof saved.activeWidgets === "object") {
-      leftSlots = Array.isArray(saved.activeWidgets.left) ? saved.activeWidgets.left : [];
-      rightSlots = Array.isArray(saved.activeWidgets.right) ? saved.activeWidgets.right : [];
+      leftSlots = Array.isArray(saved.activeWidgets.left) ? saved.activeWidgets.left.map(migrateWidgetId) : [];
+      rightSlots = Array.isArray(saved.activeWidgets.right) ? saved.activeWidgets.right.map(migrateWidgetId) : [];
     }
 
     return {

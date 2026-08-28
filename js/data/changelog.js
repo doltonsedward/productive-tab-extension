@@ -7,6 +7,28 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.14.0",
+    date: "2026-08-28",
+    items: [
+      { type: "feat", text: "Dynamic Tag Placeholders: Input placeholders now adapt dynamically when selecting category tags (TIL, Insight, Quote, etc.) for a cleaner, decluttered UI." },
+      { type: "change", text: "English Language Standardization: Standardized all Daily Learning Log copy, empty state prompts, and agent guidelines to English." }
+    ]
+  },
+  {
+    version: "1.13.1",
+    date: "2026-08-28",
+    items: [
+      { type: "fix", text: "Widget Slot Sanitization: Auto-migrated legacy widget IDs and purged orphan slot entries to prevent ghost widget slot occupancy in settings." }
+    ]
+  },
+  {
+    version: "1.13.0",
+    date: "2026-08-28",
+    items: [
+      { type: "feat", text: "Daily Learning Log Widget (TIL & Daily Accountability): Dedicated learning & knowledge capture widget with daily accountability badges, sentence starters, and Obsidian export." }
+    ]
+  },
+  {
     version: "1.10.0",
     date: "2026-08-28",
     items: [

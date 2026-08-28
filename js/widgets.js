@@ -1083,6 +1083,519 @@ const WIDGET_REGISTRY = {
         });
       }
     }
+  },
+
+  dailylearning: {
+    id: "dailylearning",
+    name: "Daily Learning Log",
+    icon: "🧠",
+    desc: "Log insights, new concepts & quotes with Obsidian export",
+
+    _storageKey: "dailyLearningData",
+    _tagsKey: "dailyLearningTags",
+    _activeFilter: "ALL",
+    _selectedTag: "🧠 TIL",
+
+    _defaultTags: ["🧠 TIL", "💡 Insight", "📖 Quote", "✨ Term", "🛠️ Method"],
+
+    _getPlaceholderForTag(tag = "") {
+      const lower = tag.toLowerCase();
+      if (lower.includes("til") || lower.includes("🧠")) return "Today I learned...";
+      if (lower.includes("insight") || lower.includes("💡") || lower.includes("realiz")) return "I just realized that...";
+      if (lower.includes("quote") || lower.includes("kutipan") || lower.includes("📖")) return "A quote or idea that resonated today...";
+      if (lower.includes("term") || lower.includes("istilah") || lower.includes("diksi") || lower.includes("✨")) return "A new word, term, or concept defined...";
+      if (lower.includes("method") || lower.includes("metode") || lower.includes("technique") || lower.includes("skill") || lower.includes("🛠️")) return "A useful workflow, command, or technique...";
+      return `Log what you learned for ${tag}...`;
+    },
+
+    _loadLearnings() {
+      try {
+        let raw = localStorage.getItem(this._storageKey);
+        if (!raw) {
+          const oldRaw = localStorage.getItem("dailySparksData");
+          if (oldRaw) {
+            raw = oldRaw;
+            localStorage.setItem(this._storageKey, oldRaw);
+            localStorage.removeItem("dailySparksData");
+          }
+        }
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) return parsed;
+        }
+      } catch (e) { }
+      return [];
+    },
+
+    _saveLearnings(items) {
+      localStorage.setItem(this._storageKey, JSON.stringify(items));
+    },
+
+    _loadTags() {
+      try {
+        let raw = localStorage.getItem(this._tagsKey);
+        if (!raw) {
+          const oldTags = localStorage.getItem("dailySparksTags");
+          if (oldTags) {
+            raw = oldTags;
+            localStorage.setItem(this._tagsKey, oldTags);
+            localStorage.removeItem("dailySparksTags");
+          }
+        }
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch (e) { }
+      return [...this._defaultTags];
+    },
+
+    _saveTags(tags) {
+      localStorage.setItem(this._tagsKey, JSON.stringify(tags));
+    },
+
+    _getTagColorClass(tag = "") {
+      const lower = tag.toLowerCase();
+      if (lower.includes("til") || lower.includes("🧠")) return "learning-tag-cyan";
+      if (lower.includes("insight") || lower.includes("💡") || lower.includes("realiz")) return "learning-tag-amber";
+      if (lower.includes("quote") || lower.includes("kutipan") || lower.includes("📖")) return "learning-tag-purple";
+      if (lower.includes("term") || lower.includes("istilah") || lower.includes("diksi") || lower.includes("✨")) return "learning-tag-rose";
+      if (lower.includes("method") || lower.includes("metode") || lower.includes("technique") || lower.includes("skill") || lower.includes("🛠️")) return "learning-tag-emerald";
+      return "learning-tag-slate";
+    },
+
+    _renderListHtml() {
+      const items = this._loadLearnings();
+      const filtered = this._activeFilter === "ALL"
+        ? items
+        : items.filter(s => (s.tag || "🧠 TIL") === this._activeFilter);
+
+      if (filtered.length === 0) {
+        return `
+          <div class="learning-empty">
+            <span class="learning-empty-icon">🌱</span>
+            <div class="learning-empty-title">Nothing logged today yet</div>
+            <div class="learning-empty-text">Spend 5 mins reading or exploring something new.<br>What's one thing you discovered today?</div>
+          </div>
+        `;
+      }
+
+      return filtered.map(item => {
+        const tagText = item.tag || "🧠 TIL";
+        const colorClass = this._getTagColorClass(tagText);
+        const borderClass = colorClass.replace('learning-tag-', 'learning-border-');
+        const textClass = colorClass.replace('learning-tag-', 'learning-text-');
+
+        return `
+          <div class="learning-item ${borderClass}" draggable="true" data-id="${item.id}">
+            <div class="learning-item-content">
+              <span class="learning-item-text" title="${escapeHtml(item.text)}">${escapeHtml(item.text)}</span>
+              <div class="learning-item-meta">
+                <span class="learning-item-tag-text ${textClass}">${escapeHtml(tagText)}</span>
+                ${item.createdAt ? `<span class="learning-item-time">${escapeHtml(item.createdAt)}</span>` : ''}
+              </div>
+            </div>
+            <div class="learning-actions">
+              <button type="button" class="learning-action-btn copy-btn" data-action="copy" data-id="${item.id}" title="Copy Markdown">📋</button>
+              <button type="button" class="learning-action-btn edit-btn" data-action="edit" data-id="${item.id}" title="Edit entry">✏️</button>
+              <button type="button" class="learning-action-btn delete-btn" data-action="delete" data-id="${item.id}" title="Delete entry">✕</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    },
+
+    _renderTagSelectorHtml() {
+      const tags = this._loadTags();
+      return `
+        <div class="learning-tag-chip-bar" id="learningTagChipBar">
+          ${tags.map(tag => {
+        const isSelected = tag === this._selectedTag;
+        const colorClass = isSelected ? this._getTagColorClass(tag) : "";
+        return `
+              <button type="button" class="learning-tag-chip ${colorClass} ${isSelected ? 'active' : ''}" data-tag="${escapeHtml(tag)}" title="Tag: ${escapeHtml(tag)}">
+                <span>${escapeHtml(tag)}</span>
+              </button>
+            `;
+      }).join("")}
+          <button type="button" class="learning-tag-chip-add" id="learningAddCustomTagBtn" title="Add new category">+</button>
+        </div>
+      `;
+    },
+
+    _renderFilterPillsHtml() {
+      const items = this._loadLearnings();
+      const tags = this._loadTags();
+      const usedTags = tags.filter(t => items.some(s => (s.tag || "🧠 TIL") === t));
+
+      if (items.length === 0 || usedTags.length === 0) {
+        return "";
+      }
+
+      return `
+        <div class="learning-filter-bar" id="learningFilterBar">
+          <button type="button" class="learning-filter-chip ${this._activeFilter === 'ALL' ? 'active' : ''}" data-filter="ALL">All (${items.length})</button>
+          ${usedTags.map(tag => {
+        const count = items.filter(s => (s.tag || "🧠 TIL") === tag).length;
+        const isActive = this._activeFilter === tag;
+        const colorClass = this._getTagColorClass(tag);
+        return `
+              <button type="button" class="learning-filter-chip ${colorClass} ${isActive ? 'active' : ''}" data-filter="${escapeHtml(tag)}">
+                ${escapeHtml(tag)} (${count})
+              </button>
+            `;
+      }).join("")}
+        </div>
+      `;
+    },
+
+    _formatObsidianMarkdown() {
+      const items = this._loadLearnings();
+      if (items.length === 0) return null;
+      const today = new Date().toISOString().split("T")[0];
+      let md = `### 🧠 Daily Learning Log (${today})\n\n`;
+      items.forEach(item => {
+        const cleanTag = (item.tag || "TIL")
+          .replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, "")
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, "-");
+        const tagSlug = cleanTag ? ` #${cleanTag}` : "";
+        md += `- **${(item.tag || "TIL").replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, "").trim()}**: ${item.text}${tagSlug}\n`;
+      });
+      return md;
+    },
+
+    render() {
+      const items = this._loadLearnings();
+      const tags = this._loadTags();
+      if (!tags.includes(this._selectedTag)) {
+        this._selectedTag = tags[0] || "🧠 TIL";
+      }
+
+      const hasLearned = items.length > 0;
+      const statusBadgeHtml = hasLearned
+        ? `<span class="learning-status-badge completed" id="learningStatusBadge">✓ ${items.length} Learned</span>`
+        : `<span class="learning-status-badge pending" id="learningStatusBadge">⏳ Not learned yet</span>`;
+
+      const currentPlaceholder = this._getPlaceholderForTag(this._selectedTag);
+
+      const card = document.createElement("div");
+      card.className = "widget-card learning-widget-card";
+      card.dataset.widgetId = "dailylearning";
+      card.innerHTML = `
+        <div class="widget-header">
+          <div class="widget-title">
+            <span class="widget-title-icon">🧠</span>
+            Learning Log
+            ${statusBadgeHtml}
+          </div>
+          <button class="widget-remove-btn" data-remove="dailylearning" title="Remove widget">✕</button>
+        </div>
+
+        <div class="learning-input-container">
+          <div class="learning-input-row">
+            <input
+              type="text"
+              id="learningInput"
+              class="learning-input"
+              placeholder="${escapeHtml(currentPlaceholder)}"
+              maxlength="160"
+            />
+            <button type="button" id="learningAddBtn" class="learning-add-btn" title="Save learning">+</button>
+          </div>
+          <div id="learningTagSelectorContainer">
+            ${this._renderTagSelectorHtml()}
+          </div>
+        </div>
+
+        <div id="learningFilterContainer">
+          ${this._renderFilterPillsHtml()}
+        </div>
+
+        <div class="learning-list" id="learningList">
+          ${this._renderListHtml()}
+        </div>
+
+        <div class="learning-footer">
+          <button type="button" class="learning-obsidian-btn" id="learningExportObsidianBtn" title="Copy all learnings to clipboard in Obsidian Markdown">
+            📋 Copy to Obsidian
+          </button>
+          <span class="learning-footer-count" id="learningFooterCount">${items.length} ${items.length === 1 ? 'learning' : 'learnings'}</span>
+        </div>
+      `;
+      return card;
+    },
+
+    _updateView() {
+      const listEl = document.getElementById("learningList");
+      const statusBadge = document.getElementById("learningStatusBadge");
+      const footerCountEl = document.getElementById("learningFooterCount");
+      const filterContainer = document.getElementById("learningFilterContainer");
+      const tagContainer = document.getElementById("learningTagSelectorContainer");
+      const input = document.getElementById("learningInput");
+
+      const items = this._loadLearnings();
+      if (listEl) listEl.innerHTML = this._renderListHtml();
+      if (statusBadge) {
+        if (items.length > 0) {
+          statusBadge.className = "learning-status-badge completed";
+          statusBadge.textContent = `✓ ${items.length} Learned`;
+        } else {
+          statusBadge.className = "learning-status-badge pending";
+          statusBadge.textContent = `⏳ Not learned yet`;
+        }
+      }
+      if (footerCountEl) footerCountEl.textContent = `${items.length} ${items.length === 1 ? 'learning' : 'learnings'}`;
+      if (filterContainer) filterContainer.innerHTML = this._renderFilterPillsHtml();
+      if (tagContainer) tagContainer.innerHTML = this._renderTagSelectorHtml();
+      if (input && !input.value) {
+        input.placeholder = this._getPlaceholderForTag(this._selectedTag);
+      }
+
+      const footer = document.querySelector(".learning-footer");
+      if (footer) {
+        let existingClear = document.getElementById("learningClearAllBtn");
+        if (items.length > 0) {
+          if (!existingClear) {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "learning-clear-all-btn";
+            btn.id = "learningClearAllBtn";
+            btn.textContent = "Clear All";
+            btn.title = "Clear all learning entries";
+            btn.addEventListener("click", () => this._handleClearAll());
+            footer.appendChild(btn);
+          }
+        } else if (existingClear) {
+          existingClear.remove();
+        }
+      }
+    },
+
+    _handleClearAll() {
+      const items = this._loadLearnings();
+      if (items.length === 0) return;
+      if (confirm(`Clear all ${items.length} entries from Daily Learning Log?`)) {
+        this._saveLearnings([]);
+        this._updateView();
+        showToast("🧠 Learning Log cleared.", "info", 2500);
+      }
+    },
+
+    afterRender() {
+      const input = document.getElementById("learningInput");
+      const addBtn = document.getElementById("learningAddBtn");
+      const tagContainer = document.getElementById("learningTagSelectorContainer");
+      const filterContainer = document.getElementById("learningFilterContainer");
+      const listEl = document.getElementById("learningList");
+      const exportObsidianBtn = document.getElementById("learningExportObsidianBtn");
+      const clearBtn = document.getElementById("learningClearAllBtn");
+
+      const handleAdd = () => {
+        if (!input) return;
+        const text = input.value.trim();
+        if (!text) return;
+
+        const items = this._loadLearnings();
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const newItem = {
+          id: Date.now(),
+          text: text,
+          tag: this._selectedTag || "🧠 TIL",
+          createdAt: timeStr,
+          date: now.toISOString().split("T")[0]
+        };
+
+        items.unshift(newItem);
+        this._saveLearnings(items);
+        input.value = "";
+        input.placeholder = this._getPlaceholderForTag(this._selectedTag);
+        this._updateView();
+        showToast("🎉 Great! 1 new insight logged today.", "success", 2500);
+      };
+
+      if (addBtn) addBtn.onclick = handleAdd;
+      if (input) {
+        input.onkeydown = (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            handleAdd();
+          }
+        };
+      }
+
+      if (clearBtn) {
+        clearBtn.onclick = () => this._handleClearAll();
+      }
+
+      // Obsidian Export
+      if (exportObsidianBtn) {
+        exportObsidianBtn.onclick = () => {
+          const md = this._formatObsidianMarkdown();
+          if (!md) {
+            showToast("⚠️ No learning entries to export yet.", "info", 2000);
+            return;
+          }
+          navigator.clipboard.writeText(md).then(() => {
+            showToast("📋 Copied Daily Learning Log to Obsidian!", "success", 2500);
+          }).catch(() => {
+            showToast("❌ Failed to copy to clipboard.", "danger", 2500);
+          });
+        };
+      }
+
+      // Tag Selector Click & Dynamic Placeholder Update
+      if (tagContainer) {
+        tagContainer.onclick = (e) => {
+          const addCustomBtn = e.target.closest("#learningAddCustomTagBtn");
+          if (addCustomBtn) {
+            const newTagName = prompt("Enter new category name (e.g. 🔬 Research, ⚡ Mindset):");
+            if (newTagName && newTagName.trim()) {
+              const trimmed = newTagName.trim();
+              const tags = this._loadTags();
+              if (!tags.includes(trimmed)) {
+                tags.push(trimmed);
+                this._saveTags(tags);
+              }
+              this._selectedTag = trimmed;
+              this._updateView();
+              if (input) {
+                input.placeholder = this._getPlaceholderForTag(this._selectedTag);
+                input.focus();
+              }
+              showToast(`🏷️ Category "${trimmed}" created!`, "success", 2000);
+            }
+            return;
+          }
+
+          const chip = e.target.closest(".learning-tag-chip");
+          if (chip && chip.dataset.tag) {
+            this._selectedTag = chip.dataset.tag;
+            this._updateView();
+            if (input) {
+              input.placeholder = this._getPlaceholderForTag(this._selectedTag);
+              input.focus();
+            }
+          }
+        };
+      }
+
+      // Tag Filter Click
+      if (filterContainer) {
+        filterContainer.onclick = (e) => {
+          const chip = e.target.closest(".learning-filter-chip");
+          if (chip && chip.dataset.filter) {
+            this._activeFilter = chip.dataset.filter;
+            this._updateView();
+          }
+        };
+      }
+
+      // List Item Actions: Copy individual, Edit, Delete
+      if (listEl) {
+        listEl.onclick = (e) => {
+          const btn = e.target.closest(".learning-action-btn");
+          if (!btn) return;
+          const action = btn.dataset.action;
+          const id = Number(btn.dataset.id);
+          const items = this._loadLearnings();
+          const item = items.find(s => s.id === id);
+          if (!item) return;
+
+          if (action === "copy") {
+            const cleanTag = (item.tag || "TIL")
+              .replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, "")
+              .trim()
+              .toLowerCase()
+              .replace(/\s+/g, "-");
+            const tagSlug = cleanTag ? ` #${cleanTag}` : "";
+            const itemMd = `- **${(item.tag || "TIL").replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, "").trim()}**: ${item.text}${tagSlug}`;
+            navigator.clipboard.writeText(itemMd).then(() => {
+              showToast("📋 Entry copied to clipboard!", "success", 2000);
+            });
+          } else if (action === "edit") {
+            const newText = prompt("Edit learning:", item.text);
+            if (newText !== null && newText.trim()) {
+              item.text = newText.trim();
+              this._saveLearnings(items);
+              this._updateView();
+              showToast("✏️ Entry updated.", "success", 2000);
+            }
+          } else if (action === "delete") {
+            const updated = items.filter(s => s.id !== id);
+            this._saveLearnings(updated);
+            this._updateView();
+            showToast("🗑️ Entry removed.", "info", 2000);
+          }
+        };
+
+        // Drag & Drop reordering for Daily Learnings
+        let draggedId = null;
+
+        listEl.addEventListener("dragstart", (e) => {
+          const item = e.target.closest(".learning-item");
+          if (!item || e.target.closest(".learning-action-btn")) {
+            e.preventDefault();
+            return;
+          }
+          e.stopPropagation();
+          draggedId = Number(item.dataset.id);
+          item.classList.add("dragging");
+          e.dataTransfer.effectAllowed = "move";
+          e.dataTransfer.setData("text/plain", item.dataset.id);
+        });
+
+        listEl.addEventListener("dragend", (e) => {
+          const item = e.target.closest(".learning-item");
+          if (item) item.classList.remove("dragging");
+          listEl.querySelectorAll(".learning-item").forEach(el => el.classList.remove("drag-over"));
+          draggedId = null;
+        });
+
+        listEl.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "move";
+        });
+
+        listEl.addEventListener("dragenter", (e) => {
+          const item = e.target.closest(".learning-item");
+          if (item && Number(item.dataset.id) !== draggedId) {
+            item.classList.add("drag-over");
+          }
+        });
+
+        listEl.addEventListener("dragleave", (e) => {
+          const item = e.target.closest(".learning-item");
+          if (item && !item.contains(e.relatedTarget)) {
+            item.classList.remove("drag-over");
+          }
+        });
+
+        listEl.addEventListener("drop", (e) => {
+          e.preventDefault();
+          const targetItem = e.target.closest(".learning-item");
+          if (!targetItem) return;
+          targetItem.classList.remove("drag-over");
+
+          const targetId = Number(targetItem.dataset.id);
+          const sourceId = draggedId || Number(e.dataTransfer.getData("text/plain"));
+          if (!sourceId || sourceId === targetId) return;
+
+          const items = this._loadLearnings();
+          const fromIndex = items.findIndex(s => s.id === sourceId);
+          const toIndex = items.findIndex(s => s.id === targetId);
+
+          if (fromIndex !== -1 && toIndex !== -1) {
+            const [movedItem] = items.splice(fromIndex, 1);
+            items.splice(toIndex, 0, movedItem);
+            this._saveLearnings(items);
+            this._updateView();
+          }
+        });
+      }
+    }
   }
 };
 
@@ -1103,6 +1616,27 @@ function renderWidgets() {
   if (!appSettings.widgetSlots) appSettings.widgetSlots = { left: [], right: [] };
   if (!Array.isArray(appSettings.widgetSlots.left)) appSettings.widgetSlots.left = [];
   if (!Array.isArray(appSettings.widgetSlots.right)) appSettings.widgetSlots.right = [];
+
+  // Sanitize slots: migrate legacy IDs and purge unknown/orphan IDs
+  const sanitizeSlots = (slots) => {
+    return slots
+      .map(id => (id === "dailysparks" ? "dailylearning" : id))
+      .filter(id => Boolean(WIDGET_REGISTRY[id]));
+  };
+
+  const cleanLeft = sanitizeSlots(appSettings.widgetSlots.left);
+  const cleanRight = sanitizeSlots(appSettings.widgetSlots.right);
+
+  if (
+    cleanLeft.length !== appSettings.widgetSlots.left.length ||
+    cleanRight.length !== appSettings.widgetSlots.right.length ||
+    cleanLeft.some((id, i) => id !== appSettings.widgetSlots.left[i]) ||
+    cleanRight.some((id, i) => id !== appSettings.widgetSlots.right[i])
+  ) {
+    appSettings.widgetSlots.left = cleanLeft;
+    appSettings.widgetSlots.right = cleanRight;
+    if (typeof saveSettings === "function") saveSettings();
+  }
 
   colLeft.querySelectorAll(".widget-card").forEach(el => el.remove());
   colRight.querySelectorAll(".widget-card").forEach(el => el.remove());
