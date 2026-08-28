@@ -1094,23 +1094,49 @@ function renderCardForSlot(widgetId, side, index) {
   card.dataset.side = side;
   card.dataset.index = index;
 
+  const isCollapsed = typeof isWidgetCollapsed === "function" ? isWidgetCollapsed(widgetId) : false;
+  if (isCollapsed) {
+    card.classList.add("is-collapsed");
+  }
+
   const header = card.querySelector(".widget-header");
   if (header) {
     const otherSide = side === "left" ? "right" : "left";
     const sameColCount = appSettings.widgetSlots[side].length;
 
     header.innerHTML = `
-      <div class="widget-title">
+      <div class="widget-title" title="Click to minimize/expand widget">
         <span class="widget-drag-handle" title="Drag & Drop to move/swap position">⣿</span>
         <span class="widget-title-icon">${def.icon}</span>
         ${escapeHtml(def.name)}
       </div>
       <div class="widget-card-actions">
+        <button class="widget-action-btn widget-collapse-btn" data-side="${side}" data-idx="${index}" data-widget-id="${widgetId}" title="${isCollapsed ? "Expand widget" : "Minimize widget"}">${isCollapsed ? "+" : "─"}</button>
         ${sameColCount > 1 ? `<button class="widget-action-btn move-updown-btn" data-side="${side}" data-idx="${index}" title="Swap top/bottom position">⇅</button>` : ''}
         <button class="widget-action-btn move-side-btn" data-side="${side}" data-idx="${index}" title="Move to ${otherSide === 'left' ? 'left' : 'right'} side">⇄</button>
         <button class="widget-action-btn widget-remove-btn" data-side="${side}" data-widget-id="${widgetId}" title="Remove widget">✕</button>
       </div>
     `;
+
+    const collapseBtn = header.querySelector(".widget-collapse-btn");
+    if (collapseBtn) {
+      collapseBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const nowCollapsed = typeof toggleWidgetCollapsed === "function" ? toggleWidgetCollapsed(widgetId) : card.classList.toggle("is-collapsed");
+        card.classList.toggle("is-collapsed", nowCollapsed);
+        collapseBtn.textContent = nowCollapsed ? "+" : "─";
+        collapseBtn.title = nowCollapsed ? "Expand widget" : "Minimize widget";
+      });
+    }
+
+    const titleEl = header.querySelector(".widget-title");
+    if (titleEl) {
+      titleEl.style.cursor = "pointer";
+      titleEl.addEventListener("click", (e) => {
+        if (e.target.closest(".widget-drag-handle")) return;
+        if (collapseBtn) collapseBtn.click();
+      });
+    }
 
     const removeBtn = header.querySelector(".widget-remove-btn");
     if (removeBtn) removeBtn.addEventListener("click", (e) => {
@@ -1129,6 +1155,16 @@ function renderCardForSlot(widgetId, side, index) {
       e.stopPropagation();
       swapWidgetUpDown(side, index);
     });
+
+    // Wrap non-header children in a .widget-body wrapper if not already wrapped
+    let bodyWrapper = card.querySelector(":scope > .widget-body");
+    if (!bodyWrapper) {
+      bodyWrapper = document.createElement("div");
+      bodyWrapper.className = "widget-body";
+      const nonHeaderNodes = Array.from(card.childNodes).filter(node => node !== header);
+      nonHeaderNodes.forEach(node => bodyWrapper.appendChild(node));
+      card.appendChild(bodyWrapper);
+    }
   }
 
   setupWidgetDragAndDrop(card, side, index, widgetId);

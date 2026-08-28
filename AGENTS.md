@@ -20,10 +20,11 @@ Whenever you (the AI Agent) make changes, add features, or fix bugs in this code
 ## 3. Automatic Changelog Maintenance
 Whenever you make changes or bump the version, you **MUST ALWAYS** keep both documentation sources up to date:
 1. **`CHANGELOG.md`**:
+   - The authoritative complete history of all releases.
    - Add a new section at the top for the new version (e.g. `## [1.4.0] - YYYY-MM-DD`).
    - Categorize entries cleanly under standard headers: `### Added`, `### Changed`, `### Fixed`, `### Refactored`, or `### Removed`.
 2. **`js/data/changelog.js`**:
-   - Add the corresponding version object to the top of `CHANGELOG_DATA` so that the in-app "What's New" modal in Settings stays synchronized.
+   - Keep all releases belonging to the **current major version cycle** (e.g., all `v1.x.x` releases). When bumping to a new major version (e.g. `v2.0.0`), reset `CHANGELOG_DATA` to start the new major release cycle fresh, while previous major versions are linked to the GitHub `CHANGELOG.md` archive.
 
 ## 4. UI/UX Design System & Aesthetics (Muted Glassmorphism)
 All UI additions, tweaks, and widgets **MUST ALWAYS** follow these core design principles:

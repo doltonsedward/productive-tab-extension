@@ -86,7 +86,7 @@ function getLocalVersion() {
   // Fallback for local web development
   const el = document.getElementById("settingsVersionText");
   if (el && el.dataset.version) return el.dataset.version;
-  return "1.8.1";
+  return "1.9.1";
 }
 
 function renderVersionText() {

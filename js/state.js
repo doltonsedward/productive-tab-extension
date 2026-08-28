@@ -75,6 +75,36 @@ function saveWidgetsMinimized(val) {
   localStorage.setItem("widgetsMinimized", String(Boolean(val)));
 }
 
+function loadCollapsedWidgets() {
+  try {
+    const raw = localStorage.getItem("collapsedWidgets");
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveCollapsedWidgets(collapsedList) {
+  localStorage.setItem("collapsedWidgets", JSON.stringify(Array.isArray(collapsedList) ? collapsedList : []));
+}
+
+function isWidgetCollapsed(widgetId) {
+  const list = loadCollapsedWidgets();
+  return list.includes(widgetId);
+}
+
+function toggleWidgetCollapsed(widgetId) {
+  let list = loadCollapsedWidgets();
+  const isCurrently = list.includes(widgetId);
+  if (isCurrently) {
+    list = list.filter(id => id !== widgetId);
+  } else {
+    list.push(widgetId);
+  }
+  saveCollapsedWidgets(list);
+  return !isCurrently;
+}
+
 // --- MILESTONE STORAGE ---
 function loadMilestone() {
   try {

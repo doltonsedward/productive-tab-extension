@@ -502,7 +502,7 @@ function initChangelog() {
 
   if (!modal || !openBtn) return;
 
-  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.8.1";
+  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.9.1";
   if (currentVerEl) currentVerEl.textContent = `v${currentVersion}`;
 
   // Check and display unread update indicator dot on button & settings FAB
@@ -539,7 +539,7 @@ function initChangelog() {
       return;
     }
 
-    listEl.innerHTML = entries.map((ver, idx) => {
+    const cardsHtml = entries.map((ver, idx) => {
       const isLatest = idx === 0;
       const isCurrent = ver.version === currentVersion;
       const itemsHtml = (ver.items || []).map(item => `
@@ -565,6 +565,20 @@ function initChangelog() {
         </div>
       `;
     }).join("");
+
+    const archiveCardHtml = `
+      <div class="changelog-archive-card">
+        <div class="changelog-archive-text">
+          <span class="changelog-archive-title">📜 Previous Versions Archive</span>
+          <span class="changelog-archive-desc">Looking for earlier release notes? View the full changelog on GitHub.</span>
+        </div>
+        <a href="https://github.com/doltonsedward/productive-tab-extension/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" class="changelog-archive-link" title="Open full CHANGELOG.md on GitHub">
+          <span>Full History</span> ↗
+        </a>
+      </div>
+    `;
+
+    listEl.innerHTML = cardsHtml + archiveCardHtml;
   };
 
   openBtn.addEventListener("click", (e) => {

@@ -1030,10 +1030,78 @@
   border: 1px solid rgba(255, 170, 0, 0.3);
 }
 
+.changelog-pill.change {
+  background: rgba(180, 140, 255, 0.15);
+  color: #d1b3ff;
+  border: 1px solid rgba(180, 140, 255, 0.3);
+}
+
 .changelog-pill.refactor {
   background: rgba(80, 160, 255, 0.15);
   color: #70b0ff;
   border: 1px solid rgba(80, 160, 255, 0.3);
+}
+
+/* Changelog GitHub Archive Card */
+.changelog-archive-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 4px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.changelog-archive-card:hover {
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.changelog-archive-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+
+.changelog-archive-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.changelog-archive-desc {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.35;
+}
+
+.changelog-archive-link {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.changelog-archive-link:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.28);
+  transform: translateY(-1px);
 }
 
 .changelog-modal-hint {

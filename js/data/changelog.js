@@ -1,8 +1,26 @@
 // ==========================================
-// DATA: CHANGELOG & RELEASE NOTES
+// DATA: CHANGELOG & RELEASE NOTES (CURRENT MAJOR: v1.x)
 // ==========================================
+// Contains all version releases for the current major cycle (v1.x).
+// Older major releases are archived in CHANGELOG.md on GitHub:
+// https://github.com/doltonsedward/productive-tab-extension/blob/main/CHANGELOG.md
 
 const CHANGELOG_DATA = [
+  {
+    version: "1.9.1",
+    date: "2026-08-28",
+    items: [
+      { type: "feat", text: "Direct GitHub Changelog Archive: Added a quick-access link card in What's New to explore the full repository changelog archive." },
+      { type: "refactor", text: "Streamlined Major Release Organization: Organized in-app changelog to display current major version cycle (v1.x) with direct GitHub archive links for previous cycles." }
+    ]
+  },
+  {
+    version: "1.9.0",
+    date: "2026-08-28",
+    items: [
+      { type: "feat", text: "Individual Widget Minimize: Added a [─]/[+] collapse button on widget headers to tuck away individual widgets into a sleek, compact glass bar without removing them." }
+    ]
+  },
   {
     version: "1.8.1",
     date: "2026-08-27",

@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.9.1] - 2026-08-28
+### Added
+- **📜 Direct GitHub Changelog Archive Link**: Added a sleek link card in the What's New modal directing users to the full historical changelog archive on GitHub (`CHANGELOG.md`).
+### Refactored
+- **⚡ Major Cycle Release Organization**: Structured in-app release notes dataset (`js/data/changelog.js`) to display the current major version cycle (`v1.x.x`) with direct GitHub archive linking for previous major versions, ensuring smooth and organized What's New presentation.
+
+---
+
+## [1.9.0] - 2026-08-28
+### Added
+- **🧩 Individual Widget Minimize / Collapse**: Added a clean `[─]` / `[+]` minimize button to every widget header actions toolbar. Clicking the button or the header title collapses the widget into a compact, elegant ~38px glass bar with a smooth height and opacity transition. Minimized states are saved per-widget and persist across new tabs and browser sessions.
+
+---
+
 ## [1.8.1] - 2026-08-27
 ### Changed
 - **Bottom-Right Action Dock Alignment**: Moved the Focus Mode toggle button to the furthest bottom-right corner and placed the Stopwatch/Timer FAB to its left for a clean, cohesive action dock.
