@@ -1318,8 +1318,8 @@ const WIDGET_REGISTRY = {
         </div>
 
         <div class="learning-footer">
-          <button type="button" class="learning-obsidian-btn" id="learningExportObsidianBtn" title="Copy all learnings to clipboard in Obsidian Markdown">
-            📋 Copy to Obsidian
+          <button type="button" class="learning-obsidian-btn" id="learningExportObsidianBtn" title="Copy all learnings in Obsidian markdown">
+            📋 Copy
           </button>
           <span class="learning-footer-count" id="learningFooterCount">${items.length} ${items.length === 1 ? 'learning' : 'learnings'}</span>
         </div>
@@ -1327,7 +1327,21 @@ const WIDGET_REGISTRY = {
       return card;
     },
 
-    _updateView() {
+    _updateTagChipsSelection() {
+      const bar = document.getElementById("learningTagChipBar");
+      if (!bar) return;
+      bar.querySelectorAll(".learning-tag-chip").forEach(chip => {
+        const tag = chip.dataset.tag;
+        const isSelected = tag === this._selectedTag;
+        chip.classList.toggle("active", isSelected);
+        chip.classList.remove("learning-tag-cyan", "learning-tag-amber", "learning-tag-purple", "learning-tag-rose", "learning-tag-emerald", "learning-tag-slate");
+        if (isSelected) {
+          chip.classList.add(this._getTagColorClass(tag));
+        }
+      });
+    },
+
+    _updateView(rebuildTags = false) {
       const listEl = document.getElementById("learningList");
       const statusBadge = document.getElementById("learningStatusBadge");
       const footerCountEl = document.getElementById("learningFooterCount");
@@ -1348,7 +1362,17 @@ const WIDGET_REGISTRY = {
       }
       if (footerCountEl) footerCountEl.textContent = `${items.length} ${items.length === 1 ? 'learning' : 'learnings'}`;
       if (filterContainer) filterContainer.innerHTML = this._renderFilterPillsHtml();
-      if (tagContainer) tagContainer.innerHTML = this._renderTagSelectorHtml();
+
+      if (rebuildTags && tagContainer) {
+        const prevBar = document.getElementById("learningTagChipBar");
+        const prevScroll = prevBar ? prevBar.scrollLeft : 0;
+        tagContainer.innerHTML = this._renderTagSelectorHtml();
+        const newBar = document.getElementById("learningTagChipBar");
+        if (newBar) newBar.scrollLeft = prevScroll;
+      } else {
+        this._updateTagChipsSelection();
+      }
+
       if (input && !input.value) {
         input.placeholder = this._getPlaceholderForTag(this._selectedTag);
       }
@@ -1378,7 +1402,7 @@ const WIDGET_REGISTRY = {
       if (items.length === 0) return;
       if (confirm(`Clear all ${items.length} entries from Daily Learning Log?`)) {
         this._saveLearnings([]);
-        this._updateView();
+        this._updateView(false);
         showToast("🧠 Learning Log cleared.", "info", 2500);
       }
     },
@@ -1412,7 +1436,7 @@ const WIDGET_REGISTRY = {
         this._saveLearnings(items);
         input.value = "";
         input.placeholder = this._getPlaceholderForTag(this._selectedTag);
-        this._updateView();
+        this._updateView(false);
         showToast("🎉 Great! 1 new insight logged today.", "success", 2500);
       };
 
@@ -1439,6 +1463,11 @@ const WIDGET_REGISTRY = {
             return;
           }
           navigator.clipboard.writeText(md).then(() => {
+            const originalText = exportObsidianBtn.innerHTML;
+            exportObsidianBtn.innerHTML = "✅ Copied!";
+            setTimeout(() => {
+              exportObsidianBtn.innerHTML = originalText;
+            }, 1800);
             showToast("📋 Copied Daily Learning Log to Obsidian!", "success", 2500);
           }).catch(() => {
             showToast("❌ Failed to copy to clipboard.", "danger", 2500);
@@ -1460,10 +1489,14 @@ const WIDGET_REGISTRY = {
                 this._saveTags(tags);
               }
               this._selectedTag = trimmed;
-              this._updateView();
+              this._updateView(true);
               if (input) {
                 input.placeholder = this._getPlaceholderForTag(this._selectedTag);
                 input.focus();
+              }
+              const newlyAddedChip = tagContainer.querySelector(`[data-tag="${CSS.escape ? CSS.escape(trimmed) : trimmed}"]`);
+              if (newlyAddedChip) {
+                newlyAddedChip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
               }
               showToast(`🏷️ Category "${trimmed}" created!`, "success", 2000);
             }
@@ -1473,7 +1506,8 @@ const WIDGET_REGISTRY = {
           const chip = e.target.closest(".learning-tag-chip");
           if (chip && chip.dataset.tag) {
             this._selectedTag = chip.dataset.tag;
-            this._updateView();
+            this._updateView(false);
+            chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
             if (input) {
               input.placeholder = this._getPlaceholderForTag(this._selectedTag);
               input.focus();

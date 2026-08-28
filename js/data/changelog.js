@@ -7,6 +7,14 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.14.1",
+    date: "2026-08-28",
+    items: [
+      { type: "fix", text: "Tag Scroll Retention: Smooth in-place tag selection without resetting horizontal scroll position." },
+      { type: "change", text: "Subdued Copy Button: Styled the copy button with muted glass borders matching the central Todo List." }
+    ]
+  },
+  {
     version: "1.14.0",
     date: "2026-08-28",
     items: [

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.14.1] - 2026-08-28
+### Fixed
+- **🏷️ Tag Chip Scroll Retention**: Resolved an issue where selecting tags far to the right caused the horizontal tag bar to jump/reset back to the left. Active classes are now toggled smoothly in-place without tearing down the DOM or resetting `scrollLeft`.
+### Changed
+- **📋 Subdued Copy Button**: Renamed the Obsidian export button to `📋 Copy` and adopted the same calm, muted glass aesthetic as the Todo List copy button, with temporary `✅ Copied!` click feedback.
+
+---
+
 ## [1.14.0] - 2026-08-28
 ### Added
 - **💡 Dynamic Tag-Based Input Placeholders**: Replaced static sentence starter buttons with intuitive dynamic input placeholders that update automatically whenever a category tag is clicked (`🧠 TIL` -> *"Today I learned..."*, `💡 Insight` -> *"I just realized that..."*, `📖 Quote` -> *"A quote or idea that resonated today..."*, etc.).

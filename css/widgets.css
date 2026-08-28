@@ -1885,24 +1885,24 @@
 }
 
 .learning-obsidian-btn {
-  background: rgba(255, 255, 255, 0.05);
+  background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
-  padding: 4px 9px;
-  font-size: 0.68rem;
-  color: rgba(255, 255, 255, 0.75);
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.45);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
   display: inline-flex;
   align-items: center;
   gap: 4px;
 }
 
 .learning-obsidian-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.22);
-  color: white;
-  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .learning-footer-count {
