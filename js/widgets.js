@@ -781,7 +781,7 @@ const WIDGET_REGISTRY = {
         const textClass = colorClass.replace('tag-', 'text-');
 
         return `
-          <div class="someday-item ${borderClass}" data-id="${t.id}">
+          <div class="someday-item ${borderClass}" draggable="true" data-id="${t.id}">
             <div class="someday-item-content">
               <span class="someday-item-text" title="${escapeHtml(t.text)}">${escapeHtml(t.text)}</span>
               <span class="someday-item-tag-text ${textClass}">${escapeHtml(tagText)}</span>
@@ -1017,6 +1017,70 @@ const WIDGET_REGISTRY = {
             showToast("🗑️ Item removed.", "info", 2000);
           }
         };
+
+        // Drag & Drop reordering for Someday tasks
+        let draggedId = null;
+
+        listEl.addEventListener("dragstart", (e) => {
+          const item = e.target.closest(".someday-item");
+          if (!item || e.target.closest(".someday-action-btn")) {
+            e.preventDefault();
+            return;
+          }
+          e.stopPropagation();
+          draggedId = Number(item.dataset.id);
+          item.classList.add("dragging");
+          e.dataTransfer.effectAllowed = "move";
+          e.dataTransfer.setData("text/plain", item.dataset.id);
+        });
+
+        listEl.addEventListener("dragend", (e) => {
+          const item = e.target.closest(".someday-item");
+          if (item) item.classList.remove("dragging");
+          listEl.querySelectorAll(".someday-item").forEach(el => el.classList.remove("drag-over"));
+          draggedId = null;
+        });
+
+        listEl.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "move";
+        });
+
+        listEl.addEventListener("dragenter", (e) => {
+          const item = e.target.closest(".someday-item");
+          if (item && Number(item.dataset.id) !== draggedId) {
+            item.classList.add("drag-over");
+          }
+        });
+
+        listEl.addEventListener("dragleave", (e) => {
+          const item = e.target.closest(".someday-item");
+          if (item && !item.contains(e.relatedTarget)) {
+            item.classList.remove("drag-over");
+          }
+        });
+
+        listEl.addEventListener("drop", (e) => {
+          e.preventDefault();
+          const targetItem = e.target.closest(".someday-item");
+          if (!targetItem) return;
+          targetItem.classList.remove("drag-over");
+
+          const targetId = Number(targetItem.dataset.id);
+          const sourceId = draggedId || Number(e.dataTransfer.getData("text/plain"));
+          if (!sourceId || sourceId === targetId) return;
+
+          const tasks = this._loadTasks();
+          const fromIndex = tasks.findIndex(t => t.id === sourceId);
+          const toIndex = tasks.findIndex(t => t.id === targetId);
+
+          if (fromIndex !== -1 && toIndex !== -1) {
+            const [movedItem] = tasks.splice(fromIndex, 1);
+            tasks.splice(toIndex, 0, movedItem);
+            this._saveTasks(tasks);
+            this._updateView();
+          }
+        });
       }
     }
   }

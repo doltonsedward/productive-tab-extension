@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.10.0] - 2026-08-28
+### Added
+- **🔀 Someday Box Task Drag & Drop Reordering**: Enabled smooth drag-and-drop reordering for items in the Someday Box widget. Tasks can now be picked up and rearranged dynamically with intuitive visual grab feedback, dashed dragging state, and top drop indicator line, with order instantly persisted to local storage.
+
+---
+
+## [1.9.3] - 2026-08-28
+### Fixed
+- **🌱 Someday Box Outer List Spacing**: Added distinct vertical breathing room above and below the task list container. Increased gap between filter tag chips bar and task list, and expanded separation before the backlog footer divider for a clean, uncrowded layout.
+
+---
+
+## [1.9.2] - 2026-08-28
+### Changed
+- **🌱 Someday Box Spacing & Breathing Room**: Optimized visual hierarchy and whitespace across the Someday Box widget. Improved vertical padding inside item cards (`9px 10px 9px 12px`), increased list item gap (`8px`), enhanced title line-height (`1.4`), scaled up category tag font size (`0.62rem`), and added breathing space to the footer separator and quick action chips for improved legibility.
+
+---
+
 ## [1.9.1] - 2026-08-28
 ### Added
 - **📜 Direct GitHub Changelog Archive Link**: Added a sleek link card in the What's New modal directing users to the full historical changelog archive on GitHub (`CHANGELOG.md`).

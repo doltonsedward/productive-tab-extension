@@ -7,6 +7,27 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.10.0",
+    date: "2026-08-28",
+    items: [
+      { type: "feat", text: "Someday Box Drag & Drop Reordering: Reorder ideas and future tasks effortlessly with smooth drag-and-drop support." }
+    ]
+  },
+  {
+    version: "1.9.3",
+    date: "2026-08-28",
+    items: [
+      { type: "fix", text: "Someday Box Outer Spacing: Enhanced vertical breathing room between tag filter chips, task list container, and backlog footer." }
+    ]
+  },
+  {
+    version: "1.9.2",
+    date: "2026-08-28",
+    items: [
+      { type: "change", text: "Someday Box Spacing & Breathing Room: Optimized vertical padding, item gaps, tag font sizing, and footer spacing for clean legibility." }
+    ]
+  },
+  {
     version: "1.9.1",
     date: "2026-08-28",
     items: [
