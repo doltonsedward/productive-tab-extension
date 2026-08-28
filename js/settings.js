@@ -541,7 +541,6 @@ function initChangelog() {
 
     const cardsHtml = entries.map((ver, idx) => {
       const isLatest = idx === 0;
-      const isCurrent = ver.version === currentVersion;
       const itemsHtml = (ver.items || []).map(item => `
         <li class="changelog-item">
           <span class="changelog-pill ${escapeHtml(item.type || 'feat')}">${escapeHtml(item.type || 'feat')}</span>
@@ -551,10 +550,10 @@ function initChangelog() {
 
       const badgeHtml = isLatest
         ? '<span class="changelog-latest-tag" style="margin-left:8px;">✨ Latest</span>'
-        : (isCurrent ? '<span class="changelog-current-tag" style="margin-left:8px;">● Installed</span>' : '');
+        : '';
 
       return `
-        <div class="changelog-version-card ${isLatest ? 'is-latest' : ''} ${isCurrent ? 'is-current' : ''}">
+        <div class="changelog-version-card ${isLatest ? 'is-latest' : ''}">
           <div class="changelog-version-title-row">
             <span class="changelog-ver-num">v${escapeHtml(ver.version)} ${badgeHtml}</span>
             <span class="changelog-ver-date">${escapeHtml(ver.date)}</span>

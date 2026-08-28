@@ -79,13 +79,16 @@ async function checkForUpdates(force = false) {
 }
 
 function getLocalVersion() {
-  // Use Chrome extension API if available
-  if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.getManifest) {
-    return chrome.runtime.getManifest().version;
+  // Check changelog dataset or DOM attribute for immediate sync
+  if (typeof CHANGELOG_DATA !== "undefined" && Array.isArray(CHANGELOG_DATA) && CHANGELOG_DATA.length > 0 && CHANGELOG_DATA[0].version) {
+    return CHANGELOG_DATA[0].version;
   }
-  // Fallback for local web development
   const el = document.getElementById("settingsVersionText");
   if (el && el.dataset.version) return el.dataset.version;
+  if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.getManifest) {
+    const m = chrome.runtime.getManifest();
+    if (m && m.version) return m.version;
+  }
   return "1.9.1";
 }
 

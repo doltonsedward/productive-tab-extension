@@ -944,10 +944,6 @@
   background: linear-gradient(90deg, rgba(0, 255, 135, 0.07), rgba(255, 255, 255, 0.02));
 }
 
-.changelog-version-card.is-current {
-  border-left-color: #00ff87;
-}
-
 .changelog-version-card::before {
   content: '';
   position: absolute;
@@ -961,8 +957,7 @@
   transition: all 0.2s ease;
 }
 
-.changelog-version-card.is-latest::before,
-.changelog-version-card.is-current::before {
+.changelog-version-card.is-latest::before {
   background: #00ff87;
   border-color: #00ff87;
   box-shadow: 0 0 12px rgba(0, 255, 135, 0.9);
