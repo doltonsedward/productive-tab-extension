@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.14.2] - 2026-08-28
+### Changed
+- **🧩 Prioritized Widget Picker Ordering**: Reordered the Add Widget picker list by user utility and frequency of use, placing high-value daily workflow widgets (Quick Links, Someday Box, and Daily Learning Log) at the top.
+
+---
+
 ## [1.14.1] - 2026-08-28
 ### Fixed
 - **🏷️ Tag Chip Scroll Retention**: Resolved an issue where selecting tags far to the right caused the horizontal tag bar to jump/reset back to the left. Active classes are now toggled smoothly in-place without tearing down the DOM or resetting `scrollLeft`.

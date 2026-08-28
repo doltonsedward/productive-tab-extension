@@ -2031,6 +2031,16 @@ function removeWidget(widgetId) {
   showToast("Widget removed.", "info", 2000);
 }
 
+const WIDGET_PRIORITY_ORDER = [
+  "quicklinks",     // 🔗 Quick Links (App dock & frequent shortcuts)
+  "somedaybox",     // 🌱 Someday Box (Idea capture & backlog)
+  "dailylearning",  // 🧠 Daily Learning Log (Knowledge & insights)
+  "quicknotes",     // 📝 Quick Notes (Scratchpad)
+  "focusstats",     // 📊 Focus Stats (Productivity stats)
+  "timer",          // ⏱️ Timer Panel (In-card timer)
+  "dailyquote",     // 💡 Daily Quote (Inspiration)
+];
+
 function openWidgetPicker(side = "right") {
   targetAddSide = side;
   const modal = document.getElementById("widgetPickerModal");
@@ -2046,7 +2056,12 @@ function openWidgetPicker(side = "right") {
   const allActive = [...leftSlots, ...rightSlots];
   const hasLargeInTarget = targetSlots.some(id => WIDGET_REGISTRY[id]?.large);
 
-  Object.values(WIDGET_REGISTRY).forEach(def => {
+  const orderedList = [
+    ...WIDGET_PRIORITY_ORDER.map(id => WIDGET_REGISTRY[id]).filter(Boolean),
+    ...Object.values(WIDGET_REGISTRY).filter(def => !WIDGET_PRIORITY_ORDER.includes(def.id))
+  ];
+
+  orderedList.forEach(def => {
     const isActive = allActive.includes(def.id);
     const isTargetFull = targetSlots.length >= MAX_WIDGETS_PER_SIDE;
     // Large widget needs empty column; normal widget can't go in a large-widget column

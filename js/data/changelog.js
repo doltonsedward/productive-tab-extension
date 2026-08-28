@@ -7,6 +7,13 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.14.2",
+    date: "2026-08-28",
+    items: [
+      { type: "change", text: "Prioritized Widget Order: Reordered Add Widget picker list to put Quick Links, Someday Box, and Daily Learning Log first." }
+    ]
+  },
+  {
     version: "1.14.1",
     date: "2026-08-28",
     items: [
