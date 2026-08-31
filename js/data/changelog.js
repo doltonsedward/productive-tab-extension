@@ -7,6 +7,22 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.15.4",
+    date: "2026-08-31",
+    items: [
+      { type: "change", text: "Habit Integrity Protection: Removed streak manual edits and check-in unlocking to keep habit building authentic and uncheatable." },
+      { type: "change", text: "Pure Restart Flow: Milestone settings now offer a direct 'Reset & Start New Target' flow starting fresh from Day 0." }
+    ]
+  },
+  {
+    version: "1.15.3",
+    date: "2026-08-31",
+    items: [
+      { type: "fix", text: "Milestone Edit Bug: Editing habit name or target days now safely preserves your streak history and check-in status." },
+      { type: "change", text: "Streamlined Milestone Settings: Clicking ⚙️ directly opens the Edit Habit Target form with streak adjustment and check-in unlock controls." }
+    ]
+  },
+  {
     version: "1.15.2",
     date: "2026-08-31",
     items: [

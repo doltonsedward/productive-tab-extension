@@ -139,14 +139,18 @@ function renderMilestone() {
 
   let actionButtonsHtml = "";
   if (milestone.completed) {
-    actionButtonsHtml = `<button class="milestone-btn checkin-btn" disabled style="background: rgba(255, 215, 0, 0.2); border-color: rgba(255, 215, 0, 0.4); color: #ffe082;">🏆 Target Completed!</button>`;
+    actionButtonsHtml = `<button id="startNextMilestoneBtn" class="milestone-btn checkin-btn" style="background: rgba(255, 215, 0, 0.18); border-color: rgba(255, 215, 0, 0.45); color: #ffe082;">🏆 Start Next Milestone</button>`;
   } else if (milestone.failed) {
-    actionButtonsHtml = `<button id="resetMilestoneBtn" class="milestone-btn">↺ Restart</button>`;
+    actionButtonsHtml = `<button id="retryMilestoneBtn" class="milestone-btn">↺ Try Again</button>`;
   } else {
     actionButtonsHtml = `<button id="checkinMilestoneBtn" class="milestone-btn checkin-btn" ${isCheckedToday ? "disabled" : ""}>
         ${isCheckedToday ? "✓ Done" : "🔥 Check-in"}
       </button>`;
   }
+
+  const restartBtnHtml = (!milestone.completed)
+    ? `<button id="resetMilestoneBtn" class="milestone-btn" title="Reset & Start New Target">↺</button>`
+    : "";
 
   container.innerHTML = `
     <div class="${cardClass}">
@@ -168,7 +172,7 @@ function renderMilestone() {
         <span>Day ${milestone.currentStreak}/${milestone.targetDays} (${progressPercent}%)</span>
         <div class="milestone-footer-actions">
           ${actionButtonsHtml}
-          <button id="editMilestoneBtn" class="milestone-btn" title="Edit / Reset Target">⚙️</button>
+          ${restartBtnHtml}
           <button id="deleteMilestoneBtn" class="milestone-btn delete-milestone-btn" title="Delete Milestone">✕</button>
         </div>
       </div>
@@ -180,14 +184,19 @@ function renderMilestone() {
     checkinBtn.addEventListener("click", checkInMilestone);
   }
 
-  const resetBtn = document.getElementById("resetMilestoneBtn");
-  if (resetBtn) {
-    resetBtn.addEventListener("click", promptCreateMilestone);
+  const startNextBtn = document.getElementById("startNextMilestoneBtn");
+  if (startNextBtn) {
+    startNextBtn.addEventListener("click", () => promptCreateMilestone(true));
   }
 
-  const editBtn = document.getElementById("editMilestoneBtn");
-  if (editBtn) {
-    editBtn.addEventListener("click", promptEditMilestoneOptions);
+  const retryBtn = document.getElementById("retryMilestoneBtn");
+  if (retryBtn) {
+    retryBtn.addEventListener("click", () => promptCreateMilestone(true));
+  }
+
+  const resetBtn = document.getElementById("resetMilestoneBtn");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => promptCreateMilestone(true));
   }
 
   const deleteBtn = document.getElementById("deleteMilestoneBtn");
@@ -196,33 +205,38 @@ function renderMilestone() {
   }
 }
 
-async function promptCreateMilestone() {
+async function promptCreateMilestone(isRestart = false) {
+  const isExisting = Boolean(milestone && isRestart);
+  const message = isExisting
+    ? `Starting a new target will end your current streak (${milestone.currentStreak}/${milestone.targetDays} days).`
+    : "Set your daily consistency goal and target days.";
+
   const result = await showFormModal({
     badge: "🏆 Milestone Habit",
-    title: milestone ? "Edit Habit Target" : "Create Habit Target",
-    message: "Set your daily consistency goal and target days.",
+    title: isExisting ? "Start New Habit Target" : "Create Habit Target",
+    message: message,
     fields: [
       {
         name: "title",
         label: "Habit Name",
         type: "text",
-        value: milestone?.title || "",
-        placeholder: "e.g. Daily Writing, Morning Run...",
+        value: "",
+        placeholder: "e.g. Daily Writing, Morning Run, 20-min Reading...",
         required: true,
       },
       {
         name: "targetDays",
         label: "Target Days",
         type: "number",
-        value: milestone?.targetDays || 14,
-        placeholder: "e.g. 30",
-        hint: "Minimum 1 day. Recommended: 14, 30, or 66 days.",
-        min: 7,
+        value: 14,
+        placeholder: "e.g. 14",
+        hint: "Minimum 1 day. Recommended: 14, 21, 30, or 66 days.",
+        min: 1,
         max: 365,
         required: true,
       },
     ],
-    confirmText: milestone ? "Save Changes" : "Create Milestone",
+    confirmText: isExisting ? "Start New Target" : "Start Habit Tracker",
     cancelText: "Cancel",
   });
 
@@ -248,7 +262,7 @@ async function promptCreateMilestone() {
 
   saveMilestone();
   renderMilestone();
-  showToast(`🏆 Milestone "${milestone.title}" (${targetDays} days) created! Ready to build consistency?`, "success");
+  showToast(`🏆 Milestone "${milestone.title}" (${targetDays} days) started! Ready to build consistency?`, "success");
 }
 
 function checkInMilestone() {
@@ -278,7 +292,7 @@ async function deleteMilestone() {
   const confirmed = await showConfirmModal({
     badge: "🏆 Milestone Habit",
     title: `Delete "${milestone.title}"?`,
-    message: "Your streak and all progress will be permanently lost. This cannot be undone.",
+    message: `Your current streak of ${milestone.currentStreak}/${milestone.targetDays} days will be permanently lost. This cannot be undone.`,
     confirmText: "Delete Target",
     cancelText: "Keep Target",
     isDanger: true,
@@ -289,18 +303,4 @@ async function deleteMilestone() {
   saveMilestone();
   renderMilestone();
   showToast(`🗑️ Milestone "${oldTitle}" has been deleted.`, "warning", 3000);
-}
-
-async function promptEditMilestoneOptions() {
-  const confirmed = await showConfirmModal({
-    badge: "🏆 Milestone Habit",
-    title: "Edit Habit Target?",
-    message: `"${milestone.title}" — Current streak is ${milestone.currentStreak} of ${milestone.targetDays} days.`,
-    confirmText: "Edit / Reset Target",
-    cancelText: "Keep Going",
-    isDanger: false,
-  });
-  if (confirmed) {
-    await promptCreateMilestone();
-  }
 }

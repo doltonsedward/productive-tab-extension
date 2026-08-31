@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.15.4] - 2026-08-31
+### Changed
+- **🛡️ Habit Integrity & Anti-Cheating Protection**: Replaced mid-streak editing and manual check-in unlock with a clean "Reset & Start New Target" flow. This prevents streak manipulation and ensures authentic daily discipline.
+- **🔄 Pure Restart / Next Target Flow**: Clicking restart (`↺`) or completing a target now smoothly prompts to begin a fresh milestone from Day 0 with a clear habit goal and target days.
+
+---
+
+## [1.15.3] - 2026-08-31
+### Fixed
+- **🏆 Milestone Edit & Streak Preservation**: Resolved a bug where editing an existing milestone habit unintentionally wiped out streak history and check-in status. Editing now safely preserves streak progress and allows manual streak adjustments.
+
+### Changed
+- **✨ Streamlined Milestone Settings UX**: Clicking the milestone settings button (`⚙️`) now directly opens the comprehensive Edit Habit Target modal without an unnecessary confirmation prompt. Added an option to unlock today's check-in button if needed.
+- **🔘 Checkbox Field Support**: Upgraded the form modal engine (`js/dialog.js` + `css/dialog.css`) to seamlessly support custom styled checkbox inputs and hints.
+
+---
+
 ## [1.15.2] - 2026-08-31
 ### Changed
 - **💎 Full Frosted Crystal Adoption**: Set Frosted Crystal glassmorphism (`rgba(14, 18, 28, 0.38)` + `blur(22px)` + crisp white reflection sheen) as the standard default modal card design across the entire application.

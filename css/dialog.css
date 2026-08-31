@@ -260,6 +260,25 @@
   letter-spacing: 0.3px;
 }
 
+.dialog-checkbox-field {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.8rem !important;
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+
+.dialog-checkbox-field input[type="checkbox"] {
+  width: 16px !important;
+  height: 16px !important;
+  cursor: pointer;
+  accent-color: #00ff87;
+  margin: 0 !important;
+}
+
 .dialog-field input,
 .dialog-field textarea {
   width: 100%;

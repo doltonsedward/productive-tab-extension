@@ -364,6 +364,22 @@ const DialogManager = (() => {
 
       // Build field HTML
       const fieldsHtml = fields.map((f, i) => {
+        if (f.type === "checkbox") {
+          return `
+            <div class="dialog-field" id="dialogFieldWrap_${f.name}">
+              <label class="dialog-checkbox-field">
+                <input
+                  type="checkbox"
+                  id="dialogField_${f.name}"
+                  ${f.checked ? "checked" : ""}
+                />
+                <span>${f.label}</span>
+              </label>
+              ${f.hint ? `<span class="dialog-field-hint" style="margin-left: 24px;">${f.hint}</span>` : ""}
+            </div>
+          `;
+        }
+
         const inputEl = f.type === "textarea"
           ? `<textarea
                id="dialogField_${f.name}"
@@ -374,7 +390,7 @@ const DialogManager = (() => {
                type="${f.type || "text"}"
                id="dialogField_${f.name}"
                placeholder="${f.placeholder || ""}"
-               value="${String(f.value || "").replace(/"/g, "&quot;")}"
+               value="${String(f.value !== undefined ? f.value : "").replace(/"/g, "&quot;")}"
                ${f.min !== undefined ? `min="${f.min}"` : ""}
                ${f.max !== undefined ? `max="${f.max}"` : ""}
                autocomplete="off"
@@ -400,8 +416,8 @@ const DialogManager = (() => {
 
       _open();
 
-      // Auto-focus first input
-      const firstInput = _card.querySelector("input, textarea");
+      // Auto-focus first text input
+      const firstInput = _card.querySelector("input:not([type='checkbox']), textarea");
       if (firstInput) {
         requestAnimationFrame(() => {
           firstInput.focus();
@@ -416,6 +432,12 @@ const DialogManager = (() => {
         for (const f of fields) {
           const el = _card.querySelector(`#dialogField_${f.name}`);
           const wrap = _card.querySelector(`#dialogFieldWrap_${f.name}`);
+
+          if (f.type === "checkbox") {
+            result[f.name] = el ? el.checked : false;
+            continue;
+          }
+
           const val = el ? el.value.trim() : "";
 
           if (f.required !== false && val === "") {
