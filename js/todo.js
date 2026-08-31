@@ -40,11 +40,18 @@ function deleteTodo(id) {
   renderTodos();
 }
 
-function editTodo(id) {
+async function editTodo(id) {
   const todo = todos.find((t) => t.id === id);
   if (!todo) return;
 
-  const newText = prompt("Edit your task:", todo.text);
+  const newText = await showPromptModal({
+    badge: "✏️ Edit Task",
+    title: "Edit your task",
+    defaultValue: todo.text,
+    placeholder: "Enter task text...",
+    confirmText: "Save",
+    cancelText: "Cancel",
+  });
   if (newText !== null && newText.trim() !== "") {
     todo.text = newText.trim();
     saveTodos();
@@ -117,14 +124,21 @@ function deleteSubtask(parentId, subtaskId) {
   renderTodos();
 }
 
-function editSubtask(parentId, subtaskId) {
+async function editSubtask(parentId, subtaskId) {
   const todo = todos.find((t) => t.id === parentId);
   if (!todo || !Array.isArray(todo.subtasks)) return;
 
   const st = todo.subtasks.find((s) => s.id === subtaskId);
   if (!st) return;
 
-  const newText = prompt("Edit subtask:", st.text);
+  const newText = await showPromptModal({
+    badge: "✏️ Edit Subtask",
+    title: "Edit subtask",
+    defaultValue: st.text,
+    placeholder: "Enter subtask text...",
+    confirmText: "Save",
+    cancelText: "Cancel",
+  });
   if (newText !== null && newText.trim() !== "") {
     st.text = newText.trim();
     saveTodos();

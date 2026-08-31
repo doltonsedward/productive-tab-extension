@@ -1,0 +1,274 @@
+/* ==========================================================================
+   DIALOG.CSS — Custom Glassmorphism Dialog System
+   Replaces native browser prompt(), confirm(), and alert() dialogs
+   Follows muted glassmorphism design language of Productive Tab
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Overlay Backdrop
+   -------------------------------------------------------------------------- */
+#customDialogModal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 90000;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 20px;
+}
+
+#customDialogModal.dialog-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Modal Card
+   -------------------------------------------------------------------------- */
+.dialog-card {
+  background: rgba(18, 23, 32, 0.92);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 18px;
+  padding: 28px 28px 24px;
+  width: 100%;
+  max-width: 420px;
+  color: white;
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10);
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle top sheen line */
+.dialog-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.18) 30%,
+    rgba(255, 255, 255, 0.22) 50%,
+    rgba(255, 255, 255, 0.18) 70%,
+    transparent 100%);
+  border-radius: 18px 18px 0 0;
+}
+
+/* Danger variant — muted crimson left accent */
+.dialog-card.dialog-danger {
+  border-left: 2px solid rgba(239, 68, 68, 0.45);
+}
+
+#customDialogModal.dialog-hidden .dialog-card {
+  transform: scale(0.93) translateY(14px);
+  opacity: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Header Area
+   -------------------------------------------------------------------------- */
+.dialog-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.dialog-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  margin: 0 0 6px 0;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.dialog-message {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.48);
+  margin: 0 0 20px 0;
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+/* No message shown means tighter spacing */
+.dialog-title:last-of-type {
+  margin-bottom: 20px;
+}
+
+/* --------------------------------------------------------------------------
+   Form Fields
+   -------------------------------------------------------------------------- */
+.dialog-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.dialog-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+
+.dialog-field label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.3px;
+}
+
+.dialog-field input,
+.dialog-field textarea {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.30);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 9px;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: inherit;
+  font-size: 0.875rem;
+  padding: 10px 13px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.dialog-field input:focus,
+.dialog-field textarea:focus {
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+}
+
+.dialog-field input::placeholder,
+.dialog-field textarea::placeholder {
+  color: rgba(255, 255, 255, 0.22);
+}
+
+.dialog-field input[type="number"]::-webkit-inner-spin-button,
+.dialog-field input[type="number"]::-webkit-outer-spin-button {
+  opacity: 0.4;
+}
+
+/* Field hint text */
+.dialog-field-hint {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.28);
+  margin-top: 2px;
+  line-height: 1.5;
+}
+
+/* Validation error state */
+.dialog-field.has-error input,
+.dialog-field.has-error textarea {
+  border-color: rgba(239, 68, 68, 0.5);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.07);
+}
+
+.dialog-field-error {
+  font-size: 0.7rem;
+  color: rgba(239, 68, 68, 0.75);
+  display: none;
+}
+
+.dialog-field.has-error .dialog-field-error {
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   Action Buttons
+   -------------------------------------------------------------------------- */
+.dialog-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+/* Reverse order — primary action on right */
+.dialog-btn {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.8);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.15s ease;
+  outline: none;
+  white-space: nowrap;
+}
+
+.dialog-btn:hover {
+  background: rgba(255, 255, 255, 0.13);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.95);
+  transform: translateY(-1px);
+}
+
+.dialog-btn:active {
+  transform: translateY(0);
+}
+
+/* Cancel / Secondary */
+.dialog-btn.dialog-btn-cancel {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.dialog-btn.dialog-btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.65);
+  transform: translateY(-1px);
+}
+
+/* Confirm / Primary */
+.dialog-btn.dialog-btn-confirm {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.dialog-btn.dialog-btn-confirm:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+/* Danger / Destructive confirm */
+.dialog-btn.dialog-btn-danger {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: rgba(239, 100, 100, 0.95);
+}
+
+.dialog-btn.dialog-btn-danger:hover {
+  background: rgba(239, 68, 68, 0.22);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: rgba(255, 120, 120, 1);
+  transform: translateY(-1px);
+}

@@ -7,6 +7,18 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.15.0",
+    date: "2026-08-31",
+    items: [
+      { type: "feat", text: "Custom Glassmorphism Dialog System: New reusable dialog engine (dialog.js + dialog.css) replaces all native browser prompt(), confirm(), and alert() with themed modals supporting keyboard navigation, backdrop-click dismiss, and real-time validation." },
+      { type: "feat", text: "Unified Milestone Modal: Habit Name and Target Days combined into a single form modal — no more two consecutive blocking prompts." },
+      { type: "change", text: "Todo & Subtask Editing: Edit actions now open a glassmorphic prompt modal with existing text pre-selected." },
+      { type: "change", text: "Someday Box & Learning Log Dialogs: Add tag, edit item, and clear all now use custom glassmorphic modals." },
+      { type: "change", text: "Settings Erase All Data: Reset confirmation upgraded to a danger-styled glassmorphic modal." },
+      { type: "change", text: "Timer & Calendar: Replaced blocking alert() calls with non-blocking showToast() notifications." }
+    ]
+  },
+  {
     version: "1.14.2",
     date: "2026-08-28",
     items: [

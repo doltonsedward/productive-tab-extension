@@ -221,7 +221,7 @@ if (startGlobalTimerBtn) {
           globalTargetEndTime = null;
           updateGlobalDisplay();
           if (startGlobalTimerBtn) startGlobalTimerBtn.textContent = "Start";
-          alert("⏰ Time's up!");
+          showToast("⏰ Time's up! Great focus session.", "success", 6000);
           resetGlobalTimer();
           return;
         }

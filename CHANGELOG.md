@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.15.0] - 2026-08-31
+### Added
+- **🪟 Custom Glassmorphism Dialog System**: Introduced a new reusable dialog engine (`js/dialog.js` + `css/dialog.css`) that replaces all native browser `prompt()`, `confirm()`, and `alert()` calls with elegant, theme-consistent custom modals. Provides `showPromptModal()`, `showConfirmModal()`, and `showFormModal()` Promise-based APIs with keyboard navigation (<kbd>Enter</kbd> to confirm, <kbd>Esc</kbd> to cancel), backdrop-click dismissal, auto-focus with text selection, and real-time field validation.
+- **📝 Unified Milestone Creation / Edit Modal**: Replaced two consecutive blocking prompts with a single `showFormModal` containing both Habit Name and Target Days fields in one clean, readable dialog — including a helper hint for recommended day targets.
+
+### Changed
+- **✏️ Todo & Subtask Editing**: Edit task and edit subtask actions now open a glassmorphic prompt modal with the existing text pre-selected for instant editing.
+- **🌱 Someday Box Dialogs**: Add custom tag, edit task, and clear all confirmations now use custom glassmorphic modals.
+- **🧠 Daily Learning Log Dialogs**: Add custom category, edit entry, and clear all confirmations now use custom glassmorphic modals.
+- **⚙️ Settings Erase All Data**: Reset confirmation now uses a danger-styled glassmorphic confirmation modal with a clear warning message.
+- **⏰ Timer & Calendar Alerts**: Replaced blocking `alert()` calls — timer "Time's up!" and GCal validation error now use non-blocking `showToast()` notifications.
+
+---
+
 ## [1.14.2] - 2026-08-28
 ### Changed
 - **🧩 Prioritized Widget Picker Ordering**: Reordered the Add Widget picker list by user utility and frequency of use, placing high-value daily workflow widgets (Quick Links, Someday Box, and Daily Learning Log) at the top.

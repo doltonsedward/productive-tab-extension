@@ -499,8 +499,16 @@ function bindSettingsControls() {
 
   const resetBtn = document.getElementById("resetAllDataBtn");
   if (resetBtn) {
-    resetBtn.addEventListener("click", () => {
-      if (!confirm("⚠️ Are you sure you want to delete ALL data?\n\nTodos, milestone, settings, and notes will be permanently erased.")) return;
+    resetBtn.addEventListener("click", async () => {
+      const confirmed = await showConfirmModal({
+        badge: "⚠️ Danger Zone",
+        title: "Erase all data?",
+        message: "Todos, milestones, settings, notes, and all widget data will be permanently erased. This cannot be undone.",
+        confirmText: "Yes, Erase Everything",
+        cancelText: "Cancel",
+        isDanger: true,
+      });
+      if (!confirmed) return;
       localStorage.clear();
       sessionStorage.clear();
       showToast("🗑️ All data erased. Reloading...", "warning", 2000);
@@ -520,7 +528,7 @@ function initChangelog() {
 
   if (!modal || !openBtn) return;
 
-  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.14.2";
+  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.15.0";
   if (currentVerEl) currentVerEl.textContent = `v${currentVersion}`;
 
   // Check and display unread update indicator dot on button & settings FAB

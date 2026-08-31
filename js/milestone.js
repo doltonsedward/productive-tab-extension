@@ -196,18 +196,47 @@ function renderMilestone() {
   }
 }
 
-function promptCreateMilestone() {
-  const title = prompt("Name your Milestone / Habit Target (e.g. Daily Writing):", milestone?.title || "Daily Writing");
-  if (!title || !title.trim()) return;
+async function promptCreateMilestone() {
+  const result = await showFormModal({
+    badge: "🏆 Milestone Habit",
+    title: milestone ? "Edit Milestone" : "Create a New Milestone",
+    message: "Set a habit target to track your daily consistency.",
+    fields: [
+      {
+        name: "title",
+        label: "Habit Name",
+        type: "text",
+        value: milestone?.title || "",
+        placeholder: "e.g. Daily Writing, Morning Run...",
+        required: true,
+      },
+      {
+        name: "targetDays",
+        label: "Target Days",
+        type: "number",
+        value: milestone?.targetDays || 30,
+        placeholder: "e.g. 30",
+        hint: "Minimum 1 day. Recommended: 21, 30, or 66 days.",
+        min: 1,
+        max: 365,
+        required: true,
+      },
+    ],
+    confirmText: milestone ? "Save Changes" : "Create Milestone",
+    cancelText: "Cancel",
+  });
 
-  const target = prompt("Target Days? (e.g. 30):", milestone?.targetDays || "30");
-  const targetDays = parseInt(target, 10);
-  if (isNaN(targetDays) || targetDays <= 0) return;
+  if (!result) return;
+
+  const title = result.title?.trim();
+  const targetDays = parseInt(result.targetDays, 10);
+
+  if (!title || isNaN(targetDays) || targetDays <= 0) return;
 
   const todayStr = new Date().toISOString().split("T")[0];
 
   milestone = {
-    title: title.trim(),
+    title,
     targetDays,
     currentStreak: 0,
     strikes: 0,
@@ -245,8 +274,16 @@ function checkInMilestone() {
   showToast(toastMsg, toastType, milestone.completed ? 8000 : 5000);
 }
 
-function deleteMilestone() {
-  if (!confirm(`Delete milestone "${milestone.title}"?\nProgress will be permanently lost.`)) return;
+async function deleteMilestone() {
+  const confirmed = await showConfirmModal({
+    badge: "🗑️ Delete Milestone",
+    title: `Delete "${milestone.title}"?`,
+    message: "Your streak and all progress will be permanently lost. This cannot be undone.",
+    confirmText: "Delete",
+    cancelText: "Keep it",
+    isDanger: true,
+  });
+  if (!confirmed) return;
   const oldTitle = milestone.title;
   milestone = null;
   saveMilestone();
@@ -254,9 +291,16 @@ function deleteMilestone() {
   showToast(`🗑️ Milestone "${oldTitle}" has been deleted.`, "warning", 3000);
 }
 
-function promptEditMilestoneOptions() {
-  const choice = confirm(`Milestone: ${milestone.title}\nStreak: ${milestone.currentStreak} Days\n\nClick OK to Edit/Reset target, or CANCEL to stay.`);
-  if (choice) {
-    promptCreateMilestone();
+async function promptEditMilestoneOptions() {
+  const confirmed = await showConfirmModal({
+    badge: "🏆 Milestone",
+    title: milestone.title,
+    message: `Current streak: ${milestone.currentStreak} / ${milestone.targetDays} days.\n\nDo you want to edit or reset this milestone?`,
+    confirmText: "Edit / Reset Target",
+    cancelText: "Keep Going",
+    isDanger: false,
+  });
+  if (confirmed) {
+    await promptCreateMilestone();
   }
 }

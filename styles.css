@@ -4,6 +4,7 @@
    ========================================================================== */
 
 @import url("css/base.css");
+@import url("css/dialog.css");
 @import url("css/clock.css");
 @import url("css/todo.css");
 @import url("css/milestone.css");

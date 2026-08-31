@@ -54,8 +54,17 @@ const WIDGET_REGISTRY = {
       }
 
       if (clearBtn) {
-        clearBtn.addEventListener("click", () => {
-          if (textarea && confirm("Clear all notes?")) {
+        clearBtn.addEventListener("click", async () => {
+          if (!textarea) return;
+          const confirmed = await showConfirmModal({
+            badge: "📝 Quick Notes",
+            title: "Clear all notes?",
+            message: "This will permanently erase your current note content.",
+            confirmText: "Clear Notes",
+            cancelText: "Cancel",
+            isDanger: true,
+          });
+          if (confirmed) {
             textarea.value = "";
             localStorage.removeItem("quickNotes");
             showToast("📝 Quick Notes cleared.", "info", 2000);
@@ -893,10 +902,18 @@ const WIDGET_REGISTRY = {
       }
     },
 
-    _handleClearAll() {
+    async _handleClearAll() {
       const tasks = this._loadTasks();
       if (tasks.length === 0) return;
-      if (confirm(`Clear all ${tasks.length} items from Someday Box?`)) {
+      const confirmed = await showConfirmModal({
+        badge: "🌱 Someday Box",
+        title: `Clear all ${tasks.length} items?`,
+        message: "All items in the Someday Box will be permanently removed.",
+        confirmText: "Clear All",
+        cancelText: "Cancel",
+        isDanger: true,
+      });
+      if (confirmed) {
         this._saveTasks([]);
         this._updateView();
         showToast("🌱 Someday Box cleared.", "info", 2500);
@@ -946,10 +963,16 @@ const WIDGET_REGISTRY = {
 
       // Tag Chip Selection & New Tag Addition
       if (tagContainer) {
-        tagContainer.onclick = (e) => {
+        tagContainer.onclick = async (e) => {
           const addCustomBtn = e.target.closest("#somedayAddCustomTagBtn");
           if (addCustomBtn) {
-            const newTagName = prompt("Enter new tag name (e.g. 🎨 Design, ⚡ High):");
+            const newTagName = await showPromptModal({
+              badge: "🏷️ Someday Box",
+              title: "Create a new tag",
+              placeholder: "e.g. 🎨 Design, ⚡ High Priority...",
+              confirmText: "Create Tag",
+              cancelText: "Cancel",
+            });
             if (newTagName && newTagName.trim()) {
               const trimmed = newTagName.trim();
               const tags = this._loadTags();
@@ -974,7 +997,7 @@ const WIDGET_REGISTRY = {
 
       // List Item Actions: Move, Edit, Delete
       if (listEl) {
-        listEl.onclick = (e) => {
+        listEl.onclick = async (e) => {
           const btn = e.target.closest(".someday-action-btn");
           if (!btn) return;
           const action = btn.dataset.action;
@@ -1003,7 +1026,14 @@ const WIDGET_REGISTRY = {
             this._updateView();
             showToast(`🚀 Moved "${task.text}" to Today's Tasks!`, "success", 2500);
           } else if (action === "edit") {
-            const newText = prompt("Edit someday task:", task.text);
+            const newText = await showPromptModal({
+              badge: "✏️ Someday Box",
+              title: "Edit task",
+              defaultValue: task.text,
+              placeholder: "Enter task text...",
+              confirmText: "Save",
+              cancelText: "Cancel",
+            });
             if (newText !== null && newText.trim()) {
               task.text = newText.trim();
               this._saveTasks(tasks);
@@ -1397,10 +1427,18 @@ const WIDGET_REGISTRY = {
       }
     },
 
-    _handleClearAll() {
+    async _handleClearAll() {
       const items = this._loadLearnings();
       if (items.length === 0) return;
-      if (confirm(`Clear all ${items.length} entries from Daily Learning Log?`)) {
+      const confirmed = await showConfirmModal({
+        badge: "🧠 Daily Learning Log",
+        title: `Clear all ${items.length} entries?`,
+        message: "All learning entries will be permanently removed from the log.",
+        confirmText: "Clear All",
+        cancelText: "Cancel",
+        isDanger: true,
+      });
+      if (confirmed) {
         this._saveLearnings([]);
         this._updateView(false);
         showToast("🧠 Learning Log cleared.", "info", 2500);
@@ -1477,10 +1515,16 @@ const WIDGET_REGISTRY = {
 
       // Tag Selector Click & Dynamic Placeholder Update
       if (tagContainer) {
-        tagContainer.onclick = (e) => {
+        tagContainer.onclick = async (e) => {
           const addCustomBtn = e.target.closest("#learningAddCustomTagBtn");
           if (addCustomBtn) {
-            const newTagName = prompt("Enter new category name (e.g. 🔬 Research, ⚡ Mindset):");
+            const newTagName = await showPromptModal({
+              badge: "🧠 Daily Learning Log",
+              title: "Create a new category",
+              placeholder: "e.g. 🔬 Research, ⚡ Mindset, 🛠️ Skill...",
+              confirmText: "Create Category",
+              cancelText: "Cancel",
+            });
             if (newTagName && newTagName.trim()) {
               const trimmed = newTagName.trim();
               const tags = this._loadTags();
@@ -1529,7 +1573,7 @@ const WIDGET_REGISTRY = {
 
       // List Item Actions: Copy individual, Edit, Delete
       if (listEl) {
-        listEl.onclick = (e) => {
+        listEl.onclick = async (e) => {
           const btn = e.target.closest(".learning-action-btn");
           if (!btn) return;
           const action = btn.dataset.action;
@@ -1550,7 +1594,14 @@ const WIDGET_REGISTRY = {
               showToast("📋 Entry copied to clipboard!", "success", 2000);
             });
           } else if (action === "edit") {
-            const newText = prompt("Edit learning:", item.text);
+            const newText = await showPromptModal({
+              badge: "✏️ Daily Learning Log",
+              title: "Edit learning entry",
+              defaultValue: item.text,
+              placeholder: "What did you learn?",
+              confirmText: "Save",
+              cancelText: "Cancel",
+            });
             if (newText !== null && newText.trim()) {
               item.text = newText.trim();
               this._saveLearnings(items);

@@ -56,7 +56,7 @@ function launchGoogleCalendar() {
   const gcalDuration = document.getElementById("gcalDuration");
 
   if (!task || !gcalDate || !gcalDate.value) {
-    alert("Please select a date and time first.");
+    showToast("⚠️ Please select a date and time first.", "warning", 3000);
     return;
   }
 
