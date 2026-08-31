@@ -115,36 +115,112 @@ body {
 }
 
 .toast {
-  background: rgba(20, 25, 35, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+  background: rgba(18, 24, 38, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   color: white;
-  padding: 10px 16px;
+  padding: 10px 16px 13px 16px;
   border-radius: 10px;
   font-size: 0.85rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
   gap: 8px;
   animation: toastSlideIn 0.3s ease forwards;
   pointer-events: auto;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.toast:hover {
+  transform: translateY(-1.5px);
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.45);
+}
+
+.toast-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.toast-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.toast-progress-fill {
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  animation: toastProgress var(--toast-duration, 4000ms) linear forwards;
+}
+
+.toast:hover .toast-progress-fill {
+  animation-play-state: paused;
 }
 
 .toast-success {
-  border-left: 4px solid #2ecc71;
+  border-left: 4px solid #00ff87;
+}
+
+.toast-success .toast-progress-fill {
+  background: linear-gradient(90deg, #00ff87, #60efff);
 }
 
 .toast-warning {
   border-left: 4px solid #f39c12;
 }
 
+.toast-warning .toast-progress-fill {
+  background: #f39c12;
+}
+
 .toast-danger {
   border-left: 4px solid #e74c3c;
 }
 
+.toast-danger .toast-progress-fill {
+  background: #e74c3c;
+}
+
+.toast-info {
+  border-left: 4px solid #00d2ff;
+}
+
+.toast-info .toast-progress-fill {
+  background: #00d2ff;
+}
+
+.toast-celebrate {
+  border-left: 4px solid #ffd700;
+}
+
+.toast-celebrate .toast-progress-fill {
+  background: linear-gradient(90deg, #ffd700, #ff9800);
+}
+
 .toast.hiding {
-  animation: toastSlideOut 0.3s ease forwards;
+  animation: toastSlideOut 0.25s ease forwards;
+}
+
+@keyframes toastProgress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
 }
 
 @keyframes toastSlideIn {
@@ -155,6 +231,17 @@ body {
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@keyframes toastSlideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
   }
 }
 

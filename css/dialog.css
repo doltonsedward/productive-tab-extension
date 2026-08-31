@@ -82,119 +82,6 @@
   opacity: 0;
 }
 
-/* --------------------------------------------------------------------------
-   3 THEME VARIATIONS (Distinct Visual Glassmorphism Profiles)
-   -------------------------------------------------------------------------- */
-
-/* VARIATION 1: Frosted Crystal (Ultra-translucent, airy, crisp diffraction) */
-.dialog-card.dialog-style-frosted {
-  background: rgba(14, 18, 28, 0.38);
-  backdrop-filter: blur(22px) saturate(210%);
-  -webkit-backdrop-filter: blur(22px) saturate(210%);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow:
-    0 24px 60px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    inset 0 0 24px rgba(255, 255, 255, 0.02);
-}
-
-.dialog-card.dialog-style-frosted::before {
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.30) 30%,
-    rgba(255, 255, 255, 0.45) 50%,
-    rgba(255, 255, 255, 0.30) 70%,
-    transparent 100%);
-}
-
-/* VARIATION 2: Deep Obsidian Glass (Muted dark-tint, high-contrast, Linear style) */
-.dialog-card.dialog-style-obsidian {
-  background: rgba(10, 14, 20, 0.78);
-  backdrop-filter: blur(24px) saturate(140%);
-  -webkit-backdrop-filter: blur(24px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  box-shadow:
-    0 28px 70px rgba(0, 0, 0, 0.65),
-    inset 0 1px 0 rgba(255, 255, 255, 0.10);
-}
-
-.dialog-card.dialog-style-obsidian::before {
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.12) 30%,
-    rgba(255, 255, 255, 0.18) 50%,
-    rgba(255, 255, 255, 0.12) 70%,
-    transparent 100%);
-}
-
-/* VARIATION 3: Neon Aurora Glass (Cyber emerald glow, translucent cyber aesthetic) */
-.dialog-card.dialog-style-aurora {
-  background: radial-gradient(130% 100% at 50% 0%, rgba(0, 255, 135, 0.12) 0%, rgba(9, 14, 22, 0.50) 100%);
-  backdrop-filter: blur(24px) saturate(190%);
-  -webkit-backdrop-filter: blur(24px) saturate(190%);
-  border: 1px solid rgba(0, 255, 135, 0.32);
-  box-shadow:
-    0 24px 65px rgba(0, 0, 0, 0.55),
-    0 0 35px rgba(0, 255, 135, 0.10),
-    inset 0 1px 0 rgba(0, 255, 135, 0.40);
-}
-
-.dialog-card.dialog-style-aurora::before {
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(0, 255, 135, 0.40) 30%,
-    rgba(0, 255, 255, 0.50) 50%,
-    rgba(0, 255, 135, 0.40) 70%,
-    transparent 100%);
-}
-
-/* --------------------------------------------------------------------------
-   Interactive Live Style Switcher Pills (Inside Preview / Testing Mode)
-   -------------------------------------------------------------------------- */
-.dialog-style-switcher {
-  display: flex;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 10px;
-  padding: 3px;
-  gap: 3px;
-  margin-bottom: 18px;
-}
-
-.dialog-style-tab {
-  flex: 1;
-  padding: 6px 4px;
-  font-size: 0.72rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.55);
-  background: transparent;
-  border: none;
-  border-radius: 7px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: inherit;
-  white-space: nowrap;
-  outline: none;
-}
-
-.dialog-style-tab:hover {
-  color: rgba(255, 255, 255, 0.85);
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.dialog-style-tab.active {
-  background: rgba(255, 255, 255, 0.16);
-  color: #fff;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.dialog-style-aurora .dialog-style-tab.active {
-  background: rgba(0, 255, 135, 0.20);
-  color: #00ff87;
-  border: 1px solid rgba(0, 255, 135, 0.35);
-}
-
 /* Danger variant — muted crimson left accent */
 .dialog-card.dialog-danger {
   border-left: 3px solid rgba(239, 68, 68, 0.65) !important;
@@ -427,5 +314,176 @@
   background: rgba(239, 68, 68, 0.25);
   border-color: rgba(239, 68, 68, 0.55);
   color: rgba(255, 160, 160, 1);
+  transform: translateY(-1px);
+}
+
+/* --------------------------------------------------------------------------
+   Dedicated Reflection Modal
+   -------------------------------------------------------------------------- */
+.dialog-reflection-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 14px 0 20px 0;
+  text-align: left;
+}
+
+.dialog-reflection-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 16px 18px 16px 42px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.dialog-reflection-icon {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  font-size: 1.3rem;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.dialog-reflection-quote {
+  font-size: 0.96rem;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.95);
+  letter-spacing: 0.2px;
+  margin: 0;
+}
+
+.dialog-reflection-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.dialog-reflection-optout {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.28);
+  transition: all 0.2s ease;
+}
+
+.dialog-reflection-optout:hover {
+  color: rgba(255, 255, 255, 0.70);
+}
+
+.dialog-reflection-optout input[type="checkbox"] {
+  width: 13px;
+  height: 13px;
+  cursor: pointer;
+  accent-color: #00ff87;
+  opacity: 0.45;
+  margin: 0;
+  transition: opacity 0.2s ease;
+}
+
+.dialog-reflection-optout:hover input[type="checkbox"] {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   SPATIAL ZEN REFLECTION MODAL (Ultra-Subdued Ambient Hierarchy)
+   -------------------------------------------------------------------------- */
+
+.reflection-v4-spatial {
+  position: relative;
+  text-align: left;
+  padding: 4px 2px;
+}
+
+.reflection-spatial-watermark {
+  position: absolute;
+  top: -24px;
+  left: -8px;
+  font-size: 5.5rem;
+  line-height: 1;
+  font-family: Georgia, serif;
+  color: rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+  user-select: none;
+}
+
+.reflection-spatial-quote {
+  position: relative;
+  z-index: 1;
+  font-size: 1.18rem;
+  font-weight: 350;
+  font-style: italic;
+  line-height: 1.68;
+  color: rgba(255, 255, 255, 0.98);
+  letter-spacing: 0.15px;
+  margin: 0 0 22px 0;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+}
+
+.reflection-spatial-meta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 0.70rem;
+  color: rgba(255, 255, 255, 0.22);
+  margin-bottom: 20px;
+  transition: color 0.25s ease;
+}
+
+.reflection-spatial-streak {
+  color: rgba(255, 255, 255, 0.32);
+  font-weight: 400;
+  transition: color 0.25s ease;
+}
+
+.reflection-spatial-habit {
+  color: rgba(255, 255, 255, 0.28);
+  font-weight: 400;
+  transition: color 0.25s ease;
+}
+
+.reflection-spatial-meta:hover .reflection-spatial-streak {
+  color: rgba(255, 183, 77, 0.85);
+}
+
+.reflection-spatial-meta:hover .reflection-spatial-habit {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.reflection-spatial-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 14px;
+}
+
+/* Ultra-subdued resting state for Done button so quote remains absolute focal hero */
+.reflection-spatial-actions .reflection-done-btn {
+  background: rgba(255, 255, 255, 0.025) !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  color: rgba(255, 255, 255, 0.38) !important;
+  padding: 6px 16px;
+  font-size: 0.76rem;
+  font-weight: 500;
+  border-radius: 7px;
+  box-shadow: none !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reflection-spatial-actions .reflection-done-btn:hover {
+  background: rgba(255, 255, 255, 0.10) !important;
+  border-color: rgba(255, 255, 255, 0.20) !important;
+  color: rgba(255, 255, 255, 0.90) !important;
   transform: translateY(-1px);
 }

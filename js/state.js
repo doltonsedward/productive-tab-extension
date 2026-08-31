@@ -182,15 +182,60 @@ function showToast(message, type = "success", duration = 4000) {
 
   const toast = document.createElement("div");
   toast.className = `toast toast-${type}`;
-  toast.innerHTML = `<span>${message}</span>`;
+  toast.style.setProperty("--toast-duration", `${duration}ms`);
+  toast.title = "Click to dismiss";
+  toast.innerHTML = `
+    <div class="toast-content">
+      <span>${message}</span>
+    </div>
+    <div class="toast-progress-bar">
+      <div class="toast-progress-fill"></div>
+    </div>
+  `;
   container.appendChild(toast);
 
-  setTimeout(() => {
+  let remaining = duration;
+  let startTime = Date.now();
+  let timerId = null;
+  let isDismissed = false;
+
+  const dismiss = () => {
+    if (isDismissed) return;
+    isDismissed = true;
+    if (timerId) clearTimeout(timerId);
     toast.classList.add("hiding");
     setTimeout(() => {
-      if (toast.parentNode) toast.parentNode.removeChild(toast);
-    }, 300);
-  }, duration);
+      if (toast.parentNode) {
+        toast.parentNode.removeChild(toast);
+      }
+    }, 250);
+  };
+
+  const startTimer = (time) => {
+    startTime = Date.now();
+    timerId = setTimeout(dismiss, time);
+  };
+
+  // Pause on hover
+  toast.addEventListener("mouseenter", () => {
+    if (isDismissed) return;
+    clearTimeout(timerId);
+    remaining -= (Date.now() - startTime);
+    if (remaining < 0) remaining = 0;
+  });
+
+  // Resume on mouse leave
+  toast.addEventListener("mouseleave", () => {
+    if (isDismissed) return;
+    startTimer(remaining);
+  });
+
+  // Click to dismiss immediately
+  toast.addEventListener("click", () => {
+    dismiss();
+  });
+
+  startTimer(remaining);
 }
 
 // --- HTML ESCAPING HELPER ---

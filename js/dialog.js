@@ -47,11 +47,6 @@ const DialogManager = (() => {
   function _open() {
     _init();
     if (!_overlay) return;
-    if (_card) {
-      const style = getStyle();
-      _card.classList.remove("dialog-style-frosted", "dialog-style-obsidian", "dialog-style-aurora");
-      _card.classList.add(`dialog-style-${style}`);
-    }
     _overlay.classList.remove("dialog-hidden");
   }
 
@@ -87,8 +82,6 @@ const DialogManager = (() => {
     if (!_overlay) return;
 
     // Remove any existing backdrop listener first
-    const newOverlay = _overlay.cloneNode(false);
-    // We can't clone children, so use a flag approach instead
     _overlay._backdropHandler && _overlay.removeEventListener("click", _overlay._backdropHandler);
     _overlay._backdropHandler = (e) => {
       if (e.target === _overlay) _resolve(cancelValue);
@@ -122,37 +115,8 @@ const DialogManager = (() => {
   // --------------------------------------------------------------------------
   // Build HTML helpers
   // --------------------------------------------------------------------------
-  function _buildStyleSwitcher() {
-    const current = getStyle();
-    return `
-      <div class="dialog-style-switcher" id="dialogStyleSwitcher">
-        <button type="button" class="dialog-style-tab ${current === 'frosted' ? 'active' : ''}" data-style="frosted">💎 Frosted</button>
-        <button type="button" class="dialog-style-tab ${current === 'obsidian' ? 'active' : ''}" data-style="obsidian">🌑 Obsidian</button>
-        <button type="button" class="dialog-style-tab ${current === 'aurora' ? 'active' : ''}" data-style="aurora">⚡ Aurora</button>
-      </div>
-    `;
-  }
-
-  function _wireStyleSwitcher() {
-    const switcher = _card?.querySelector("#dialogStyleSwitcher");
-    if (!switcher) return;
-    switcher.addEventListener("click", (e) => {
-      const tab = e.target.closest(".dialog-style-tab");
-      if (!tab || !tab.dataset.style) return;
-      const style = tab.dataset.style;
-      setStyle(style);
-      switcher.querySelectorAll(".dialog-style-tab").forEach(t => t.classList.remove("active"));
-      tab.classList.add("active");
-
-      // Also update buttons in settings if open
-      const settingsBtns = document.querySelectorAll(".modal-style-btn");
-      settingsBtns.forEach(b => b.classList.toggle("active", b.dataset.style === style));
-    });
-  }
-
-  function _buildHeader(badge, title, message, showStyleSwitcher = false) {
+  function _buildHeader(badge, title, message) {
     let html = "";
-    if (showStyleSwitcher) html += _buildStyleSwitcher();
     if (badge) html += `<span class="dialog-badge">${badge}</span>`;
     if (title) html += `<h3 class="dialog-title">${title}</h3>`;
     if (message) html += `<p class="dialog-message">${message}</p>`;
@@ -184,7 +148,6 @@ const DialogManager = (() => {
    * @param {string} [opts.confirmText]   — Confirm button label
    * @param {string} [opts.cancelText]    — Cancel button label
    * @param {boolean}[opts.required]      — Disallow empty submission
-   * @param {boolean}[opts.showStyleSwitcher] — Show live style switcher tabs
    * @returns {Promise<string|null>}      — Resolved value or null if cancelled
    */
   function showPromptModal({
@@ -197,7 +160,6 @@ const DialogManager = (() => {
     confirmText = "Save",
     cancelText = "Cancel",
     required = true,
-    showStyleSwitcher = false,
   } = {}) {
     return new Promise((resolve) => {
       _init();
@@ -211,7 +173,7 @@ const DialogManager = (() => {
 
       _card.classList.remove("dialog-danger");
       _card.innerHTML = `
-        ${_buildHeader(badge, title, message, showStyleSwitcher)}
+        ${_buildHeader(badge, title, message)}
         <div class="dialog-fields">
           <div class="dialog-field" id="dialogPromptField">
             <input
@@ -230,7 +192,6 @@ const DialogManager = (() => {
       `;
 
       _open();
-      if (showStyleSwitcher) _wireStyleSwitcher();
 
       const input = _card.querySelector("#dialogPromptInput");
       const confirmBtn = _card.querySelector("#dialogConfirmBtn");
@@ -465,16 +426,81 @@ const DialogManager = (() => {
     });
   }
 
-  function previewModal() {
-    return showPromptModal({
-      badge: "Glassmorphism Style Preview",
-      title: "Test Modal Appearance",
-      message: "Click the style tabs above to preview how each glass variation looks on your active wallpaper in real time.",
-      defaultValue: "Daily standup meeting notes & code review",
-      placeholder: "Type anything here...",
-      confirmText: "Looks Great!",
-      cancelText: "Close Preview",
-      showStyleSwitcher: true,
+  // --------------------------------------------------------------------------
+  // PUBLIC API: showReflectionModal (Spatial Zen)
+  // --------------------------------------------------------------------------
+  /**
+   * Shows a dedicated Spatial Zen reflection modal after a milestone check-in (Day 3+).
+   * @param {Object} opts
+   * @param {number} opts.streak
+   * @param {number} opts.targetDays
+   * @param {string} opts.title
+   * @param {string} opts.question
+   * @returns {Promise<boolean>}
+   */
+  function showReflectionModal({
+    streak = 3,
+    targetDays = 30,
+    title = "Daily Habit",
+    question = "What habit today will your future self thank you for?",
+  } = {}) {
+    return new Promise((resolve) => {
+      _init();
+      if (!_overlay || !_card) {
+        return resolve(true);
+      }
+
+      _resolveCallback = resolve;
+      _card.classList.remove("dialog-danger");
+
+      const isCompleted = streak >= targetDays;
+      const streakText = isCompleted
+        ? `🏆 Target Completed (${targetDays}/${targetDays} Days)!`
+        : `🔥 Day ${streak} of ${targetDays} Checked In`;
+
+      const habitLabel = title ? `Habit: ${escapeHtml(title)}` : "Habit Target";
+
+      _card.innerHTML = `
+        <div class="reflection-v4-spatial">
+          <div class="reflection-spatial-watermark">“</div>
+          <p class="reflection-spatial-quote">${escapeHtml(question)}</p>
+          <div class="reflection-spatial-meta">
+            <span class="reflection-spatial-streak">${streakText}</span>
+            <span>·</span>
+            <span class="reflection-spatial-habit">${habitLabel}</span>
+          </div>
+          <div class="reflection-spatial-actions">
+            <label class="dialog-reflection-optout" title="You can turn this back on anytime in Settings > Personal">
+              <input type="checkbox" id="dialogOptOutReflection" />
+              <span>Don't show again</span>
+            </label>
+            <button type="button" class="dialog-btn dialog-btn-confirm reflection-done-btn" id="dialogStayFocusedBtn">
+              Done ⚡
+            </button>
+          </div>
+        </div>
+      `;
+
+      _open();
+
+      const finish = () => {
+        const optOutCheck = _card.querySelector("#dialogOptOutReflection");
+        if (optOutCheck && optOutCheck.checked) {
+          localStorage.setItem("showReflectionModal", "false");
+          const settingToggle = document.getElementById("settingShowReflectionModal");
+          if (settingToggle) settingToggle.checked = false;
+        }
+        _resolve(true);
+      };
+
+      const confirmBtn = _card.querySelector("#dialogStayFocusedBtn");
+      if (confirmBtn) {
+        confirmBtn.addEventListener("click", finish);
+        requestAnimationFrame(() => confirmBtn.focus());
+      }
+
+      _attachBackdropListener(true);
+      _attachKeyboard({ onEnter: finish, onEscape: () => _resolve(true) });
     });
   }
 
@@ -485,18 +511,14 @@ const DialogManager = (() => {
     showPromptModal,
     showConfirmModal,
     showFormModal,
-    previewModal,
-    getStyle,
-    setStyle,
+    showReflectionModal,
   };
 })();
 
 // --- Convenience global aliases ---
-function showPromptModal(opts) { return DialogManager.showPromptModal(opts); }
-function showConfirmModal(opts) { return DialogManager.showConfirmModal(opts); }
-function showFormModal(opts)    { return DialogManager.showFormModal(opts); }
-function setDialogStyle(style)  { return DialogManager.setStyle(style); }
-function getDialogStyle()       { return DialogManager.getStyle(); }
-function previewDialogModal()   { return DialogManager.previewModal(); }
+function showPromptModal(opts)     { return DialogManager.showPromptModal(opts); }
+function showConfirmModal(opts)    { return DialogManager.showConfirmModal(opts); }
+function showFormModal(opts)       { return DialogManager.showFormModal(opts); }
+function showReflectionModal(opts) { return DialogManager.showReflectionModal(opts); }
 
 

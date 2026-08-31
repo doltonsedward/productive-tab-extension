@@ -7,6 +7,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.16.7] - 2026-08-31
+### Removed
+- **🧹 Finalized Production Release**: Cleaned up the temporary reflection modal preview button from Settings Drawer for a clean, distraction-free production interface.
+
+---
+
+## [1.16.6] - 2026-08-31
+### Changed
+- **“ Balanced Watermark Quotation Opacity**: Restored the large background watermark quotation mark to a gentle, artistic opacity (`rgba(255, 255, 255, 0.08)`) for better spatial depth.
+
+---
+
+## [1.16.5] - 2026-08-31
+### Changed
+- **🧘 Ultra-Subdued Auxiliary Elements in Reflection Modal**: Dimmed streak counts, habit tags, opt-out checkboxes, and action buttons to a calm, low-contrast resting state with subtle hover reveal. This elevates the reflection question into the clear, luminous focal hero.
+
+---
+
+## [1.16.4] - 2026-08-31
+### Changed
+- **🌫️ Subdued Spatial Zen Action Button**: Softened the resting state of the "Done ⚡" button with low-contrast glass styling so visual focus remains completely centered on the mindful question.
+- **🏷️ Real Active Milestone Integration**: The reflection modal and settings preview now dynamically display your authentic active habit name and streak progress instead of generic dummy text.
+
+---
+
+## [1.16.3] - 2026-08-31
+### Changed
+- **🌌 Spatial Zen Standard**: Permanently adopted the Spatial Zen design (large translucent watermark quotation mark, clean streak metadata, and airy typography) as the reflection modal standard.
+- **🌱 Day 3+ Habit Reflection Threshold**: Daily reflection questions now trigger exclusively once reaching Day 3 streak or milestone completion. Days 1 and 2 deliver quick, non-intrusive toast notifications to eliminate early-habit friction.
+
+---
+
+## [1.16.2] - 2026-08-31
+### Added
+- **🎨 4 Live Reflection Modal Variations**: Introduced 4 distinct, organic design variations for the daily reflection modal (`Zen Minimal`, `Milestone Hero`, `Micro-Journal`, and `Spatial Zen`) with real-time tab previewing and live switching.
+- **✨ Settings Reflection Preview**: Added a `✨ Preview / Test 4 Reflection Variations` button in Settings Personal tab to test all styles anytime.
+
+### Fixed
+- **⚙️ Settings Drawer Opening Issue**: Fixed a syntax error in settings UI synchronization that prevented the Settings button from opening the drawer.
+
+---
+
+## [1.16.1] - 2026-08-31
+### Refactored
+- **💎 Frosted Crystal Consolidation**: Permanently standardized on Frosted Crystal as the sole modal card style, removing redundant test theme variations (`Obsidian` and `Aurora`) and the Settings style switcher for a leaner, cleaner codebase.
+
+---
+
+## [1.16.0] - 2026-08-31
+### Added
+- **🧘 Dedicated Mindful Reflection Modal**: Checking in on a Milestone habit now opens an elegant, frosted glass Reflection Modal showcasing daily thought-provoking questions with zero time pressure and a "Stay Focused ⚡" button.
+- **📚 Modular Reflection Questions Data**: Created `js/data/reflections.js` with 25 curated deep questions for personal mindfulness, self-growth, and daily grounding.
+- **⚙️ Reflection Modal Setting & Opt-Out**: Added a "Don't show reflection modal again" checkbox on the modal itself and a toggle under `Settings > Personal > Daily Reflection Modal` to re-enable anytime.
+- **⏳ Interactive Toast Progress Line & Hover Pause**: All toast notifications across the dashboard now feature an animated timer progress line at the bottom, pause indefinitely on mouse hover, and can be clicked to dismiss instantly.
+
+---
+
 ## [1.15.4] - 2026-08-31
 ### Changed
 - **🛡️ Habit Integrity & Anti-Cheating Protection**: Replaced mid-streak editing and manual check-in unlock with a clean "Reset & Start New Target" flow. This prevents streak manipulation and ensures authentic daily discipline.

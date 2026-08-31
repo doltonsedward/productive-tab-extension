@@ -7,6 +7,68 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.16.7",
+    date: "2026-08-31",
+    items: [
+      { type: "refactor", text: "Production Finalization: Removed all testing controls and preview buttons for a clean, distraction-free interface." }
+    ]
+  },
+  {
+    version: "1.16.6",
+    date: "2026-08-31",
+    items: [
+      { type: "change", text: "Balanced Watermark: Restored quotation mark watermark opacity for balanced ambient aesthetics." }
+    ]
+  },
+  {
+    version: "1.16.5",
+    date: "2026-08-31",
+    items: [
+      { type: "change", text: "Ultra-Subdued Hierarchy: Dimmed all auxiliary metadata, checkboxes, and buttons to keep focus completely centered on the mindful reflection question." }
+    ]
+  },
+  {
+    version: "1.16.4",
+    date: "2026-08-31",
+    items: [
+      { type: "change", text: "Subdued Done Button: Softened the Spatial Zen action button to keep focal attention on the reflection question." },
+      { type: "change", text: "Active Milestone Integration: The reflection modal now automatically reflects your live habit name and progress." }
+    ]
+  },
+  {
+    version: "1.16.3",
+    date: "2026-08-31",
+    items: [
+      { type: "change", text: "Spatial Zen Standard: Locked in the Spatial Zen reflection card design with subtle watermark typography." },
+      { type: "change", text: "Day 3+ Reflection Threshold: Reflection questions now appear starting from Day 3, keeping Days 1 and 2 lightweight with toast messages." }
+    ]
+  },
+  {
+    version: "1.16.2",
+    date: "2026-08-31",
+    items: [
+      { type: "feat", text: "4 Creative Reflection Modal Variations: Added Zen Minimal, Milestone Hero, Micro-Journal, and Spatial Zen styles with real-time preview tabs." },
+      { type: "fix", text: "Settings Drawer: Resolved script syntax error so settings open smoothly." }
+    ]
+  },
+  {
+    version: "1.16.1",
+    date: "2026-08-31",
+    items: [
+      { type: "refactor", text: "Frosted Crystal Permanent Standard: Cleaned up temporary modal style variations and Settings selector for a unified, clutter-free design." }
+    ]
+  },
+  {
+    version: "1.16.0",
+    date: "2026-08-31",
+    items: [
+      { type: "feat", text: "Dedicated Reflection Modal: Daily milestone check-in now reveals an elegant reflection card with mindful questions and zero time pressure." },
+      { type: "feat", text: "Interactive Toast Timer & Hover Pause: Toasts now feature an animated progress line, pause on hover, and dismiss on click." },
+      { type: "feat", text: "25 Mindful Reflection Questions: Extracted questions into a dedicated data module with 10 new self-growth prompts." },
+      { type: "change", text: "Reflection Preferences: Added in-modal opt-out and a Settings toggle to customize your check-in experience." }
+    ]
+  },
+  {
     version: "1.15.4",
     date: "2026-08-31",
     items: [

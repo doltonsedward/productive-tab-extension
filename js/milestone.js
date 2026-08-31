@@ -2,24 +2,6 @@
 // MILESTONE HABIT TRACKER MODULE
 // ==========================================
 
-const RANDOM_QUESTIONS = [
-  "What assumption did you make today that might be wrong?",
-  "If today was a chapter in your book, what would its title be?",
-  "What habit today will your future self thank you for?",
-  "Are you reacting to your day, or actively shaping it?",
-  "What is something you learned today that shifted your perspective?",
-  "What's one thing you did today purely for your own joy?",
-  "What unspoken rule are you following that you never agreed to?",
-  "If you had 1 extra hour with zero obligations, how would you spend it?",
-  "What's the smallest change that would give you the biggest peace of mind?",
-  "Are you spending your energy on what truly matters to you?",
-  "What's one belief you held last year that you've outgrown?",
-  "What would you attempt today if failure was impossible?",
-  "What hard truth did you embrace recently that made you stronger?",
-  "What's one noise in your life you need to turn down?",
-  "What made you feel genuinely grateful or smile today?"
-];
-
 function getDayCheckinQuote(streak, targetDays, title) {
   if (streak >= targetDays) {
     return `🏆 CONGRATULATIONS! You completed all ${targetDays} days of '${title}'! 🎉`;
@@ -34,7 +16,9 @@ function getDayCheckinQuote(streak, targetDays, title) {
     return `⚡ Day 3 done! 3 days in a row — your habit is forming!`;
   }
 
-  const q = RANDOM_QUESTIONS[Math.floor(Math.random() * RANDOM_QUESTIONS.length)];
+  const q = (typeof getRandomReflectionQuestion === "function")
+    ? getRandomReflectionQuestion()
+    : "What habit today will your future self thank you for?";
   return `💪 Day ${streak}/${targetDays} checked in! 🤔 ${q}`;
 }
 
@@ -283,9 +267,24 @@ function checkInMilestone() {
   saveMilestone();
   renderMilestone();
 
-  const toastMsg = getDayCheckinQuote(milestone.currentStreak, milestone.targetDays, milestone.title);
-  const toastType = milestone.completed ? "celebrate" : "success";
-  showToast(toastMsg, toastType, milestone.completed ? 8000 : 5000);
+  const showModal = localStorage.getItem("showReflectionModal") !== "false";
+  const isEligibleForModal = milestone.currentStreak >= 3 || milestone.completed;
+  const question = (typeof getRandomReflectionQuestion === "function")
+    ? getRandomReflectionQuestion()
+    : "What habit today will your future self thank you for?";
+
+  if (showModal && isEligibleForModal && typeof showReflectionModal === "function") {
+    showReflectionModal({
+      streak: milestone.currentStreak,
+      targetDays: milestone.targetDays,
+      title: milestone.title,
+      question: question,
+    });
+  } else {
+    const toastMsg = getDayCheckinQuote(milestone.currentStreak, milestone.targetDays, milestone.title);
+    const toastType = milestone.completed ? "celebrate" : "success";
+    showToast(toastMsg, toastType, milestone.completed ? 8000 : 5000);
+  }
 }
 
 async function deleteMilestone() {

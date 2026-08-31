@@ -83,6 +83,11 @@ function syncSettingsUI() {
   const showDateEl = document.getElementById("settingShowDate");
   if (showDateEl) showDateEl.checked = appSettings.showDate !== false;
 
+  const showReflectionEl = document.getElementById("settingShowReflectionModal");
+  if (showReflectionEl) {
+    showReflectionEl.checked = localStorage.getItem("showReflectionModal") !== "false";
+  }
+
   document.querySelectorAll("[data-bg]").forEach(btn => {
     const isSel = (appSettings.bgType === "preset" || appSettings.bgType === "default") && (appSettings.bgVal || "default") === btn.dataset.bg;
     btn.classList.toggle("active", isSel);
@@ -106,11 +111,6 @@ function syncSettingsUI() {
     bgBlurSlider.value = appSettings.bgBlur !== undefined ? appSettings.bgBlur : 0;
     bgBlurVal.textContent = `${bgBlurSlider.value}px`;
   }
-
-  const currentStyle = (typeof getDialogStyle === "function") ? getDialogStyle() : (localStorage.getItem("dialogStyle") || "frosted");
-  document.querySelectorAll(".modal-style-btn").forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.style === currentStyle);
-  });
 
   renderSettingsWidgetList();
 }
@@ -327,6 +327,13 @@ function bindSettingsControls() {
     });
   }
 
+  const showReflectionEl = document.getElementById("settingShowReflectionModal");
+  if (showReflectionEl) {
+    showReflectionEl.addEventListener("change", () => {
+      localStorage.setItem("showReflectionModal", showReflectionEl.checked ? "true" : "false");
+    });
+  }
+
   document.querySelectorAll("[data-bg]").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll("[data-bg]").forEach(b => b.classList.remove("active"));
@@ -521,32 +528,6 @@ function bindSettingsControls() {
     });
   }
 
-  const modalStyleSelector = document.getElementById("modalStyleSelector");
-  if (modalStyleSelector) {
-    modalStyleSelector.addEventListener("click", (e) => {
-      const btn = e.target.closest(".modal-style-btn");
-      if (!btn || !btn.dataset.style) return;
-      const style = btn.dataset.style;
-      if (typeof setDialogStyle === "function") {
-        setDialogStyle(style);
-      } else {
-        localStorage.setItem("dialogStyle", style);
-      }
-      modalStyleSelector.querySelectorAll(".modal-style-btn").forEach(b => b.classList.toggle("active", b === btn));
-      const styleName = btn.querySelector(".modal-style-name")?.textContent || style;
-      showToast(`✨ Switched modal style to ${styleName}`, "success", 2000);
-    });
-  }
-
-  const previewModalBtn = document.getElementById("previewModalBtn");
-  if (previewModalBtn) {
-    previewModalBtn.addEventListener("click", () => {
-      if (typeof previewDialogModal === "function") {
-        previewDialogModal();
-      }
-    });
-  }
-
   initChangelog();
 }
 
@@ -559,7 +540,7 @@ function initChangelog() {
 
   if (!modal || !openBtn) return;
 
-  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.15.4";
+  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.16.7";
   if (currentVerEl) currentVerEl.textContent = `v${currentVersion}`;
 
   // Check and display unread update indicator dot on button & settings FAB

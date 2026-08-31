@@ -128,33 +128,16 @@
             </label>
           </label>
         </div>
-      </div>
-
-      <div class="settings-section">
-        <div class="settings-section-label">Modal & Dialog Style</div>
         <div class="settings-field">
-          <label>Glassmorphism Theme</label>
-          <div class="modal-style-grid" id="modalStyleSelector">
-            <button type="button" class="modal-style-btn active" data-style="frosted">
-              <span class="modal-style-icon">💎</span>
-              <span class="modal-style-name">Frosted Crystal</span>
-              <span class="modal-style-desc">Super Translucent</span>
-            </button>
-            <button type="button" class="modal-style-btn" data-style="obsidian">
-              <span class="modal-style-icon">🌑</span>
-              <span class="modal-style-name">Deep Obsidian</span>
-              <span class="modal-style-desc">Muted Dark Glass</span>
-            </button>
-            <button type="button" class="modal-style-btn" data-style="aurora">
-              <span class="modal-style-icon">⚡</span>
-              <span class="modal-style-name">Neon Aurora</span>
-              <span class="modal-style-desc">Emerald Accent</span>
-            </button>
-          </div>
+          <label class="settings-toggle-label">
+            <span>Daily Reflection Modal</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="settingShowReflectionModal" checked />
+              <span class="toggle-slider"></span>
+            </label>
+          </label>
+          <span class="settings-field-hint" style="font-size: 0.72rem; color: rgba(255,255,255,0.45); display: block; margin-top: 4px;">Show mindful reflection questions starting from Day 3 streak.</span>
         </div>
-        <button type="button" id="previewModalBtn" class="settings-action-btn" style="margin-top: 10px;">
-          ✨ Test / Preview Modal Live
-        </button>
       </div>
     </div>
 
@@ -275,7 +258,7 @@
     </div>
 
     <div class="settings-drawer-footer">
-      <span class="settings-version" id="settingsVersionText" data-version="1.15.4">Productive Tab · v1.15.4</span>
+      <span class="settings-version" id="settingsVersionText" data-version="1.16.7">Productive Tab · v1.16.7</span>
       <button type="button" id="openChangelogBtn" class="settings-changelog-btn" title="View Release Notes">What's
         New</button>
     </div>
@@ -526,6 +509,7 @@
 
   <script src="js/data/icons.js"></script>
   <script src="js/data/changelog.js"></script>
+  <script src="js/data/reflections.js"></script>
   <script src="js/dialog.js"></script>
   <script src="js/state.js"></script>
   <script src="js/clock.js"></script>
