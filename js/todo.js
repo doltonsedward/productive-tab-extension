@@ -45,10 +45,10 @@ async function editTodo(id) {
   if (!todo) return;
 
   const newText = await showPromptModal({
-    badge: "✏️ Edit Task",
-    title: "Edit your task",
+    badge: "📋 Todo List",
+    title: "Edit Task",
     defaultValue: todo.text,
-    placeholder: "Enter task text...",
+    placeholder: "Enter task description...",
     confirmText: "Save",
     cancelText: "Cancel",
   });
@@ -132,10 +132,10 @@ async function editSubtask(parentId, subtaskId) {
   if (!st) return;
 
   const newText = await showPromptModal({
-    badge: "✏️ Edit Subtask",
-    title: "Edit subtask",
+    badge: "📌 Subtask",
+    title: "Edit Subtask",
     defaultValue: st.text,
-    placeholder: "Enter subtask text...",
+    placeholder: "Enter subtask description...",
     confirmText: "Save",
     cancelText: "Cancel",
   });

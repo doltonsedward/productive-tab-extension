@@ -7,6 +7,23 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.15.2",
+    date: "2026-08-31",
+    items: [
+      { type: "change", text: "Full Frosted Crystal Adoption: Applied the airy, high-translucency Frosted Crystal glassmorphism as the permanent standard card theme." },
+      { type: "change", text: "Contextual Emoji Badges: Added distinct emoji icons to all modal badges (e.g. 🌱 Someday Box, 📋 Todo List, 📌 Subtask, 🏆 Milestone Habit, 🧠 Daily Learning Log, 📝 Quick Notes, ⚠️ Danger Zone)." }
+    ]
+  },
+  {
+    version: "1.15.1",
+    date: "2026-08-31",
+    items: [
+      { type: "feat", text: "3 Glassmorphism Modal Variations: Added Frosted Crystal, Deep Obsidian, and Neon Aurora style themes with true translucent glass diffraction." },
+      { type: "refactor", text: "Hierarchy & Redundancy Fix: Refactored modal titles and badges so badges show section context and titles show clear, non-repetitive actions." },
+      { type: "change", text: "Increased Glass Translucency: Replaced heavy opaque modal card background with airy, frosted glass backdrop blur." }
+    ]
+  },
+  {
     version: "1.15.0",
     date: "2026-08-31",
     items: [

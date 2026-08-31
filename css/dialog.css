@@ -13,14 +13,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 90000;
   opacity: 1;
   visibility: visible;
   transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-              visibility 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+              visibility 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              backdrop-filter 0.22s ease;
   padding: 20px;
 }
 
@@ -31,25 +32,30 @@
 }
 
 /* --------------------------------------------------------------------------
-   Modal Card
+   Modal Card (Base Structure)
    -------------------------------------------------------------------------- */
 .dialog-card {
-  background: rgba(18, 23, 32, 0.92);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 18px;
-  padding: 28px 28px 24px;
+  /* Standard Default: Frosted Crystal (Ultra-translucent, airy, crisp diffraction) */
+  background: rgba(14, 18, 28, 0.38);
+  backdrop-filter: blur(22px) saturate(210%);
+  -webkit-backdrop-filter: blur(22px) saturate(210%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 20px;
+  padding: 26px 26px 22px;
   width: 100%;
   max-width: 420px;
   color: white;
   box-shadow:
-    0 24px 70px rgba(0, 0, 0, 0.65),
-    inset 0 1px 0 rgba(255, 255, 255, 0.10);
+    0 24px 60px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 0 24px rgba(255, 255, 255, 0.02);
   transform: scale(1) translateY(0);
   opacity: 1;
   transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1),
-              opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+              opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.3s ease,
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
   position: relative;
   overflow: hidden;
 }
@@ -64,56 +70,170 @@
   height: 1px;
   background: linear-gradient(90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.18) 30%,
-    rgba(255, 255, 255, 0.22) 50%,
-    rgba(255, 255, 255, 0.18) 70%,
+    rgba(255, 255, 255, 0.30) 30%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0.30) 70%,
     transparent 100%);
-  border-radius: 18px 18px 0 0;
-}
-
-/* Danger variant — muted crimson left accent */
-.dialog-card.dialog-danger {
-  border-left: 2px solid rgba(239, 68, 68, 0.45);
+  border-radius: 20px 20px 0 0;
 }
 
 #customDialogModal.dialog-hidden .dialog-card {
-  transform: scale(0.93) translateY(14px);
+  transform: scale(0.93) translateY(12px);
   opacity: 0;
 }
 
 /* --------------------------------------------------------------------------
-   Header Area
+   3 THEME VARIATIONS (Distinct Visual Glassmorphism Profiles)
+   -------------------------------------------------------------------------- */
+
+/* VARIATION 1: Frosted Crystal (Ultra-translucent, airy, crisp diffraction) */
+.dialog-card.dialog-style-frosted {
+  background: rgba(14, 18, 28, 0.38);
+  backdrop-filter: blur(22px) saturate(210%);
+  -webkit-backdrop-filter: blur(22px) saturate(210%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 0 24px rgba(255, 255, 255, 0.02);
+}
+
+.dialog-card.dialog-style-frosted::before {
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.30) 30%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0.30) 70%,
+    transparent 100%);
+}
+
+/* VARIATION 2: Deep Obsidian Glass (Muted dark-tint, high-contrast, Linear style) */
+.dialog-card.dialog-style-obsidian {
+  background: rgba(10, 14, 20, 0.78);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow:
+    0 28px 70px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+
+.dialog-card.dialog-style-obsidian::before {
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.12) 30%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0.12) 70%,
+    transparent 100%);
+}
+
+/* VARIATION 3: Neon Aurora Glass (Cyber emerald glow, translucent cyber aesthetic) */
+.dialog-card.dialog-style-aurora {
+  background: radial-gradient(130% 100% at 50% 0%, rgba(0, 255, 135, 0.12) 0%, rgba(9, 14, 22, 0.50) 100%);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid rgba(0, 255, 135, 0.32);
+  box-shadow:
+    0 24px 65px rgba(0, 0, 0, 0.55),
+    0 0 35px rgba(0, 255, 135, 0.10),
+    inset 0 1px 0 rgba(0, 255, 135, 0.40);
+}
+
+.dialog-card.dialog-style-aurora::before {
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(0, 255, 135, 0.40) 30%,
+    rgba(0, 255, 255, 0.50) 50%,
+    rgba(0, 255, 135, 0.40) 70%,
+    transparent 100%);
+}
+
+/* --------------------------------------------------------------------------
+   Interactive Live Style Switcher Pills (Inside Preview / Testing Mode)
+   -------------------------------------------------------------------------- */
+.dialog-style-switcher {
+  display: flex;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 3px;
+  margin-bottom: 18px;
+}
+
+.dialog-style-tab {
+  flex: 1;
+  padding: 6px 4px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  white-space: nowrap;
+  outline: none;
+}
+
+.dialog-style-tab:hover {
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.dialog-style-tab.active {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dialog-style-aurora .dialog-style-tab.active {
+  background: rgba(0, 255, 135, 0.20);
+  color: #00ff87;
+  border: 1px solid rgba(0, 255, 135, 0.35);
+}
+
+/* Danger variant — muted crimson left accent */
+.dialog-card.dialog-danger {
+  border-left: 3px solid rgba(239, 68, 68, 0.65) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Header Area (Clean typography & distinct non-repetitive hierarchy)
    -------------------------------------------------------------------------- */
 .dialog-badge {
-  display: inline-block;
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  color: rgba(255, 255, 255, 0.45);
-  margin-bottom: 8px;
-  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  letter-spacing: 0.8px;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 6px;
+  font-weight: 600;
 }
 
 .dialog-title {
-  font-size: 1.05rem;
+  font-size: 1.08rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.95);
   margin: 0 0 6px 0;
-  line-height: 1.4;
+  line-height: 1.35;
   word-break: break-word;
 }
 
 .dialog-message {
   font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.48);
-  margin: 0 0 20px 0;
-  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 4px 0 18px 0;
+  line-height: 1.55;
   word-break: break-word;
 }
 
 /* No message shown means tighter spacing */
 .dialog-title:last-of-type {
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 /* --------------------------------------------------------------------------
@@ -122,8 +242,8 @@
 .dialog-fields {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin-bottom: 22px;
+  gap: 13px;
+  margin-bottom: 20px;
 }
 
 .dialog-field {
@@ -134,36 +254,43 @@
 }
 
 .dialog-field label {
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.60);
   letter-spacing: 0.3px;
 }
 
 .dialog-field input,
 .dialog-field textarea {
   width: 100%;
-  background: rgba(0, 0, 0, 0.30);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  border-radius: 9px;
-  color: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.92);
   font-family: inherit;
   font-size: 0.875rem;
   padding: 10px 13px;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   box-sizing: border-box;
 }
 
 .dialog-field input:focus,
 .dialog-field textarea:focus {
-  border-color: rgba(255, 255, 255, 0.28);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.32);
+  border-color: rgba(255, 255, 255, 0.32);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.06);
+}
+
+.dialog-style-aurora .dialog-field input:focus,
+.dialog-style-aurora .dialog-field textarea:focus {
+  border-color: rgba(0, 255, 135, 0.45);
+  box-shadow: 0 0 0 3px rgba(0, 255, 135, 0.10);
 }
 
 .dialog-field input::placeholder,
 .dialog-field textarea::placeholder {
-  color: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.25);
 }
 
 .dialog-field input[type="number"]::-webkit-inner-spin-button,
@@ -174,22 +301,23 @@
 /* Field hint text */
 .dialog-field-hint {
   font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.28);
+  color: rgba(255, 255, 255, 0.35);
   margin-top: 2px;
-  line-height: 1.5;
+  line-height: 1.45;
 }
 
 /* Validation error state */
 .dialog-field.has-error input,
 .dialog-field.has-error textarea {
-  border-color: rgba(239, 68, 68, 0.5);
-  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.07);
+  border-color: rgba(239, 68, 68, 0.55);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.10);
 }
 
 .dialog-field-error {
   font-size: 0.7rem;
-  color: rgba(239, 68, 68, 0.75);
+  color: rgba(239, 68, 68, 0.85);
   display: none;
+  margin-top: 2px;
 }
 
 .dialog-field.has-error .dialog-field-error {
@@ -205,13 +333,12 @@
   justify-content: flex-end;
 }
 
-/* Reverse order — primary action on right */
 .dialog-btn {
   padding: 8px 18px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.07);
-  color: rgba(255, 255, 255, 0.8);
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
   font-family: inherit;
   font-size: 0.82rem;
   font-weight: 500;
@@ -222,9 +349,9 @@
 }
 
 .dialog-btn:hover {
-  background: rgba(255, 255, 255, 0.13);
-  border-color: rgba(255, 255, 255, 0.22);
-  color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.24);
+  color: rgba(255, 255, 255, 0.98);
   transform: translateY(-1px);
 }
 
@@ -236,39 +363,50 @@
 .dialog-btn.dialog-btn-cancel {
   background: rgba(255, 255, 255, 0.04);
   border-color: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.50);
 }
 
 .dialog-btn.dialog-btn-cancel:hover {
   background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.14);
-  color: rgba(255, 255, 255, 0.65);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.75);
   transform: translateY(-1px);
 }
 
 /* Confirm / Primary */
 .dialog-btn.dialog-btn-confirm {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.13);
+  border-color: rgba(255, 255, 255, 0.28);
   color: rgba(255, 255, 255, 0.95);
 }
 
 .dialog-btn.dialog-btn-confirm:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.38);
   transform: translateY(-1px);
+}
+
+.dialog-style-aurora .dialog-btn.dialog-btn-confirm {
+  background: rgba(0, 255, 135, 0.14);
+  border-color: rgba(0, 255, 135, 0.30);
+  color: #fff;
+}
+
+.dialog-style-aurora .dialog-btn.dialog-btn-confirm:hover {
+  background: rgba(0, 255, 135, 0.24);
+  border-color: rgba(0, 255, 135, 0.45);
 }
 
 /* Danger / Destructive confirm */
 .dialog-btn.dialog-btn-danger {
-  background: rgba(239, 68, 68, 0.12);
-  border-color: rgba(239, 68, 68, 0.35);
-  color: rgba(239, 100, 100, 0.95);
+  background: rgba(239, 68, 68, 0.14);
+  border-color: rgba(239, 68, 68, 0.38);
+  color: rgba(255, 130, 130, 0.95);
 }
 
 .dialog-btn.dialog-btn-danger:hover {
-  background: rgba(239, 68, 68, 0.22);
-  border-color: rgba(239, 68, 68, 0.5);
-  color: rgba(255, 120, 120, 1);
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.55);
+  color: rgba(255, 160, 160, 1);
   transform: translateY(-1px);
 }

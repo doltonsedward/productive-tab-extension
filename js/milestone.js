@@ -47,7 +47,7 @@ function checkMilestoneNotice() {
         showToast(notice, "warning", 6000);
       }, 500);
     }
-  } catch (e) {}
+  } catch (e) { }
 }
 
 function checkMilestoneDayGap(data) {
@@ -77,7 +77,7 @@ function checkMilestoneDayGap(data) {
         "milestoneNotice",
         `🗑️ Milestone "${data.title}" was auto-deleted for missing 2 consecutive days.`
       );
-    } catch (e) {}
+    } catch (e) { }
 
     localStorage.removeItem("milestone");
     return null;
@@ -199,8 +199,8 @@ function renderMilestone() {
 async function promptCreateMilestone() {
   const result = await showFormModal({
     badge: "🏆 Milestone Habit",
-    title: milestone ? "Edit Milestone" : "Create a New Milestone",
-    message: "Set a habit target to track your daily consistency.",
+    title: milestone ? "Edit Habit Target" : "Create Habit Target",
+    message: "Set your daily consistency goal and target days.",
     fields: [
       {
         name: "title",
@@ -214,10 +214,10 @@ async function promptCreateMilestone() {
         name: "targetDays",
         label: "Target Days",
         type: "number",
-        value: milestone?.targetDays || 30,
+        value: milestone?.targetDays || 14,
         placeholder: "e.g. 30",
-        hint: "Minimum 1 day. Recommended: 21, 30, or 66 days.",
-        min: 1,
+        hint: "Minimum 1 day. Recommended: 14, 30, or 66 days.",
+        min: 7,
         max: 365,
         required: true,
       },
@@ -276,11 +276,11 @@ function checkInMilestone() {
 
 async function deleteMilestone() {
   const confirmed = await showConfirmModal({
-    badge: "🗑️ Delete Milestone",
+    badge: "🏆 Milestone Habit",
     title: `Delete "${milestone.title}"?`,
     message: "Your streak and all progress will be permanently lost. This cannot be undone.",
-    confirmText: "Delete",
-    cancelText: "Keep it",
+    confirmText: "Delete Target",
+    cancelText: "Keep Target",
     isDanger: true,
   });
   if (!confirmed) return;
@@ -293,9 +293,9 @@ async function deleteMilestone() {
 
 async function promptEditMilestoneOptions() {
   const confirmed = await showConfirmModal({
-    badge: "🏆 Milestone",
-    title: milestone.title,
-    message: `Current streak: ${milestone.currentStreak} / ${milestone.targetDays} days.\n\nDo you want to edit or reset this milestone?`,
+    badge: "🏆 Milestone Habit",
+    title: "Edit Habit Target?",
+    message: `"${milestone.title}" — Current streak is ${milestone.currentStreak} of ${milestone.targetDays} days.`,
     confirmText: "Edit / Reset Target",
     cancelText: "Keep Going",
     isDanger: false,

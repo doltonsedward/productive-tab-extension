@@ -107,6 +107,11 @@ function syncSettingsUI() {
     bgBlurVal.textContent = `${bgBlurSlider.value}px`;
   }
 
+  const currentStyle = (typeof getDialogStyle === "function") ? getDialogStyle() : (localStorage.getItem("dialogStyle") || "frosted");
+  document.querySelectorAll(".modal-style-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.style === currentStyle);
+  });
+
   renderSettingsWidgetList();
 }
 
@@ -502,9 +507,9 @@ function bindSettingsControls() {
     resetBtn.addEventListener("click", async () => {
       const confirmed = await showConfirmModal({
         badge: "⚠️ Danger Zone",
-        title: "Erase all data?",
+        title: "Erase All Extension Data?",
         message: "Todos, milestones, settings, notes, and all widget data will be permanently erased. This cannot be undone.",
-        confirmText: "Yes, Erase Everything",
+        confirmText: "Erase Everything",
         cancelText: "Cancel",
         isDanger: true,
       });
@@ -513,6 +518,32 @@ function bindSettingsControls() {
       sessionStorage.clear();
       showToast("🗑️ All data erased. Reloading...", "warning", 2000);
       setTimeout(() => location.reload(), 2200);
+    });
+  }
+
+  const modalStyleSelector = document.getElementById("modalStyleSelector");
+  if (modalStyleSelector) {
+    modalStyleSelector.addEventListener("click", (e) => {
+      const btn = e.target.closest(".modal-style-btn");
+      if (!btn || !btn.dataset.style) return;
+      const style = btn.dataset.style;
+      if (typeof setDialogStyle === "function") {
+        setDialogStyle(style);
+      } else {
+        localStorage.setItem("dialogStyle", style);
+      }
+      modalStyleSelector.querySelectorAll(".modal-style-btn").forEach(b => b.classList.toggle("active", b === btn));
+      const styleName = btn.querySelector(".modal-style-name")?.textContent || style;
+      showToast(`✨ Switched modal style to ${styleName}`, "success", 2000);
+    });
+  }
+
+  const previewModalBtn = document.getElementById("previewModalBtn");
+  if (previewModalBtn) {
+    previewModalBtn.addEventListener("click", () => {
+      if (typeof previewDialogModal === "function") {
+        previewDialogModal();
+      }
     });
   }
 
@@ -528,7 +559,7 @@ function initChangelog() {
 
   if (!modal || !openBtn) return;
 
-  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.15.0";
+  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.15.2";
   if (currentVerEl) currentVerEl.textContent = `v${currentVersion}`;
 
   // Check and display unread update indicator dot on button & settings FAB

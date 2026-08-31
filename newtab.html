@@ -129,6 +129,33 @@
           </label>
         </div>
       </div>
+
+      <div class="settings-section">
+        <div class="settings-section-label">Modal & Dialog Style</div>
+        <div class="settings-field">
+          <label>Glassmorphism Theme</label>
+          <div class="modal-style-grid" id="modalStyleSelector">
+            <button type="button" class="modal-style-btn active" data-style="frosted">
+              <span class="modal-style-icon">💎</span>
+              <span class="modal-style-name">Frosted Crystal</span>
+              <span class="modal-style-desc">Super Translucent</span>
+            </button>
+            <button type="button" class="modal-style-btn" data-style="obsidian">
+              <span class="modal-style-icon">🌑</span>
+              <span class="modal-style-name">Deep Obsidian</span>
+              <span class="modal-style-desc">Muted Dark Glass</span>
+            </button>
+            <button type="button" class="modal-style-btn" data-style="aurora">
+              <span class="modal-style-icon">⚡</span>
+              <span class="modal-style-name">Neon Aurora</span>
+              <span class="modal-style-desc">Emerald Accent</span>
+            </button>
+          </div>
+        </div>
+        <button type="button" id="previewModalBtn" class="settings-action-btn" style="margin-top: 10px;">
+          ✨ Test / Preview Modal Live
+        </button>
+      </div>
     </div>
 
     <!-- Tab: Background -->
@@ -248,7 +275,7 @@
     </div>
 
     <div class="settings-drawer-footer">
-      <span class="settings-version" id="settingsVersionText" data-version="1.15.0">Productive Tab · v1.15.0</span>
+      <span class="settings-version" id="settingsVersionText" data-version="1.15.2">Productive Tab · v1.15.2</span>
       <button type="button" id="openChangelogBtn" class="settings-changelog-btn" title="View Release Notes">What's
         New</button>
     </div>

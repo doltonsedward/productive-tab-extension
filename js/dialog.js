@@ -27,12 +27,31 @@ const DialogManager = (() => {
     }
   }
 
+  function getStyle() {
+    return localStorage.getItem("dialogStyle") || "frosted";
+  }
+
+  function setStyle(styleName) {
+    const valid = ["frosted", "obsidian", "aurora"];
+    if (!valid.includes(styleName)) styleName = "frosted";
+    localStorage.setItem("dialogStyle", styleName);
+    if (_card) {
+      _card.classList.remove("dialog-style-frosted", "dialog-style-obsidian", "dialog-style-aurora");
+      _card.classList.add(`dialog-style-${styleName}`);
+    }
+  }
+
   // --------------------------------------------------------------------------
   // Open / Close helpers
   // --------------------------------------------------------------------------
   function _open() {
     _init();
     if (!_overlay) return;
+    if (_card) {
+      const style = getStyle();
+      _card.classList.remove("dialog-style-frosted", "dialog-style-obsidian", "dialog-style-aurora");
+      _card.classList.add(`dialog-style-${style}`);
+    }
     _overlay.classList.remove("dialog-hidden");
   }
 
@@ -103,8 +122,37 @@ const DialogManager = (() => {
   // --------------------------------------------------------------------------
   // Build HTML helpers
   // --------------------------------------------------------------------------
-  function _buildHeader(badge, title, message) {
+  function _buildStyleSwitcher() {
+    const current = getStyle();
+    return `
+      <div class="dialog-style-switcher" id="dialogStyleSwitcher">
+        <button type="button" class="dialog-style-tab ${current === 'frosted' ? 'active' : ''}" data-style="frosted">💎 Frosted</button>
+        <button type="button" class="dialog-style-tab ${current === 'obsidian' ? 'active' : ''}" data-style="obsidian">🌑 Obsidian</button>
+        <button type="button" class="dialog-style-tab ${current === 'aurora' ? 'active' : ''}" data-style="aurora">⚡ Aurora</button>
+      </div>
+    `;
+  }
+
+  function _wireStyleSwitcher() {
+    const switcher = _card?.querySelector("#dialogStyleSwitcher");
+    if (!switcher) return;
+    switcher.addEventListener("click", (e) => {
+      const tab = e.target.closest(".dialog-style-tab");
+      if (!tab || !tab.dataset.style) return;
+      const style = tab.dataset.style;
+      setStyle(style);
+      switcher.querySelectorAll(".dialog-style-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+
+      // Also update buttons in settings if open
+      const settingsBtns = document.querySelectorAll(".modal-style-btn");
+      settingsBtns.forEach(b => b.classList.toggle("active", b.dataset.style === style));
+    });
+  }
+
+  function _buildHeader(badge, title, message, showStyleSwitcher = false) {
     let html = "";
+    if (showStyleSwitcher) html += _buildStyleSwitcher();
     if (badge) html += `<span class="dialog-badge">${badge}</span>`;
     if (title) html += `<h3 class="dialog-title">${title}</h3>`;
     if (message) html += `<p class="dialog-message">${message}</p>`;
@@ -136,6 +184,7 @@ const DialogManager = (() => {
    * @param {string} [opts.confirmText]   — Confirm button label
    * @param {string} [opts.cancelText]    — Cancel button label
    * @param {boolean}[opts.required]      — Disallow empty submission
+   * @param {boolean}[opts.showStyleSwitcher] — Show live style switcher tabs
    * @returns {Promise<string|null>}      — Resolved value or null if cancelled
    */
   function showPromptModal({
@@ -148,6 +197,7 @@ const DialogManager = (() => {
     confirmText = "Save",
     cancelText = "Cancel",
     required = true,
+    showStyleSwitcher = false,
   } = {}) {
     return new Promise((resolve) => {
       _init();
@@ -161,7 +211,7 @@ const DialogManager = (() => {
 
       _card.classList.remove("dialog-danger");
       _card.innerHTML = `
-        ${_buildHeader(badge, title, message)}
+        ${_buildHeader(badge, title, message, showStyleSwitcher)}
         <div class="dialog-fields">
           <div class="dialog-field" id="dialogPromptField">
             <input
@@ -180,6 +230,7 @@ const DialogManager = (() => {
       `;
 
       _open();
+      if (showStyleSwitcher) _wireStyleSwitcher();
 
       const input = _card.querySelector("#dialogPromptInput");
       const confirmBtn = _card.querySelector("#dialogConfirmBtn");
@@ -392,6 +443,19 @@ const DialogManager = (() => {
     });
   }
 
+  function previewModal() {
+    return showPromptModal({
+      badge: "Glassmorphism Style Preview",
+      title: "Test Modal Appearance",
+      message: "Click the style tabs above to preview how each glass variation looks on your active wallpaper in real time.",
+      defaultValue: "Daily standup meeting notes & code review",
+      placeholder: "Type anything here...",
+      confirmText: "Looks Great!",
+      cancelText: "Close Preview",
+      showStyleSwitcher: true,
+    });
+  }
+
   // --------------------------------------------------------------------------
   // Expose public API
   // --------------------------------------------------------------------------
@@ -399,6 +463,9 @@ const DialogManager = (() => {
     showPromptModal,
     showConfirmModal,
     showFormModal,
+    previewModal,
+    getStyle,
+    setStyle,
   };
 })();
 
@@ -406,3 +473,8 @@ const DialogManager = (() => {
 function showPromptModal(opts) { return DialogManager.showPromptModal(opts); }
 function showConfirmModal(opts) { return DialogManager.showConfirmModal(opts); }
 function showFormModal(opts)    { return DialogManager.showFormModal(opts); }
+function setDialogStyle(style)  { return DialogManager.setStyle(style); }
+function getDialogStyle()       { return DialogManager.getStyle(); }
+function previewDialogModal()   { return DialogManager.previewModal(); }
+
+

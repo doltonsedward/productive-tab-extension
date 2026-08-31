@@ -58,7 +58,7 @@ const WIDGET_REGISTRY = {
           if (!textarea) return;
           const confirmed = await showConfirmModal({
             badge: "📝 Quick Notes",
-            title: "Clear all notes?",
+            title: "Clear All Notes?",
             message: "This will permanently erase your current note content.",
             confirmText: "Clear Notes",
             cancelText: "Cancel",
@@ -967,8 +967,8 @@ const WIDGET_REGISTRY = {
           const addCustomBtn = e.target.closest("#somedayAddCustomTagBtn");
           if (addCustomBtn) {
             const newTagName = await showPromptModal({
-              badge: "🏷️ Someday Box",
-              title: "Create a new tag",
+              badge: "🌱 Someday Box",
+              title: "New Custom Tag",
               placeholder: "e.g. 🎨 Design, ⚡ High Priority...",
               confirmText: "Create Tag",
               cancelText: "Cancel",
@@ -1027,10 +1027,10 @@ const WIDGET_REGISTRY = {
             showToast(`🚀 Moved "${task.text}" to Today's Tasks!`, "success", 2500);
           } else if (action === "edit") {
             const newText = await showPromptModal({
-              badge: "✏️ Someday Box",
-              title: "Edit task",
+              badge: "🌱 Someday Box",
+              title: "Edit Task",
               defaultValue: task.text,
-              placeholder: "Enter task text...",
+              placeholder: "Enter task description...",
               confirmText: "Save",
               cancelText: "Cancel",
             });
@@ -1433,7 +1433,7 @@ const WIDGET_REGISTRY = {
       const confirmed = await showConfirmModal({
         badge: "🧠 Daily Learning Log",
         title: `Clear all ${items.length} entries?`,
-        message: "All learning entries will be permanently removed from the log.",
+        message: "All insights logged in your Daily Learning Log will be permanently removed.",
         confirmText: "Clear All",
         cancelText: "Cancel",
         isDanger: true,
@@ -1520,7 +1520,7 @@ const WIDGET_REGISTRY = {
           if (addCustomBtn) {
             const newTagName = await showPromptModal({
               badge: "🧠 Daily Learning Log",
-              title: "Create a new category",
+              title: "New Category Tag",
               placeholder: "e.g. 🔬 Research, ⚡ Mindset, 🛠️ Skill...",
               confirmText: "Create Category",
               cancelText: "Cancel",
@@ -1595,10 +1595,10 @@ const WIDGET_REGISTRY = {
             });
           } else if (action === "edit") {
             const newText = await showPromptModal({
-              badge: "✏️ Daily Learning Log",
-              title: "Edit learning entry",
+              badge: "🧠 Daily Learning Log",
+              title: "Edit Learning Entry",
               defaultValue: item.text,
-              placeholder: "What did you learn?",
+              placeholder: "What did you learn today?",
               confirmText: "Save",
               cancelText: "Cancel",
             });

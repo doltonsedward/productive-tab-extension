@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.15.2] - 2026-08-31
+### Changed
+- **💎 Full Frosted Crystal Adoption**: Set Frosted Crystal glassmorphism (`rgba(14, 18, 28, 0.38)` + `blur(22px)` + crisp white reflection sheen) as the standard default modal card design across the entire application.
+- **🏷️ Contextual Emoji Badges**: Added component-specific emoji icons to all modal badges (e.g. `🌱 Someday Box`, `📋 Todo List`, `📌 Subtask`, `🏆 Milestone Habit`, `🧠 Daily Learning Log`, `📝 Quick Notes`, `⚠️ Danger Zone`) with aligned `inline-flex` typography.
+
+---
+
+## [1.15.1] - 2026-08-31
+### Added
+- **🎨 3 Distinct Glassmorphism Modal Variations**: Upgraded the dialog system with 3 selectable glassmorphism themes (`Frosted Crystal`, `Deep Obsidian Glass`, and `Neon Aurora Glass`) featuring true frosted translucency (0.52 to 0.72 opacity with 32px backdrop blur) and top sheen highlights.
+
+### Changed
+- **✨ Hierarchy & Redundancy Cleanup**: Eliminated repetitive badge/title pairs across all modals. The badge now strictly represents the component context (e.g. `TODO LIST`, `SUBTASK`, `SOMEDAY BOX`, `LEARNING LOG`, `MILESTONE HABIT`, `DANGER ZONE`), while the title states the distinct action (e.g. `Edit Task`, `Edit Subtask`, `New Custom Tag`, `Edit Habit Target`).
+- **🔍 High Translucency & Contrast**: Overhauled modal card opacity from opaque 0.92 to authentic translucent glassmorphism with enhanced diffraction blur and subtle border sheen.
+
+---
+
 ## [1.15.0] - 2026-08-31
 ### Added
 - **🪟 Custom Glassmorphism Dialog System**: Introduced a new reusable dialog engine (`js/dialog.js` + `css/dialog.css`) that replaces all native browser `prompt()`, `confirm()`, and `alert()` calls with elegant, theme-consistent custom modals. Provides `showPromptModal()`, `showConfirmModal()`, and `showFormModal()` Promise-based APIs with keyboard navigation (<kbd>Enter</kbd> to confirm, <kbd>Esc</kbd> to cancel), backdrop-click dismissal, auto-focus with text selection, and real-time field validation.
