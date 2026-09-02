@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.16.10] - 2026-09-02
+### Added
+- **🌫️ Smooth Top & Bottom Scroll Fade Gradient**: Added a soft gradient mask shadow on the top and bottom of the widget column container, gently dissolving cards as they scroll in and out instead of abruptly clipping.
+
+---
+
+## [1.16.9] - 2026-09-02
+### Fixed
+- **🎯 Rock-Solid Center Focus Layout**: Anchored the vertical position of the Clock, Greeting, and central Todo List so that adding, removing, or scrolling side widgets never shifts the center workspace vertically.
+
+---
+
+## [1.16.8] - 2026-09-02
+### Changed
+- **📐 Fixed Viewport & Independent Column Scrolling**: Updated desktop layout to fit cleanly inside a fixed 100vh viewport, eliminating full-page window scrolling. Clock, Date, and Greeting remain pinned at the top while left/right widget columns and the central Todo List scroll independently with slim glass scrollbars. Responsive vertical fallback is maintained on smaller viewports.
+
+---
+
 ## [1.16.7] - 2026-08-31
 ### Removed
 - **🧹 Finalized Production Release**: Cleaned up the temporary reflection modal preview button from Settings Drawer for a clean, distraction-free production interface.

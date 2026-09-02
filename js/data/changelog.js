@@ -7,6 +7,27 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.16.10",
+    date: "2026-09-02",
+    items: [
+      { type: "feat", text: "Top & Bottom Fade Gradient: Added soft gradient mask shadow on widget column boundaries for smooth, seamless scrolling." }
+    ]
+  },
+  {
+    version: "1.16.9",
+    date: "2026-09-02",
+    items: [
+      { type: "fix", text: "Locked Center Hero: Anchored Clock, Greeting, and Todo section vertically so adding/removing widgets never shifts the center workspace." }
+    ]
+  },
+  {
+    version: "1.16.8",
+    date: "2026-09-02",
+    items: [
+      { type: "change", text: "Fixed Viewport Layout: Dashboard now fits within a single 100vh screen with independent column scrolling, keeping clock and layout anchored." }
+    ]
+  },
+  {
     version: "1.16.7",
     date: "2026-08-31",
     items: [

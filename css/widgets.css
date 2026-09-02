@@ -27,8 +27,27 @@
   gap: 12px;
   width: 290px;
   min-height: 120px;
-  padding: 4px;
+  max-height: min(560px, calc(100vh - 280px));
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 6px 16px 4px;
   border-radius: 14px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0px,
+    black 14px,
+    black calc(100% - 20px),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0px,
+    black 14px,
+    black calc(100% - 20px),
+    transparent 100%
+  );
   transition:
     opacity 0.38s cubic-bezier(0.22, 1, 0.36, 1),
     transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
@@ -38,6 +57,23 @@
     background 0.25s ease,
     border-color 0.25s ease;
   will-change: transform, opacity, filter;
+}
+
+.widget-column::-webkit-scrollbar {
+  width: 4px;
+}
+
+.widget-column::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.widget-column::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+}
+
+.widget-column::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.28);
 }
 
 .widget-column-left {
@@ -87,6 +123,7 @@
 }
 
 .widget-card {
+  flex-shrink: 0;
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
@@ -891,6 +928,7 @@
 
 /* ADD WIDGET BUTTON */
 .add-widget-btn {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1927,20 +1965,39 @@
 }
 
 @media (max-width: 1280px) {
+  body {
+    overflow-y: auto !important;
+    height: auto !important;
+    min-height: 100vh !important;
+  }
+
+  .container {
+    height: auto !important;
+    min-height: 100vh !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
   .workspace-layout {
     display: flex;
     flex-direction: column;
     align-items: center;
     max-width: 750px;
+    height: auto !important;
+    max-height: none !important;
+    flex: none;
   }
 
   .todo-section {
     order: 1;
+    max-height: none !important;
   }
 
   .widget-column {
     width: 100%;
     max-width: 750px;
+    max-height: none !important;
+    overflow: visible !important;
     margin-top: 16px;
     flex-direction: row;
     flex-wrap: wrap;
