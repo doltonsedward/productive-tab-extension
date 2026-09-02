@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.17.5] - 2026-09-02
+### Changed
+- **🪟 Frosted Crystal Transparency**: Aligned the bookmark spotlight card to match the Frosted Crystal glassmorphism style — card background reduced from `0.78` to `0.40` opacity, backdrop blur tuned to `blur(22px) saturate(210%)`, border brightened to `rgba(255, 255, 255, 0.22)`, and a subtle top sheen gradient line added.
+- **🏮 Lighter Inner Sections**: Search bar, folder sidebar, and footer bar backgrounds are now thinner and more transparent so the underlying wallpaper can breathe through.
+
+---
+
 ## [1.17.4] - 2026-09-02
 ### Changed
 - **🍃 Calm Resting State**: Moving the mouse away from bookmark items now automatically clears active outlines, keeping the modal resting and neutral unless actively navigating via keyboard.

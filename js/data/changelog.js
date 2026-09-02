@@ -7,6 +7,13 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.17.5",
+    date: "2026-09-02",
+    items: [
+      { type: "change", text: "Bookmark Modal Transparency: Increased the bookmark spotlight card to match the Frosted Crystal glassmorphism style — background reduced to 0.40 opacity with stronger blur saturation and a top sheen gradient line." }
+    ]
+  },
+  {
     version: "1.17.4",
     date: "2026-09-02",
     items: [
@@ -157,14 +164,6 @@ const CHANGELOG_DATA = [
     items: [
       { type: "fix", text: "Milestone Edit Bug: Editing habit name or target days now safely preserves your streak history and check-in status." },
       { type: "change", text: "Streamlined Milestone Settings: Clicking ⚙️ directly opens the Edit Habit Target form with streak adjustment and check-in unlock controls." }
-    ]
-  },
-  {
-    version: "1.15.2",
-    date: "2026-08-31",
-    items: [
-      { type: "change", text: "Full Frosted Crystal Adoption: Applied the airy, high-translucency Frosted Crystal glassmorphism as the permanent standard card theme." },
-      { type: "change", text: "Contextual Emoji Badges: Added distinct emoji icons to all modal badges (e.g. 🌱 Someday Box, 📋 Todo List, 📌 Subtask, 🏆 Milestone Habit, 🧠 Daily Learning Log, 📝 Quick Notes, ⚠️ Danger Zone)." }
     ]
   },
 ];

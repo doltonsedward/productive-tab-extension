@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Productive Tab",
-  "version": "1.17.4",
+  "version": "1.17.5",
   "description": "Minimalist productive new tab dashboard with todos, milestone habits, widgets, and focus timer.",
   "chrome_url_overrides": {
     "newtab": "newtab.html"

@@ -8,9 +8,9 @@
   position: fixed;
   inset: 0;
   z-index: 99999;
-  background: rgba(6, 10, 18, 0.62);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -27,26 +27,46 @@
   pointer-events: none;
 }
 
-/* Spotlight Card — translucent frosted glass */
+/* Spotlight Card — translucent frosted glass (matches dialog card style) */
 .bookmarks-spotlight-card {
   width: 700px;
   max-width: 92vw;
   max-height: 82vh;
-  background: rgba(14, 20, 32, 0.78);
-  backdrop-filter: blur(32px) saturate(1.4);
-  -webkit-backdrop-filter: blur(32px) saturate(1.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 18px;
+  background: rgba(14, 18, 28, 0.40);
+  backdrop-filter: blur(22px) saturate(210%);
+  -webkit-backdrop-filter: blur(22px) saturate(210%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 20px;
   box-shadow:
-    0 28px 80px rgba(0, 0, 0, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+    0 24px 64px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    inset 0 0 24px rgba(255, 255, 255, 0.02);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
   transform: scale(1) translateY(0);
   transition: transform 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.275),
               opacity 0.25s ease;
+}
+
+/* Subtle top sheen gradient line */
+.bookmarks-spotlight-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.28) 30%,
+    rgba(255, 255, 255, 0.42) 50%,
+    rgba(255, 255, 255, 0.28) 70%,
+    transparent 100%);
+  border-radius: 20px 20px 0 0;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .bookmarks-modal-overlay.hidden .bookmarks-spotlight-card {
@@ -60,8 +80,8 @@
   align-items: center;
   gap: 12px;
   padding: 15px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  background: rgba(255, 255, 255, 0.015);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .bookmarks-search-icon {
@@ -149,8 +169,8 @@
 
 /* LEFT PANE — Folder Sidebar */
 .bm-left-pane {
-  background: rgba(0, 0, 0, 0.2);
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.12);
+  border-right: 1px solid rgba(255, 255, 255, 0.10);
   padding: 10px 8px;
   display: flex;
   flex-direction: column;
@@ -471,8 +491,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 9px 18px;
-  background: rgba(0, 0, 0, 0.25);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.12);
+  border-top: 1px solid rgba(255, 255, 255, 0.10);
   font-size: 0.7rem;
   color: rgba(255, 255, 255, 0.35);
   user-select: none;
