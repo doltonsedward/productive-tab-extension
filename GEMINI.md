@@ -24,7 +24,7 @@ Whenever you make changes or bump the version, you **MUST ALWAYS** keep both doc
    - Add a new section at the top for the new version (e.g. `## [1.4.0] - YYYY-MM-DD`).
    - Categorize entries cleanly under standard headers: `### Added`, `### Changed`, `### Fixed`, `### Refactored`, or `### Removed`.
 2. **`js/data/changelog.js`**:
-   - Keep all releases belonging to the **current major version cycle** (e.g., all `v1.x.x` releases). When bumping to a new major version (e.g. `v2.0.0`), reset `CHANGELOG_DATA` to start the new major release cycle fresh, while previous major versions are linked to the GitHub `CHANGELOG.md` archive.
+   - Keep the **20 most recent version releases** (counting both patch and minor releases). All earlier releases remain archived in the GitHub `CHANGELOG.md` document accessible via the in-app archive link card.
 
 ## 4. UI/UX Design System & Aesthetics (Muted Glassmorphism)
 All UI additions, tweaks, and widgets **MUST ALWAYS** follow these core design principles:

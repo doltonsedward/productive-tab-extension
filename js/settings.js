@@ -540,7 +540,7 @@ function initChangelog() {
 
   if (!modal || !openBtn) return;
 
-  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.16.10";
+  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.16.11";
   if (currentVerEl) currentVerEl.textContent = `v${currentVersion}`;
 
   // Check and display unread update indicator dot on button & settings FAB
@@ -571,11 +571,13 @@ function initChangelog() {
 
   const renderChangelog = () => {
     if (!listEl) return;
-    const entries = (typeof CHANGELOG_DATA !== "undefined" && Array.isArray(CHANGELOG_DATA)) ? CHANGELOG_DATA : [];
-    if (entries.length === 0) {
+    const allEntries = (typeof CHANGELOG_DATA !== "undefined" && Array.isArray(CHANGELOG_DATA)) ? CHANGELOG_DATA : [];
+    if (allEntries.length === 0) {
       listEl.innerHTML = '<div style="color: rgba(255,255,255,0.4); text-align:center; padding: 20px;">No changelog records found.</div>';
       return;
     }
+
+    const entries = allEntries.slice(0, 20);
 
     const cardsHtml = entries.map((ver, idx) => {
       const isLatest = idx === 0;

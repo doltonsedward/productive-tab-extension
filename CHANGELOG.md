@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.16.11] - 2026-09-02
+### Changed
+- **🌫️ Subdued Add Widget Button**: Softened the resting state of the empty column `+` button and add widget buttons with subtle, low-contrast borders and dim opacity, smoothly highlighting on hover.
+- **📜 20-Version What's New Cap**: Capped the in-app What's New changelog list to the 20 most recent releases for lightning-fast rendering, with earlier versions archived on GitHub.
+
+---
+
 ## [1.16.10] - 2026-09-02
 ### Added
 - **🌫️ Smooth Top & Bottom Scroll Fade Gradient**: Added a soft gradient mask shadow on the top and bottom of the widget column container, gently dissolving cards as they scroll in and out instead of abruptly clipping.
