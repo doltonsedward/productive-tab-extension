@@ -7,6 +7,15 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.18.0",
+    date: "2026-09-02",
+    items: [
+      { type: "add", text: "Music Player Widget: Dedicated focus audio widget supporting Spotify, YouTube / YouTube Music, and Apple Music with 1-click provider switching." },
+      { type: "add", text: "Curated Focus Presets: Quick 1-click productivity channels including Lofi Beats, Deep Focus, Soft Piano, Synthwave, Chillhop, and Pure Focus." },
+      { type: "add", text: "Smart URL Normalizer: Paste any track, playlist, or live stream link from Spotify, YouTube, or Apple Music for automatic embed playback." }
+    ]
+  },
+  {
     version: "1.17.6",
     date: "2026-09-02",
     items: [

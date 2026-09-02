@@ -2082,3 +2082,293 @@
   border-color: rgba(0, 255, 135, 0.35);
   color: rgba(0, 255, 135, 0.9);
 }
+
+/* ==========================================
+   MUSIC PLAYER WIDGET
+   ========================================== */
+.music-widget-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.music-provider-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.22);
+  padding: 3px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.music-provider-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 5px 4px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.68rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+  user-select: none;
+  font-family: inherit;
+}
+
+.music-provider-btn:hover {
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.music-provider-btn .provider-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  opacity: 0.5;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.music-provider-btn .dot-spotify {
+  background: #1db954;
+}
+
+.music-provider-btn .dot-youtube {
+  background: #ff4444;
+}
+
+.music-provider-btn .dot-apple {
+  background: #fa2d48;
+}
+
+.music-provider-btn.active {
+  color: white;
+  font-weight: 600;
+}
+
+.music-provider-btn.active .provider-dot {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.music-provider-btn.active.provider-spotify {
+  background: rgba(29, 185, 84, 0.16);
+  border-color: rgba(29, 185, 84, 0.38);
+  box-shadow: 0 0 10px rgba(29, 185, 84, 0.15);
+}
+
+.music-provider-btn.active.provider-youtube {
+  background: rgba(255, 68, 68, 0.16);
+  border-color: rgba(255, 68, 68, 0.38);
+  box-shadow: 0 0 10px rgba(255, 68, 68, 0.15);
+}
+
+.music-provider-btn.active.provider-apple {
+  background: rgba(250, 45, 72, 0.16);
+  border-color: rgba(250, 45, 72, 0.38);
+  box-shadow: 0 0 10px rgba(250, 45, 72, 0.15);
+}
+
+/* Preset Chips Bar */
+.music-preset-bar {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.music-preset-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.music-preset-chip {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.035);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.65rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+  user-select: none;
+  font-family: inherit;
+}
+
+.music-preset-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.music-preset-chip.active {
+  background: rgba(0, 255, 135, 0.12);
+  border-color: rgba(0, 255, 135, 0.35);
+  color: #00ff87;
+  font-weight: 600;
+}
+
+.music-preset-chip.custom-link-chip.active {
+  background: rgba(56, 189, 248, 0.14);
+  border-color: rgba(56, 189, 248, 0.38);
+  color: #38bdf8;
+}
+
+/* Custom URL Input Box */
+.music-custom-input-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 8px;
+  animation: fadeInDown 0.2s ease;
+}
+
+.music-custom-row {
+  display: flex;
+  gap: 6px;
+}
+
+.music-custom-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 5px 8px;
+  color: white;
+  font-size: 0.72rem;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.music-custom-input:focus {
+  border-color: rgba(0, 255, 135, 0.45);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.music-custom-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.music-custom-apply-btn {
+  padding: 5px 10px;
+  background: rgba(0, 255, 135, 0.15);
+  border: 1px solid rgba(0, 255, 135, 0.35);
+  border-radius: 6px;
+  color: #00ff87;
+  font-size: 0.68rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.music-custom-apply-btn:hover {
+  background: rgba(0, 255, 135, 0.25);
+  border-color: rgba(0, 255, 135, 0.55);
+}
+
+.music-custom-hint {
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* Player Frame Wrapper */
+.music-player-frame-wrapper {
+  position: relative;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: height 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.music-embed-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  border-radius: 10px;
+}
+
+.music-loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(14, 18, 25, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.music-loading-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.music-spinner {
+  width: 22px;
+  height: 22px;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  border-top-color: #00ff87;
+  border-radius: 50%;
+  animation: musicSpin 0.75s linear infinite;
+}
+
+@keyframes musicSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Footer */
+.music-widget-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 2px;
+}
+
+.music-footer-label {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+.music-open-web-btn {
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.72rem;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.music-open-web-btn:hover {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.08);
+}
+

@@ -1681,6 +1681,431 @@ const WIDGET_REGISTRY = {
         });
       }
     }
+  },
+
+  music: {
+    id: "music",
+    name: "Music Player",
+    icon: "🎵",
+    desc: "Focus audio from Spotify, YouTube & Apple Music",
+
+    _storageKey: "musicWidgetData",
+
+    _providers: {
+      spotify: {
+        id: "spotify",
+        name: "Spotify",
+        icon: "🟢",
+        tag: "Spotify",
+        defaultHeight: 152,
+        presets: [
+          { key: "lofi", label: "☕ Lofi Beats", url: "https://open.spotify.com/embed/playlist/0vvXsWCC9xrXsKd4FyS8kM?utm_source=generator&theme=0" },
+          { key: "focus", label: "🧠 Deep Focus", url: "https://open.spotify.com/embed/playlist/37i9dQZF1DWZeKCadgRdKQ?utm_source=generator&theme=0" },
+          { key: "piano", label: "🎹 Soft Piano", url: "https://open.spotify.com/embed/playlist/37i9dQZF1DX4sWSpwq3LiO?utm_source=generator&theme=0" },
+          { key: "synth", label: "⚡ Synthwave", url: "https://open.spotify.com/embed/playlist/37i9dQZF1DXdLEN7aqioXM?utm_source=generator&theme=0" },
+        ]
+      },
+      youtube: {
+        id: "youtube",
+        name: "YouTube",
+        icon: "🔴",
+        tag: "YouTube",
+        defaultHeight: 160,
+        presets: [
+          { key: "lofigirl", label: "☕ Lofi Girl", url: "https://www.youtube-nocookie.com/embed/jfKfPfyJRdk?autoplay=0&enablejsapi=1" },
+          { key: "chillhop", label: "🌿 Chillhop", url: "https://www.youtube-nocookie.com/embed/5yx6BWlEVcY?autoplay=0&enablejsapi=1" },
+          { key: "deepfocus", label: "🧠 Deep Focus", url: "https://www.youtube-nocookie.com/embed/WPni755-Krg?autoplay=0&enablejsapi=1" },
+          { key: "rainpiano", label: "🌧️ Rain & Piano", url: "https://www.youtube-nocookie.com/embed/tfTkyT2hTsc?autoplay=0&enablejsapi=1" },
+        ]
+      },
+      applemusic: {
+        id: "applemusic",
+        name: "Apple Music",
+        icon: "🍎",
+        tag: "Apple Music",
+        defaultHeight: 152,
+        presets: [
+          { key: "purefocus", label: "🧠 Pure Focus", url: "https://embed.music.apple.com/us/playlist/pure-focus/pl.u-aZb009GuP99jZp" },
+          { key: "beatstruments", label: "☕ Beats", url: "https://embed.music.apple.com/us/playlist/beatstrumentals/pl.7b65345719544bb489ccfeab2efb1ea2" },
+          { key: "pianochill", label: "🎹 Piano Chill", url: "https://embed.music.apple.com/us/playlist/piano-chill/pl.82e38c92a6c84f5db1e239e336e05df1" },
+          { key: "chillelec", label: "⚡ Chill Elec", url: "https://embed.music.apple.com/us/playlist/chill-electronic/pl.b1154694b799435b801a2c347f897f25" },
+        ]
+      }
+    },
+
+    _loadState() {
+      try {
+        const raw = localStorage.getItem(this._storageKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === "object") {
+            return {
+              activeProvider: parsed.activeProvider || "spotify",
+              activePresets: {
+                spotify: parsed.activePresets?.spotify || "lofi",
+                youtube: parsed.activePresets?.youtube || "lofigirl",
+                applemusic: parsed.activePresets?.applemusic || "purefocus",
+              },
+              customUrls: {
+                spotify: parsed.customUrls?.spotify || "",
+                youtube: parsed.customUrls?.youtube || "",
+                applemusic: parsed.customUrls?.applemusic || "",
+              },
+              useCustomUrl: {
+                spotify: Boolean(parsed.useCustomUrl?.spotify),
+                youtube: Boolean(parsed.useCustomUrl?.youtube),
+                applemusic: Boolean(parsed.useCustomUrl?.applemusic),
+              },
+              showCustomInput: Boolean(parsed.showCustomInput),
+            };
+          }
+        }
+      } catch (e) {}
+      return {
+        activeProvider: "spotify",
+        activePresets: { spotify: "lofi", youtube: "lofigirl", applemusic: "purefocus" },
+        customUrls: { spotify: "", youtube: "", applemusic: "" },
+        useCustomUrl: { spotify: false, youtube: false, applemusic: false },
+        showCustomInput: false,
+      };
+    },
+
+    _saveState(state) {
+      try {
+        localStorage.setItem(this._storageKey, JSON.stringify(state));
+      } catch (e) {}
+    },
+
+    _normalizeEmbedUrl(url, provider) {
+      if (!url) return "";
+      url = url.trim();
+
+      if (provider === "spotify") {
+        if (url.includes("spotify.com/embed/")) {
+          return url.includes("utm_source=") ? url : `${url}${url.includes('?') ? '&' : '?'}utm_source=generator&theme=0`;
+        }
+        const spotMatch = url.match(/open\.spotify\.com\/(track|playlist|album|artist|episode|show)\/([a-zA-Z0-9]+)/);
+        if (spotMatch) {
+          return `https://open.spotify.com/embed/${spotMatch[1]}/${spotMatch[2]}?utm_source=generator&theme=0`;
+        }
+        const uriMatch = url.match(/spotify:(track|playlist|album|artist|episode|show):([a-zA-Z0-9]+)/);
+        if (uriMatch) {
+          return `https://open.spotify.com/embed/${uriMatch[1]}/${uriMatch[2]}?utm_source=generator&theme=0`;
+        }
+      }
+
+      if (provider === "youtube") {
+        if (url.includes("youtube-nocookie.com/embed/") || url.includes("youtube.com/embed/")) {
+          return url.replace("youtube.com/embed/", "youtube-nocookie.com/embed/");
+        }
+        const listMatch = url.match(/[?&]list=([a-zA-Z0-9_-]+)/);
+        if (listMatch) {
+          return `https://www.youtube-nocookie.com/embed/videoseries?list=${listMatch[1]}`;
+        }
+        const vMatch = url.match(/(?:v=|youtu\.be\/|shorts\/)([a-zA-Z0-9_-]{11})/);
+        if (vMatch) {
+          return `https://www.youtube-nocookie.com/embed/${vMatch[1]}?autoplay=0&enablejsapi=1`;
+        }
+      }
+
+      if (provider === "applemusic") {
+        if (url.includes("embed.music.apple.com")) {
+          return url;
+        }
+        if (url.includes("music.apple.com")) {
+          return url.replace("music.apple.com", "embed.music.apple.com");
+        }
+      }
+
+      return url;
+    },
+
+    _getCurrentEmbed(state) {
+      const provider = state.activeProvider || "spotify";
+      const provDef = this._providers[provider] || this._providers.spotify;
+      const isCustom = state.useCustomUrl[provider];
+      const customUrl = state.customUrls[provider];
+
+      if (isCustom && customUrl) {
+        const norm = this._normalizeEmbedUrl(customUrl, provider);
+        if (norm) return { url: norm, label: "Custom Link", isCustom: true, height: provDef.defaultHeight };
+      }
+
+      const activeKey = state.activePresets[provider];
+      const preset = provDef.presets.find(p => p.key === activeKey) || provDef.presets[0];
+      return { url: preset.url, label: preset.label, isCustom: false, height: provDef.defaultHeight };
+    },
+
+    _renderPresetChipsHtml(state) {
+      const provider = state.activeProvider || "spotify";
+      const provDef = this._providers[provider] || this._providers.spotify;
+      const activeKey = state.activePresets[provider];
+      const isCustom = Boolean(state.useCustomUrl[provider]);
+
+      let html = provDef.presets.map(p => {
+        const isActive = !isCustom && p.key === activeKey;
+        return `
+          <button type="button" class="music-preset-chip ${isActive ? 'active' : ''}" data-preset-key="${p.key}">
+            ${escapeHtml(p.label)}
+          </button>
+        `;
+      }).join("");
+
+      html += `
+        <button type="button" class="music-preset-chip custom-link-chip ${isCustom ? 'active' : ''}" id="musicCustomLinkToggleBtn" title="Set custom link">
+          <span>🔗 Custom</span>
+        </button>
+      `;
+
+      return html;
+    },
+
+    render() {
+      const state = this._loadState();
+      const current = this._getCurrentEmbed(state);
+      const activeProvider = state.activeProvider || "spotify";
+
+      const card = document.createElement("div");
+      card.className = "widget-card music-widget-card";
+      card.dataset.widgetId = "music";
+      card.innerHTML = `
+        <div class="widget-header">
+          <div class="widget-title">
+            <span class="widget-title-icon">🎵</span>
+            Music Player
+          </div>
+          <button class="widget-remove-btn" data-remove="music" title="Remove widget">✕</button>
+        </div>
+
+        <div class="music-provider-bar" id="musicProviderBar">
+          <button type="button" class="music-provider-btn ${activeProvider === 'spotify' ? 'active provider-spotify' : ''}" data-provider="spotify">
+            <span class="provider-dot dot-spotify"></span> Spotify
+          </button>
+          <button type="button" class="music-provider-btn ${activeProvider === 'youtube' ? 'active provider-youtube' : ''}" data-provider="youtube">
+            <span class="provider-dot dot-youtube"></span> YouTube
+          </button>
+          <button type="button" class="music-provider-btn ${activeProvider === 'applemusic' ? 'active provider-apple' : ''}" data-provider="applemusic">
+            <span class="provider-dot dot-apple"></span> Apple
+          </button>
+        </div>
+
+        <div class="music-preset-bar" id="musicPresetBar">
+          ${this._renderPresetChipsHtml(state)}
+        </div>
+
+        <div class="music-custom-input-box ${state.showCustomInput ? '' : 'hidden'}" id="musicCustomInputBox">
+          <div class="music-custom-row">
+            <input
+              type="url"
+              id="musicCustomUrlInput"
+              class="music-custom-input"
+              placeholder="Paste ${activeProvider === 'spotify' ? 'Spotify' : activeProvider === 'youtube' ? 'YouTube' : 'Apple Music'} link..."
+              value="${escapeHtml(state.customUrls[activeProvider] || '')}"
+              autocomplete="off"
+            />
+            <button type="button" class="music-custom-apply-btn" id="musicCustomApplyBtn">Set</button>
+          </div>
+          <span class="music-custom-hint">Paste track, playlist, album, or live stream URL</span>
+        </div>
+
+        <div class="music-player-frame-wrapper" id="musicPlayerWrapper" style="height: ${current.height}px;">
+          <div class="music-loading-overlay" id="musicLoadingOverlay">
+            <div class="music-spinner"></div>
+          </div>
+          <iframe
+            id="musicEmbedIframe"
+            class="music-embed-iframe"
+            src="${escapeHtml(current.url)}"
+            frameborder="0"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+          ></iframe>
+        </div>
+
+        <div class="music-widget-footer">
+          <span class="music-footer-label" id="musicFooterLabel">${escapeHtml(current.label)} · ${escapeHtml(this._providers[activeProvider]?.tag || 'Music')}</span>
+          <button type="button" class="music-open-web-btn" id="musicOpenWebBtn" title="Open in web app">↗</button>
+        </div>
+      `;
+      return card;
+    },
+
+    _updateIframe(state) {
+      const wrapper = document.getElementById("musicPlayerWrapper");
+      const iframe = document.getElementById("musicEmbedIframe");
+      const loader = document.getElementById("musicLoadingOverlay");
+      const footerLabel = document.getElementById("musicFooterLabel");
+      const current = this._getCurrentEmbed(state);
+      const provDef = this._providers[state.activeProvider] || this._providers.spotify;
+
+      if (wrapper) {
+        wrapper.style.height = `${current.height}px`;
+      }
+
+      if (loader) {
+        loader.classList.remove("hidden");
+      }
+
+      if (iframe) {
+        if (iframe.src !== current.url) {
+          iframe.src = current.url;
+        } else if (loader) {
+          setTimeout(() => loader.classList.add("hidden"), 300);
+        }
+      }
+
+      if (footerLabel) {
+        footerLabel.textContent = `${current.label} · ${provDef.tag || 'Music'}`;
+      }
+    },
+
+    afterRender() {
+      const providerBar = document.getElementById("musicProviderBar");
+      const presetBar = document.getElementById("musicPresetBar");
+      const customBox = document.getElementById("musicCustomInputBox");
+      const customInput = document.getElementById("musicCustomUrlInput");
+      const customApplyBtn = document.getElementById("musicCustomApplyBtn");
+      const iframe = document.getElementById("musicEmbedIframe");
+      const loader = document.getElementById("musicLoadingOverlay");
+      const openWebBtn = document.getElementById("musicOpenWebBtn");
+
+      let state = this._loadState();
+
+      if (iframe && loader) {
+        iframe.onload = () => {
+          loader.classList.add("hidden");
+        };
+      }
+
+      // Provider Switching
+      if (providerBar) {
+        providerBar.onclick = (e) => {
+          const btn = e.target.closest(".music-provider-btn");
+          if (!btn || !btn.dataset.provider) return;
+          const newProvider = btn.dataset.provider;
+          if (newProvider === state.activeProvider) return;
+
+          state.activeProvider = newProvider;
+          this._saveState(state);
+
+          providerBar.querySelectorAll(".music-provider-btn").forEach(b => {
+            const isTarget = b.dataset.provider === newProvider;
+            b.classList.toggle("active", isTarget);
+            b.classList.remove("provider-spotify", "provider-youtube", "provider-apple");
+            if (isTarget) {
+              if (newProvider === "spotify") b.classList.add("provider-spotify");
+              if (newProvider === "youtube") b.classList.add("provider-youtube");
+              if (newProvider === "applemusic") b.classList.add("provider-apple");
+            }
+          });
+
+          if (presetBar) {
+            presetBar.innerHTML = this._renderPresetChipsHtml(state);
+          }
+
+          if (customInput) {
+            customInput.placeholder = `Paste ${newProvider === 'spotify' ? 'Spotify' : newProvider === 'youtube' ? 'YouTube' : 'Apple Music'} link...`;
+            customInput.value = state.customUrls[newProvider] || "";
+          }
+
+          this._updateIframe(state);
+        };
+      }
+
+      // Preset selection & Custom Link Toggle
+      if (presetBar) {
+        presetBar.onclick = (e) => {
+          const chip = e.target.closest(".music-preset-chip");
+          if (!chip) return;
+
+          // Custom link chip clicked
+          if (chip.classList.contains("custom-link-chip")) {
+            state.showCustomInput = !state.showCustomInput;
+            this._saveState(state);
+            if (customBox) {
+              customBox.classList.toggle("hidden", !state.showCustomInput);
+              if (state.showCustomInput && customInput) {
+                customInput.focus();
+              }
+            }
+            return;
+          }
+
+          const presetKey = chip.dataset.presetKey;
+          if (presetKey) {
+            state.activePresets[state.activeProvider] = presetKey;
+            state.useCustomUrl[state.activeProvider] = false;
+            this._saveState(state);
+
+            presetBar.querySelectorAll(".music-preset-chip").forEach(c => {
+              c.classList.toggle("active", c.dataset.presetKey === presetKey);
+            });
+            const customChip = presetBar.querySelector(".custom-link-chip");
+            if (customChip) customChip.classList.remove("active");
+
+            this._updateIframe(state);
+          }
+        };
+      }
+
+      // Custom link apply
+      const handleApplyCustom = () => {
+        if (!customInput) return;
+        const rawUrl = customInput.value.trim();
+        if (!rawUrl) {
+          showToast("Please enter a valid music or playlist link.", "warning", 2500);
+          return;
+        }
+
+        const normalized = this._normalizeEmbedUrl(rawUrl, state.activeProvider);
+        if (!normalized) {
+          showToast("Unsupported or invalid URL for this provider.", "warning", 2500);
+          return;
+        }
+
+        state.customUrls[state.activeProvider] = rawUrl;
+        state.useCustomUrl[state.activeProvider] = true;
+        this._saveState(state);
+
+        if (presetBar) {
+          presetBar.querySelectorAll(".music-preset-chip").forEach(c => c.classList.remove("active"));
+          const customChip = presetBar.querySelector(".custom-link-chip");
+          if (customChip) customChip.classList.add("active");
+        }
+
+        this._updateIframe(state);
+        showToast("🎵 Custom music source updated!", "success", 2000);
+      };
+
+      if (customApplyBtn) {
+        customApplyBtn.onclick = handleApplyCustom;
+      }
+
+      if (customInput) {
+        customInput.onkeydown = (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            handleApplyCustom();
+          }
+        };
+      }
+
+      // Open external web player
+      if (openWebBtn) {
+        openWebBtn.onclick = () => {
+          const current = this._getCurrentEmbed(state);
+          let targetUrl = current.url;
+          if (state.activeProvider === "spotify") {
+            targetUrl = targetUrl.replace("/embed/", "/").split("?")[0];
+          } else if (state.activeProvider === "youtube") {
+            targetUrl = targetUrl.replace("youtube-nocookie.com/embed/", "youtube.com/watch?v=").split("?")[0];
+          } else if (state.activeProvider === "applemusic") {
+            targetUrl = targetUrl.replace("embed.music.apple.com", "music.apple.com");
+          }
+          window.open(targetUrl, "_blank", "noopener,noreferrer");
+        };
+      }
+    }
   }
 };
 
@@ -2083,6 +2508,7 @@ function removeWidget(widgetId) {
 }
 
 const WIDGET_PRIORITY_ORDER = [
+  "music",          // 🎵 Music Player (Spotify, YouTube & Apple Music)
   "quicklinks",     // 🔗 Quick Links (App dock & frequent shortcuts)
   "somedaybox",     // 🌱 Someday Box (Idea capture & backlog)
   "dailylearning",  // 🧠 Daily Learning Log (Knowledge & insights)

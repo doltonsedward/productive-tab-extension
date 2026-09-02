@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.18.0] - 2026-09-02
+### Added
+- **🎵 Music Player Widget**: Integrated a dedicated focus audio player widget supporting **Spotify**, **YouTube / YouTube Music**, and **Apple Music** with 1-click provider switching.
+- **✨ Curated Focus Presets**: Included quick-start productivity channels (Lofi Beats, Deep Focus, Soft Piano, Synthwave Chill, Chillhop Radio, Lofi Girl live stream, Pure Focus, and Beatstrumentals).
+- **🔗 Smart URL Normalizer & Custom Sources**: Support for pasting custom playlist, album, track, or live stream links with automatic embed conversion for all three providers.
+- **💾 Music State Persistence**: Remembers active provider, selected preset, custom sources, and player state across browser sessions.
+
+---
+
 ## [1.17.6] - 2026-09-02
 ### Changed
 - **📏 Global Minimalist Slim Scrollbars**: Standardized all scrollbars across the entire extension (Todo List, Settings Drawer, Changelog Modal, Bookmarks Spotlight, Widget Columns, and item lists) to a 4px slim, transparent-track glass design with soft translucent thumbs.
