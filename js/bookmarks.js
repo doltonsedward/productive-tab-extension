@@ -191,8 +191,11 @@ const BookmarkSpotlight = (() => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
       if (query || focusPane === "right") {
-        selectedRight = Math.min(rightItems.length - 1, selectedRight + 1);
-        if (selectedRight < 0 && rightItems.length > 0) selectedRight = 0;
+        if (selectedRight < 0) {
+          selectedRight = rightItems.length > 0 ? 0 : -1;
+        } else {
+          selectedRight = Math.min(rightItems.length - 1, selectedRight + 1);
+        }
       } else {
         selectedLeft = Math.min(leftItems.length - 1, selectedLeft + 1);
       }
@@ -203,7 +206,11 @@ const BookmarkSpotlight = (() => {
     if (e.key === "ArrowUp") {
       e.preventDefault();
       if (query || focusPane === "right") {
-        selectedRight = Math.max(0, selectedRight - 1);
+        if (selectedRight < 0) {
+          selectedRight = rightItems.length > 0 ? rightItems.length - 1 : -1;
+        } else {
+          selectedRight = Math.max(0, selectedRight - 1);
+        }
       } else {
         selectedLeft = Math.max(0, selectedLeft - 1);
       }
@@ -214,8 +221,9 @@ const BookmarkSpotlight = (() => {
     if (e.key === "Enter") {
       e.preventDefault();
       if (query || focusPane === "right") {
-        if (selectedRight >= 0 && selectedRight < rightItems.length) {
-          const item = rightItems[selectedRight];
+        const targetIdx = selectedRight >= 0 ? selectedRight : 0;
+        if (targetIdx >= 0 && targetIdx < rightItems.length) {
+          const item = rightItems[targetIdx];
           if (item.url) openUrlInNewTab(item.url);
           else if (item.isSubfolder) selectFolderById(item.id, item.title, item.parentPath);
         }
@@ -223,7 +231,7 @@ const BookmarkSpotlight = (() => {
         if (selectedLeft >= 0 && selectedLeft < leftItems.length) {
           selectFolderById(leftItems[selectedLeft].id, leftItems[selectedLeft].title, leftItems[selectedLeft].path);
           focusPane = "right";
-          selectedRight = rightItems.length > 0 ? 0 : -1;
+          selectedRight = -1;
           updateHighlight();
         }
       }
@@ -329,10 +337,13 @@ const BookmarkSpotlight = (() => {
     rightItems = [];
 
     if (activeNode && activeNode.children) {
+      const subfolders = [];
+      const links = [];
+
       activeNode.children.forEach(child => {
         if (child.children) {
           // Sub-folder
-          rightItems.push({
+          subfolders.push({
             id: child.id,
             title: child.title,
             count: child.children.length,
@@ -340,9 +351,12 @@ const BookmarkSpotlight = (() => {
             parentPath: [...(activeFolderPath || []), child.title]
           });
         } else if (child.url) {
-          rightItems.push({ id: child.id, title: child.title, url: child.url, isSubfolder: false });
+          links.push({ id: child.id, title: child.title, url: child.url, isSubfolder: false });
         }
       });
+
+      // Maintain EXACT same order as rendered in DOM: subfolders first, links second
+      rightItems = [...subfolders, ...links];
     }
 
     // Clamp selectedLeft
@@ -401,12 +415,13 @@ const BookmarkSpotlight = (() => {
 
     if (subfolders.length > 0) {
       html += `<div class="bm-section-label">Folders</div>`;
-      html += subfolders.map((f, idx) => {
-        const isSelected = rightItems.indexOf(f) === selectedRight && focusPane === "right";
+      html += subfolders.map(f => {
+        const idx = rightItems.indexOf(f);
+        const isSelected = idx === selectedRight && focusPane === "right";
         return `
           <div class="bm-subfolder-card ${isSelected ? "selected" : ""}"
                data-subfolder-id="${f.id}"
-               data-right-idx="${rightItems.indexOf(f)}">
+               data-right-idx="${idx}">
             <span style="font-size:1rem;">🗂️</span>
             <span class="bm-subfolder-name">${escapeHtml(f.title)}</span>
             <span class="bm-subfolder-count">${f.count} items</span>
@@ -447,7 +462,7 @@ const BookmarkSpotlight = (() => {
   };
 
   const attachBrowseEvents = (container) => {
-    // Left pane folder click
+    // Left pane folder click & hover
     container.querySelectorAll(".bm-folder-row").forEach(row => {
       row.addEventListener("click", () => {
         const id = row.dataset.folderId;
@@ -457,21 +472,23 @@ const BookmarkSpotlight = (() => {
           selectedLeft = idx;
           focusPane = "right";
           selectFolderById(folder.id, folder.title, folder.path);
-          selectedRight = rightItems.length > 0 ? 0 : -1;
+          selectedRight = -1;
           updateHighlight();
         }
       });
 
       row.addEventListener("mouseenter", () => {
         const idx = parseInt(row.dataset.idx, 10);
-        if (!isNaN(idx) && focusPane === "left") {
+        if (!isNaN(idx)) {
           selectedLeft = idx;
+          focusPane = "left";
+          selectedRight = -1;
           updateHighlight();
         }
       });
     });
 
-    // Right pane sub-folder click
+    // Right pane sub-folder click & hover
     container.querySelectorAll(".bm-subfolder-card").forEach(card => {
       card.addEventListener("click", () => {
         const id = card.dataset.subfolderId;
@@ -482,18 +499,27 @@ const BookmarkSpotlight = (() => {
           const leftIdx = leftItems.findIndex(f => f.id === id);
           if (leftIdx >= 0) selectedLeft = leftIdx;
           focusPane = "right";
-          selectedRight = 0;
+          selectedRight = -1;
           updateHighlight();
         }
       });
 
       card.addEventListener("mouseenter", () => {
         const idx = parseInt(card.dataset.rightIdx, 10);
-        if (!isNaN(idx)) { selectedRight = idx; focusPane = "right"; updateHighlight(); }
+        if (!isNaN(idx)) {
+          selectedRight = idx;
+          focusPane = "right";
+          updateHighlight();
+        }
+      });
+
+      card.addEventListener("mouseleave", () => {
+        selectedRight = -1;
+        updateHighlight();
       });
     });
 
-    // Right pane link click
+    // Right pane link click & hover
     container.querySelectorAll(".bm-link-item").forEach(item => {
       item.addEventListener("click", (e) => {
         e.preventDefault();
@@ -502,7 +528,16 @@ const BookmarkSpotlight = (() => {
 
       item.addEventListener("mouseenter", () => {
         const idx = parseInt(item.dataset.rightIdx, 10);
-        if (!isNaN(idx)) { selectedRight = idx; focusPane = "right"; updateHighlight(); }
+        if (!isNaN(idx)) {
+          selectedRight = idx;
+          focusPane = "right";
+          updateHighlight();
+        }
+      });
+
+      item.addEventListener("mouseleave", () => {
+        selectedRight = -1;
+        updateHighlight();
       });
     });
   };
@@ -567,6 +602,10 @@ const BookmarkSpotlight = (() => {
         const idx = parseInt(item.dataset.rightIdx, 10);
         if (!isNaN(idx)) { selectedRight = idx; updateHighlight(); }
       });
+      item.addEventListener("mouseleave", () => {
+        selectedRight = -1;
+        updateHighlight();
+      });
     });
 
     updateHighlight();
@@ -579,15 +618,21 @@ const BookmarkSpotlight = (() => {
     if (!container) return;
 
     // Left pane highlight (keyboard nav indicator only, not active)
-    container.querySelectorAll(".bm-folder-row").forEach((el, idx) => {
+    container.querySelectorAll(".bm-folder-row").forEach(el => {
+      const idx = parseInt(el.dataset.idx, 10);
       el.classList.toggle("keyboard-focus", idx === selectedLeft && focusPane === "left");
     });
 
     // Right pane highlight
-    const rightEls = container.querySelectorAll(".bm-link-item, .bm-subfolder-card");
-    rightEls.forEach((el, idx) => {
-      el.classList.toggle("selected", idx === selectedRight && (focusPane === "right" || document.getElementById("bookmarksSearchInput")?.value));
-      if (idx === selectedRight) el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    const isSearching = Boolean(document.getElementById("bookmarksSearchInput")?.value);
+    const rightEls = container.querySelectorAll(".bm-subfolder-card, .bm-link-item");
+    rightEls.forEach(el => {
+      const idx = parseInt(el.dataset.rightIdx, 10);
+      const isSelected = idx === selectedRight && (focusPane === "right" || isSearching);
+      el.classList.toggle("selected", isSelected);
+      if (isSelected) {
+        el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
     });
   };
 

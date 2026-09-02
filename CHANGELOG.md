@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.17.4] - 2026-09-02
+### Changed
+- **🍃 Calm Resting State**: Moving the mouse away from bookmark items now automatically clears active outlines, keeping the modal resting and neutral unless actively navigating via keyboard.
+- **⌨️ Keyboard Resume**: Pressing arrow keys instantly engages keyboard navigation cleanly even after moving the mouse.
+
+---
+
+## [1.17.3] - 2026-09-02
+### Fixed
+- **🎯 Single Active Item in Bookmark Finder**: Fixed an index mismatch between subfolders and links in the Dual-Pane finder that caused two items to be highlighted green simultaneously when hovering.
+- **🖱️ Mouse & Keyboard Coordination**: Moving the mouse over the folder sidebar now cleans up any active right-pane selection to prevent lingering highlights.
+
+---
+
 ## [1.17.2] - 2026-09-02
 ### Changed
 - **🗂️ Dual-Pane Column Finder**: Replaced the collapsible tree view with a two-panel column finder — a folder sidebar on the left and a live bookmark list on the right. Click a folder to browse its bookmarks instantly.

@@ -7,6 +7,22 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.17.4",
+    date: "2026-09-02",
+    items: [
+      { type: "change", text: "Calm Resting State: Moving cursor away from bookmark items automatically clears the active outline, keeping the modal resting and neutral unless navigating via keyboard." },
+      { type: "change", text: "Seamless Keyboard Resume: Pressing arrow keys instantly engages keyboard navigation smoothly even after mouse hover." }
+    ]
+  },
+  {
+    version: "1.17.3",
+    date: "2026-09-02",
+    items: [
+      { type: "fix", text: "Bookmark Selection Highlight: Fixed index synchronization in Dual-Pane finder so only the actively hovered or keyboard-selected bookmark item receives the green highlight." },
+      { type: "change", text: "Mouse & Keyboard Coordination: Moving cursor over folder sidebar now clears right-pane selection, preventing multiple active outlines." }
+    ]
+  },
+  {
     version: "1.17.2",
     date: "2026-09-02",
     items: [
@@ -149,27 +165,6 @@ const CHANGELOG_DATA = [
     items: [
       { type: "change", text: "Full Frosted Crystal Adoption: Applied the airy, high-translucency Frosted Crystal glassmorphism as the permanent standard card theme." },
       { type: "change", text: "Contextual Emoji Badges: Added distinct emoji icons to all modal badges (e.g. 🌱 Someday Box, 📋 Todo List, 📌 Subtask, 🏆 Milestone Habit, 🧠 Daily Learning Log, 📝 Quick Notes, ⚠️ Danger Zone)." }
-    ]
-  },
-  {
-    version: "1.15.1",
-    date: "2026-08-31",
-    items: [
-      { type: "feat", text: "3 Glassmorphism Modal Variations: Added Frosted Crystal, Deep Obsidian, and Neon Aurora style themes with true translucent glass diffraction." },
-      { type: "refactor", text: "Hierarchy & Redundancy Fix: Refactored modal titles and badges so badges show section context and titles show clear, non-repetitive actions." },
-      { type: "change", text: "Increased Glass Translucency: Replaced heavy opaque modal card background with airy, frosted glass backdrop blur." }
-    ]
-  },
-  {
-    version: "1.15.0",
-    date: "2026-08-31",
-    items: [
-      { type: "feat", text: "Custom Glassmorphism Dialog System: New reusable dialog engine (dialog.js + dialog.css) replaces all native browser prompt(), confirm(), and alert() with themed modals supporting keyboard navigation, backdrop-click dismiss, and real-time validation." },
-      { type: "feat", text: "Unified Milestone Modal: Habit Name and Target Days combined into a single form modal — no more two consecutive blocking prompts." },
-      { type: "change", text: "Todo & Subtask Editing: Edit actions now open a glassmorphic prompt modal with existing text pre-selected." },
-      { type: "change", text: "Someday Box & Learning Log Dialogs: Add tag, edit item, and clear all now use custom glassmorphic modals." },
-      { type: "change", text: "Settings Erase All Data: Reset confirmation upgraded to a danger-styled glassmorphic modal." },
-      { type: "change", text: "Timer & Calendar: Replaced blocking alert() calls with non-blocking showToast() notifications." }
     ]
   },
 ];
