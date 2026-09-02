@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.17.6] - 2026-09-02
+### Changed
+- **📏 Global Minimalist Slim Scrollbars**: Standardized all scrollbars across the entire extension (Todo List, Settings Drawer, Changelog Modal, Bookmarks Spotlight, Widget Columns, and item lists) to a 4px slim, transparent-track glass design with soft translucent thumbs.
+
+---
+
 ## [1.17.5] - 2026-09-02
 ### Changed
 - **🪟 Frosted Crystal Transparency**: Aligned the bookmark spotlight card to match the Frosted Crystal glassmorphism style — card background reduced from `0.78` to `0.40` opacity, backdrop blur tuned to `blur(22px) saturate(210%)`, border brightened to `rgba(255, 255, 255, 0.22)`, and a subtle top sheen gradient line added.

@@ -7,6 +7,13 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.17.6",
+    date: "2026-09-02",
+    items: [
+      { type: "change", text: "Global Slim Scrollbar Styling: Standardized all scrollbars across the extension (todo list, settings tabs, changelog modal, bookmarks modal, and widget containers) to an ultra-slim 4px translucent glass track." }
+    ]
+  },
+  {
     version: "1.17.5",
     date: "2026-09-02",
     items: [
@@ -156,14 +163,6 @@ const CHANGELOG_DATA = [
     items: [
       { type: "change", text: "Habit Integrity Protection: Removed streak manual edits and check-in unlocking to keep habit building authentic and uncheatable." },
       { type: "change", text: "Pure Restart Flow: Milestone settings now offer a direct 'Reset & Start New Target' flow starting fresh from Day 0." }
-    ]
-  },
-  {
-    version: "1.15.3",
-    date: "2026-08-31",
-    items: [
-      { type: "fix", text: "Milestone Edit Bug: Editing habit name or target days now safely preserves your streak history and check-in status." },
-      { type: "change", text: "Streamlined Milestone Settings: Clicking ⚙️ directly opens the Edit Habit Target form with streak adjustment and check-in unlock controls." }
     ]
   },
 ];
