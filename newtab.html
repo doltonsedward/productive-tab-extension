@@ -258,7 +258,7 @@
     </div>
 
     <div class="settings-drawer-footer">
-      <span class="settings-version" id="settingsVersionText" data-version="1.17.0">Productive Tab · v1.17.0</span>
+      <span class="settings-version" id="settingsVersionText" data-version="1.17.2">Productive Tab · v1.17.2</span>
       <button type="button" id="openChangelogBtn" class="settings-changelog-btn" title="View Release Notes">What's
         New</button>
     </div>
@@ -520,9 +520,7 @@
         <button type="button" id="bookmarksCloseBtn" class="bookmarks-close-btn" title="Close (Esc)">ESC</button>
       </div>
 
-      <div id="bookmarksBreadcrumbBar" class="bookmarks-breadcrumb-bar">
-        <!-- Injected via bookmarks.js -->
-      </div>
+      <div id="bookmarksBreadcrumbBar" style="display:none;"></div>
 
       <div id="bookmarksContentArea" class="bookmarks-content-area">
         <!-- Injected via bookmarks.js -->
@@ -531,8 +529,9 @@
       <div class="bookmarks-footer-bar">
         <div class="bm-hints">
           <span class="bm-hint-item"><kbd class="bm-kbd">↑</kbd><kbd class="bm-kbd">↓</kbd> Navigate</span>
+          <span class="bm-hint-item"><kbd class="bm-kbd">←</kbd><kbd class="bm-kbd">→</kbd> Switch Pane</span>
           <span class="bm-hint-item"><kbd class="bm-kbd">↵</kbd> Open</span>
-          <span class="bm-hint-item"><kbd class="bm-kbd">Esc</kbd> Back / Close</span>
+          <span class="bm-hint-item"><kbd class="bm-kbd">Esc</kbd> Close</span>
         </div>
         <div>
           <span class="bm-hint-item"><kbd class="bm-kbd">Ctrl+B</kbd> Toggle</span>

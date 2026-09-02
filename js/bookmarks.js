@@ -1,16 +1,21 @@
 // ==========================================
-// MODULE: BOOKMARK SPOTLIGHT & COMMAND PALETTE
+// MODULE: BOOKMARK SPOTLIGHT — DUAL-PANE COLUMN FINDER
 // ==========================================
 
 const BookmarkSpotlight = (() => {
   let bookmarkTree = [];
   let flatBookmarks = [];
-  let currentFolderId = "root";
-  let breadcrumbStack = [{ id: "root", title: "Bookmarks" }];
-  let selectedIndex = 0;
-  let activeItems = []; // List of currently rendered navigable items (folders + links)
+  let activeFolderId = null;    // Currently selected folder in left pane
+  let activeFolderPath = [];    // Breadcrumb path for selected folder
+  let focusPane = "left";       // "left" | "right"
+  let selectedLeft = 0;         // Selected index in left pane
+  let selectedRight = -1;       // Selected index in right pane
+  let leftItems = [];           // All folder rows rendered in left pane
+  let rightItems = [];          // All link/subfolder rows rendered in right pane
 
-  // Mock bookmark dataset for local dev / non-extension preview
+  // Flat folder list for the left pane (depth-aware for sub-folder indent)
+  let allFolders = [];
+
   const MOCK_BOOKMARKS = [
     {
       id: "1",
@@ -51,9 +56,8 @@ const BookmarkSpotlight = (() => {
     }
   ];
 
-  /**
-   * Initialize module, bind keyboard shortcuts and Chrome bookmark event listeners
-   */
+  /* -------------------------------------------------- */
+
   const init = () => {
     bindGlobalShortcut();
     bindDomEvents();
@@ -61,9 +65,6 @@ const BookmarkSpotlight = (() => {
     initChromeListeners();
   };
 
-  /**
-   * Listen to real-time Chrome bookmark events
-   */
   const initChromeListeners = () => {
     if (typeof chrome !== "undefined" && chrome.bookmarks) {
       const refresh = () => loadBookmarks();
@@ -75,299 +76,524 @@ const BookmarkSpotlight = (() => {
     }
   };
 
-  /**
-   * Load bookmarks from Chrome API or fallback mock
-   */
   const loadBookmarks = async () => {
     if (typeof chrome !== "undefined" && chrome.bookmarks && chrome.bookmarks.getTree) {
       try {
         chrome.bookmarks.getTree((tree) => {
-          if (tree && tree.length > 0) {
-            // Chrome root node often has an empty title and children [Bookmarks Bar, Other, Mobile]
-            const rootChildren = tree[0].children || tree;
-            bookmarkTree = rootChildren;
-          } else {
-            bookmarkTree = MOCK_BOOKMARKS;
-          }
-          flattenBookmarks();
-          if (isOpen()) renderContent();
+          bookmarkTree = (tree && tree[0]?.children) ? tree[0].children : MOCK_BOOKMARKS;
+          processTree();
+          if (isOpen()) renderAll();
         });
-      } catch (err) {
-        console.warn("Could not load chrome.bookmarks, using fallback:", err);
+      } catch {
         bookmarkTree = MOCK_BOOKMARKS;
-        flattenBookmarks();
+        processTree();
       }
     } else {
       bookmarkTree = MOCK_BOOKMARKS;
-      flattenBookmarks();
+      processTree();
     }
   };
 
   /**
-   * Create flat array of all links with their full folder path for instant fuzzy search
+   * Build flat folder list (with depth) and flat link list for search
    */
-  const flattenBookmarks = () => {
+  const processTree = () => {
+    allFolders = [];
     flatBookmarks = [];
-    const traverse = (node, path = []) => {
-      if (!node) return;
-      const currentPath = node.title ? [...path, node.title] : path;
-      if (node.url) {
-        flatBookmarks.push({
-          id: node.id,
-          title: node.title || node.url,
-          url: node.url,
-          folderPath: path.join(" / ") || "Bookmarks",
-          folderName: path.length > 0 ? path[path.length - 1] : "Bookmarks"
-        });
-      }
-      if (node.children && node.children.length > 0) {
-        node.children.forEach(child => traverse(child, currentPath));
-      }
-    };
 
-    bookmarkTree.forEach(rootNode => traverse(rootNode, []));
+    const walkFolders = (nodes, depth = 0, path = []) => {
+      nodes.forEach(node => {
+        if (node.children) {
+          const currentPath = [...path, node.title];
+          allFolders.push({ id: node.id, title: node.title, node, depth, path: currentPath });
+          walkFolders(node.children, depth + 1, currentPath);
+        }
+        if (node.url) {
+          flatBookmarks.push({
+            id: node.id,
+            title: node.title || node.url,
+            url: node.url,
+            folderName: path.length > 0 ? path[path.length - 1] : "Bookmarks"
+          });
+        }
+      });
+    };
+    walkFolders(bookmarkTree);
   };
 
-  /**
-   * Bind Ctrl+B / Cmd+B global keydown
-   */
+  /* -------------------------------------------------- */
+
   const bindGlobalShortcut = () => {
     window.addEventListener("keydown", (e) => {
-      // Check for Ctrl+B (Windows/Linux) or Cmd+B (macOS)
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") {
-        // Prevent browser default bookmark bar toggle
         e.preventDefault();
         toggle();
+        return;
+      }
+      if (isOpen()) handleKeydown(e);
+    });
+  };
+
+  const bindDomEvents = () => {
+    document.getElementById("toggleBookmarksBtn")?.addEventListener("click", () => open());
+    document.getElementById("bookmarksModal")?.addEventListener("click", (e) => {
+      if (e.target.id === "bookmarksModal") close();
+    });
+    document.getElementById("bookmarksCloseBtn")?.addEventListener("click", () => close());
+
+    const input = document.getElementById("bookmarksSearchInput");
+    const clearBtn = document.getElementById("bookmarksClearSearchBtn");
+
+    input?.addEventListener("input", () => {
+      selectedLeft = 0;
+      selectedRight = -1;
+      focusPane = "right";
+      if (clearBtn) clearBtn.style.display = input.value ? "flex" : "none";
+      renderAll();
+    });
+
+    clearBtn?.addEventListener("click", () => {
+      if (input) {
+        input.value = "";
+        clearBtn.style.display = "none";
+        input.focus();
+        focusPane = "left";
+        selectedLeft = 0;
+        selectedRight = -1;
+        renderAll();
       }
     });
   };
 
-  /**
-   * Bind DOM trigger buttons and search events
-   */
-  const bindDomEvents = () => {
-    const fab = document.getElementById("toggleBookmarksBtn");
-    if (fab) {
-      fab.addEventListener("click", () => open());
-    }
+  const handleKeydown = (e) => {
+    const query = document.getElementById("bookmarksSearchInput")?.value.trim() ?? "";
 
-    const modal = document.getElementById("bookmarksModal");
-    if (modal) {
-      modal.addEventListener("click", (e) => {
-        if (e.target === modal) close();
-      });
-    }
+    if (e.key === "Escape") { e.preventDefault(); close(); return; }
 
-    const closeBtn = document.getElementById("bookmarksCloseBtn");
-    if (closeBtn) {
-      closeBtn.addEventListener("click", () => close());
-    }
-
-    const searchInput = document.getElementById("bookmarksSearchInput");
-    const clearBtn = document.getElementById("bookmarksClearSearchBtn");
-
-    if (searchInput) {
-      searchInput.addEventListener("input", () => {
-        selectedIndex = 0;
-        if (clearBtn) {
-          clearBtn.style.display = searchInput.value ? "flex" : "none";
-        }
-        renderContent();
-      });
-
-      searchInput.addEventListener("keydown", handleKeyNavigation);
-    }
-
-    if (clearBtn) {
-      clearBtn.addEventListener("click", () => {
-        if (searchInput) {
-          searchInput.value = "";
-          clearBtn.style.display = "none";
-          searchInput.focus();
-          selectedIndex = 0;
-          renderContent();
-        }
-      });
-    }
-  };
-
-  /**
-   * Handle keyboard navigation (Arrow keys, Enter, Esc, Backspace)
-   */
-  const handleKeyNavigation = (e) => {
-    const searchInput = document.getElementById("bookmarksSearchInput");
-    const query = searchInput ? searchInput.value.trim() : "";
-
-    if (e.key === "Escape") {
-      e.preventDefault();
-      if (!query && breadcrumbStack.length > 1) {
-        // Go back up one folder level
-        goBackFolder();
-      } else {
-        close();
+    // Tab / Arrow Left / Arrow Right to switch panes (only in browse mode)
+    if (!query) {
+      if (e.key === "ArrowRight" && focusPane === "left") {
+        e.preventDefault();
+        focusPane = "right";
+        selectedRight = rightItems.length > 0 ? 0 : -1;
+        updateHighlight();
+        return;
       }
-      return;
-    }
-
-    if (e.key === "Backspace" && !query && breadcrumbStack.length > 1) {
-      // Go back up folder if backspace pressed on empty search input
-      e.preventDefault();
-      goBackFolder();
-      return;
+      if ((e.key === "ArrowLeft" || e.key === "Tab") && focusPane === "right") {
+        e.preventDefault();
+        focusPane = "left";
+        selectedRight = -1;
+        updateHighlight();
+        return;
+      }
     }
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      if (activeItems.length > 0) {
-        selectedIndex = (selectedIndex + 1) % activeItems.length;
-        updateSelectionHighlight();
+      if (query || focusPane === "right") {
+        selectedRight = Math.min(rightItems.length - 1, selectedRight + 1);
+        if (selectedRight < 0 && rightItems.length > 0) selectedRight = 0;
+      } else {
+        selectedLeft = Math.min(leftItems.length - 1, selectedLeft + 1);
       }
+      updateHighlight();
       return;
     }
 
     if (e.key === "ArrowUp") {
       e.preventDefault();
-      if (activeItems.length > 0) {
-        selectedIndex = (selectedIndex - 1 + activeItems.length) % activeItems.length;
-        updateSelectionHighlight();
+      if (query || focusPane === "right") {
+        selectedRight = Math.max(0, selectedRight - 1);
+      } else {
+        selectedLeft = Math.max(0, selectedLeft - 1);
       }
+      updateHighlight();
       return;
     }
 
     if (e.key === "Enter") {
       e.preventDefault();
-      if (activeItems.length > 0 && activeItems[selectedIndex]) {
-        const item = activeItems[selectedIndex];
-        if (item.isFolder) {
-          openFolder(item.id, item.title);
-        } else if (item.url) {
-          openUrl(item.url, e.ctrlKey || e.metaKey);
+      if (query || focusPane === "right") {
+        if (selectedRight >= 0 && selectedRight < rightItems.length) {
+          const item = rightItems[selectedRight];
+          if (item.url) openUrlInNewTab(item.url);
+          else if (item.isSubfolder) selectFolderById(item.id, item.title, item.parentPath);
+        }
+      } else {
+        if (selectedLeft >= 0 && selectedLeft < leftItems.length) {
+          selectFolderById(leftItems[selectedLeft].id, leftItems[selectedLeft].title, leftItems[selectedLeft].path);
+          focusPane = "right";
+          selectedRight = rightItems.length > 0 ? 0 : -1;
+          updateHighlight();
         }
       }
     }
   };
 
-  /**
-   * Highlight currently selected keyboard item
-   */
-  const updateSelectionHighlight = () => {
-    const container = document.getElementById("bookmarksContentArea");
-    if (!container) return;
+  /* -------------------------------------------------- */
 
-    const cards = container.querySelectorAll(".bm-folder-card, .bm-link-item");
-    cards.forEach((el, idx) => {
-      el.classList.toggle("selected", idx === selectedIndex);
-      if (idx === selectedIndex) {
-        el.scrollIntoView({ block: "nearest", behavior: "smooth" });
-      }
-    });
-  };
-
-  /**
-   * Open modal
-   */
   const open = () => {
     const modal = document.getElementById("bookmarksModal");
     const input = document.getElementById("bookmarksSearchInput");
     const clearBtn = document.getElementById("bookmarksClearSearchBtn");
     if (!modal) return;
 
-    // Reset search
-    if (input) {
-      input.value = "";
-      if (clearBtn) clearBtn.style.display = "none";
-    }
+    if (input) { input.value = ""; if (clearBtn) clearBtn.style.display = "none"; }
 
-    currentFolderId = "root";
-    breadcrumbStack = [{ id: "root", title: "Bookmarks" }];
-    selectedIndex = 0;
+    // Select first folder by default
+    activeFolderId = null;
+    activeFolderPath = [];
+    selectedLeft = 0;
+    selectedRight = -1;
+    focusPane = "left";
+
+    if (allFolders.length > 0) {
+      const first = allFolders[0];
+      activeFolderId = first.id;
+      activeFolderPath = first.path;
+    }
 
     modal.classList.remove("hidden");
     document.body.style.overflow = "hidden";
 
-    // Fast render
-    renderBreadcrumbs();
-    renderContent();
-
-    setTimeout(() => {
-      if (input) input.focus();
-    }, 50);
+    renderAll();
+    setTimeout(() => input?.focus(), 40);
   };
 
-  /**
-   * Close modal
-   */
   const close = () => {
-    const modal = document.getElementById("bookmarksModal");
-    if (!modal) return;
-    modal.classList.add("hidden");
+    document.getElementById("bookmarksModal")?.classList.add("hidden");
     document.body.style.overflow = "";
   };
 
   const isOpen = () => {
-    const modal = document.getElementById("bookmarksModal");
-    return modal && !modal.classList.contains("hidden");
+    const m = document.getElementById("bookmarksModal");
+    return m && !m.classList.contains("hidden");
   };
 
-  const toggle = () => {
-    if (isOpen()) close();
-    else open();
+  const toggle = () => isOpen() ? close() : open();
+
+  /* -------------------------------------------------- */
+
+  const selectFolderById = (id, title, path) => {
+    activeFolderId = id;
+    activeFolderPath = path || [title];
+    selectedRight = -1;
+    renderAll();
   };
 
-  /**
-   * Drill down into folder
-   */
-  const openFolder = (folderId, folderTitle) => {
-    currentFolderId = folderId;
-    breadcrumbStack.push({ id: folderId, title: folderTitle });
-    selectedIndex = 0;
-
-    const searchInput = document.getElementById("bookmarksSearchInput");
-    if (searchInput) searchInput.value = "";
-
-    renderBreadcrumbs();
-    renderContent(true); // with macOS spring animation
-  };
-
-  /**
-   * Navigate back up to a specific breadcrumb level
-   */
-  const navigateToBreadcrumb = (index) => {
-    if (index >= 0 && index < breadcrumbStack.length) {
-      breadcrumbStack = breadcrumbStack.slice(0, index + 1);
-      currentFolderId = breadcrumbStack[breadcrumbStack.length - 1].id;
-      selectedIndex = 0;
-      renderBreadcrumbs();
-      renderContent(true);
-    }
-  };
-
-  /**
-   * Go back up 1 folder level
-   */
-  const goBackFolder = () => {
-    if (breadcrumbStack.length > 1) {
-      navigateToBreadcrumb(breadcrumbStack.length - 2);
-    }
-  };
-
-  /**
-   * Open bookmark URL
-   */
-  const openUrl = (url, openInNewTab = false) => {
+  const openUrlInNewTab = (url) => {
     if (!url) return;
-    if (openInNewTab || url.startsWith("chrome://") || url.startsWith("edge://")) {
-      window.open(url, "_blank");
+    window.open(url, "_blank");
+    close();
+  };
+
+  const getHostName = (urlStr) => {
+    try { return new URL(urlStr).hostname.replace(/^www\./, ""); } catch { return ""; }
+  };
+
+  const getFaviconUrl = (urlStr) => {
+    const h = getHostName(urlStr);
+    return h ? `https://www.google.com/s2/favicons?domain=${h}&sz=32` : null;
+  };
+
+  /* -------------------------------------------------- */
+
+  /**
+   * Main render function — decides search mode vs browse mode
+   */
+  const renderAll = () => {
+    const query = document.getElementById("bookmarksSearchInput")?.value.trim().toLowerCase() ?? "";
+
+    const breadcrumbBar = document.getElementById("bookmarksBreadcrumbBar");
+    if (breadcrumbBar) breadcrumbBar.style.display = "none"; // Hide old breadcrumb bar
+
+    if (query) {
+      renderSearchMode(query);
     } else {
-      window.location.href = url;
+      renderBrowseMode();
     }
   };
 
   /**
-   * Find node in tree by ID
+   * Browse Mode: Left Folder Pane + Right Link Pane
    */
+  const renderBrowseMode = () => {
+    const container = document.getElementById("bookmarksContentArea");
+    if (!container) return;
+
+    // Build left items list
+    leftItems = allFolders.map(f => ({ ...f }));
+
+    // Find right pane content (direct children of activeFolderId)
+    const activeNode = findNodeById(bookmarkTree, activeFolderId);
+    rightItems = [];
+
+    if (activeNode && activeNode.children) {
+      activeNode.children.forEach(child => {
+        if (child.children) {
+          // Sub-folder
+          rightItems.push({
+            id: child.id,
+            title: child.title,
+            count: child.children.length,
+            isSubfolder: true,
+            parentPath: [...(activeFolderPath || []), child.title]
+          });
+        } else if (child.url) {
+          rightItems.push({ id: child.id, title: child.title, url: child.url, isSubfolder: false });
+        }
+      });
+    }
+
+    // Clamp selectedLeft
+    if (selectedLeft >= leftItems.length) selectedLeft = Math.max(0, leftItems.length - 1);
+
+    // Render HTML
+    container.innerHTML = `
+      <div class="bm-dual-pane">
+        <div class="bm-left-pane" id="bmLeftPane">
+          <div class="bm-pane-label">Folders</div>
+          ${leftItems.map((f, idx) => {
+            const isActive = f.id === activeFolderId;
+            const isSelected = idx === selectedLeft && focusPane === "left";
+            const indent = f.depth > 0 ? "sub" : "";
+            return `
+              <div class="bm-folder-row ${indent} ${isActive ? "active" : ""} ${isSelected && !isActive ? "hovered" : ""}"
+                   data-folder-id="${f.id}"
+                   data-idx="${idx}">
+                <span class="bm-folder-icon">${f.depth > 0 ? "🗂️" : "📁"}</span>
+                <span class="bm-folder-name">${escapeHtml(f.title)}</span>
+                <span class="bm-folder-badge">${countChildren(f.node)}</span>
+              </div>
+            `;
+          }).join("")}
+        </div>
+
+        <div class="bm-right-pane" id="bmRightPane">
+          <div class="bm-right-header">
+            <div class="bm-right-breadcrumb">
+              ${(activeFolderPath || []).map((seg, i, arr) =>
+                i < arr.length - 1
+                  ? `<span>${escapeHtml(seg)}</span><span style="opacity:0.3;">›</span>`
+                  : `<span class="crumb">${escapeHtml(seg)}</span>`
+              ).join(" ")}
+            </div>
+          </div>
+          <div class="bm-right-list" id="bmRightList">
+            ${renderRightContent()}
+          </div>
+        </div>
+      </div>
+    `;
+
+    attachBrowseEvents(container);
+    updateHighlight();
+  };
+
+  const renderRightContent = () => {
+    if (rightItems.length === 0) {
+      return `<div class="bm-empty-state"><span class="bm-empty-icon">📂</span><strong>Empty folder</strong></div>`;
+    }
+
+    const subfolders = rightItems.filter(i => i.isSubfolder);
+    const links = rightItems.filter(i => !i.isSubfolder);
+    let html = "";
+
+    if (subfolders.length > 0) {
+      html += `<div class="bm-section-label">Folders</div>`;
+      html += subfolders.map((f, idx) => {
+        const isSelected = rightItems.indexOf(f) === selectedRight && focusPane === "right";
+        return `
+          <div class="bm-subfolder-card ${isSelected ? "selected" : ""}"
+               data-subfolder-id="${f.id}"
+               data-right-idx="${rightItems.indexOf(f)}">
+            <span style="font-size:1rem;">🗂️</span>
+            <span class="bm-subfolder-name">${escapeHtml(f.title)}</span>
+            <span class="bm-subfolder-count">${f.count} items</span>
+            <span style="font-size:0.75rem; color:rgba(255,255,255,0.3);">›</span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    if (links.length > 0) {
+      if (subfolders.length > 0) html += `<div class="bm-section-label">Bookmarks</div>`;
+      html += links.map(link => {
+        const idx = rightItems.indexOf(link);
+        const faviconUrl = getFaviconUrl(link.url);
+        const host = getHostName(link.url);
+        const isSelected = idx === selectedRight && focusPane === "right";
+        return `
+          <div class="bm-link-item ${isSelected ? "selected" : ""}"
+               data-url="${escapeHtml(link.url)}"
+               data-right-idx="${idx}">
+            <div class="bm-favicon-wrapper">
+              ${faviconUrl
+                ? `<img src="${faviconUrl}" class="bm-favicon-img" alt=""
+                       onerror="this.style.display='none'; this.nextSibling.style.display='inline';" />
+                   <span class="bm-favicon-fallback" style="display:none;">🔗</span>`
+                : `<span class="bm-favicon-fallback">🔗</span>`}
+            </div>
+            <div class="bm-link-details">
+              <span class="bm-link-title">${escapeHtml(link.title)}</span>
+              <span class="bm-link-url">${escapeHtml(host || link.url)}</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    return html;
+  };
+
+  const attachBrowseEvents = (container) => {
+    // Left pane folder click
+    container.querySelectorAll(".bm-folder-row").forEach(row => {
+      row.addEventListener("click", () => {
+        const id = row.dataset.folderId;
+        const idx = parseInt(row.dataset.idx, 10);
+        const folder = allFolders.find(f => f.id === id);
+        if (folder) {
+          selectedLeft = idx;
+          focusPane = "right";
+          selectFolderById(folder.id, folder.title, folder.path);
+          selectedRight = rightItems.length > 0 ? 0 : -1;
+          updateHighlight();
+        }
+      });
+
+      row.addEventListener("mouseenter", () => {
+        const idx = parseInt(row.dataset.idx, 10);
+        if (!isNaN(idx) && focusPane === "left") {
+          selectedLeft = idx;
+          updateHighlight();
+        }
+      });
+    });
+
+    // Right pane sub-folder click
+    container.querySelectorAll(".bm-subfolder-card").forEach(card => {
+      card.addEventListener("click", () => {
+        const id = card.dataset.subfolderId;
+        const item = rightItems.find(r => r.id === id);
+        if (item) {
+          selectFolderById(id, item.title, item.parentPath);
+          // Sync left pane selection
+          const leftIdx = leftItems.findIndex(f => f.id === id);
+          if (leftIdx >= 0) selectedLeft = leftIdx;
+          focusPane = "right";
+          selectedRight = 0;
+          updateHighlight();
+        }
+      });
+
+      card.addEventListener("mouseenter", () => {
+        const idx = parseInt(card.dataset.rightIdx, 10);
+        if (!isNaN(idx)) { selectedRight = idx; focusPane = "right"; updateHighlight(); }
+      });
+    });
+
+    // Right pane link click
+    container.querySelectorAll(".bm-link-item").forEach(item => {
+      item.addEventListener("click", (e) => {
+        e.preventDefault();
+        openUrlInNewTab(item.dataset.url);
+      });
+
+      item.addEventListener("mouseenter", () => {
+        const idx = parseInt(item.dataset.rightIdx, 10);
+        if (!isNaN(idx)) { selectedRight = idx; focusPane = "right"; updateHighlight(); }
+      });
+    });
+  };
+
+  /**
+   * Search Mode — single-pane flat results
+   */
+  const renderSearchMode = (query) => {
+    const container = document.getElementById("bookmarksContentArea");
+    if (!container) return;
+
+    const matches = flatBookmarks.filter(bm =>
+      bm.title.toLowerCase().includes(query) ||
+      bm.url.toLowerCase().includes(query)
+    ).slice(0, 40);
+
+    rightItems = matches.map(bm => ({ ...bm, isSubfolder: false }));
+    leftItems = [];
+
+    if (selectedRight >= rightItems.length) selectedRight = rightItems.length - 1;
+
+    container.innerHTML = `
+      <div class="bm-search-results" id="bmSearchResults">
+        ${matches.length === 0
+          ? `<div class="bm-empty-state">
+               <span class="bm-empty-icon">🔍</span>
+               <strong>No bookmarks found</strong>
+             </div>`
+          : matches.map((bm, idx) => {
+              const faviconUrl = getFaviconUrl(bm.url);
+              const host = getHostName(bm.url);
+              const isSelected = idx === selectedRight;
+              return `
+                <div class="bm-link-item ${isSelected ? "selected" : ""}"
+                     data-url="${escapeHtml(bm.url)}"
+                     data-right-idx="${idx}">
+                  <div class="bm-favicon-wrapper">
+                    ${faviconUrl
+                      ? `<img src="${faviconUrl}" class="bm-favicon-img" alt=""
+                             onerror="this.style.display='none'; this.nextSibling.style.display='inline';" />
+                         <span class="bm-favicon-fallback" style="display:none;">🔗</span>`
+                      : `<span class="bm-favicon-fallback">🔗</span>`}
+                  </div>
+                  <div class="bm-link-details">
+                    <span class="bm-link-title">${escapeHtml(bm.title)}</span>
+                    <span class="bm-link-url">${escapeHtml(host)}</span>
+                  </div>
+                  <span style="font-size:0.65rem; padding:2px 6px; border-radius:4px;
+                    background:rgba(255,255,255,0.05); color:rgba(255,255,255,0.4);">
+                    📁 ${escapeHtml(bm.folderName)}
+                  </span>
+                </div>
+              `;
+            }).join("")
+        }
+      </div>
+    `;
+
+    container.querySelectorAll(".bm-link-item").forEach(item => {
+      item.addEventListener("click", (e) => { e.preventDefault(); openUrlInNewTab(item.dataset.url); });
+      item.addEventListener("mouseenter", () => {
+        const idx = parseInt(item.dataset.rightIdx, 10);
+        if (!isNaN(idx)) { selectedRight = idx; updateHighlight(); }
+      });
+    });
+
+    updateHighlight();
+  };
+
+  /* -------------------------------------------------- */
+
+  const updateHighlight = () => {
+    const container = document.getElementById("bookmarksContentArea");
+    if (!container) return;
+
+    // Left pane highlight (keyboard nav indicator only, not active)
+    container.querySelectorAll(".bm-folder-row").forEach((el, idx) => {
+      el.classList.toggle("keyboard-focus", idx === selectedLeft && focusPane === "left");
+    });
+
+    // Right pane highlight
+    const rightEls = container.querySelectorAll(".bm-link-item, .bm-subfolder-card");
+    rightEls.forEach((el, idx) => {
+      el.classList.toggle("selected", idx === selectedRight && (focusPane === "right" || document.getElementById("bookmarksSearchInput")?.value));
+      if (idx === selectedRight) el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    });
+  };
+
+  /* -------------------------------------------------- */
+
   const findNodeById = (nodes, id) => {
-    if (id === "root") return { id: "root", title: "Bookmarks", children: nodes };
     for (const node of nodes) {
       if (node.id === id) return node;
       if (node.children) {
@@ -378,238 +604,17 @@ const BookmarkSpotlight = (() => {
     return null;
   };
 
-  /**
-   * Extract hostname cleanly
-   */
-  const getHostName = (urlStr) => {
-    try {
-      const u = new URL(urlStr);
-      return u.hostname.replace(/^www\./, "");
-    } catch {
-      return "";
-    }
-  };
-
-  /**
-   * Get Favicon URL using Google Favicon service
-   */
-  const getFaviconUrl = (urlStr) => {
-    const host = getHostName(urlStr);
-    if (!host) return null;
-    return `https://www.google.com/s2/favicons?domain=${host}&sz=32`;
-  };
-
-  /**
-   * Render breadcrumb pills
-   */
-  const renderBreadcrumbs = () => {
-    const bar = document.getElementById("bookmarksBreadcrumbBar");
-    if (!bar) return;
-
-    bar.innerHTML = breadcrumbStack.map((crumb, idx) => {
-      const isLast = idx === breadcrumbStack.length - 1;
-      const icon = idx === 0 ? "⭐️" : "📁";
-      return `
-        <span class="bm-crumb ${isLast ? "active" : ""}" data-index="${idx}">
-          <span>${icon}</span> ${escapeHtml(crumb.title)}
-        </span>
-        ${!isLast ? '<span class="bm-crumb-sep">/</span>' : ""}
-      `;
-    }).join("");
-
-    bar.querySelectorAll(".bm-crumb").forEach(crumb => {
-      crumb.addEventListener("click", () => {
-        const idx = parseInt(crumb.dataset.index, 10);
-        navigateToBreadcrumb(idx);
-      });
-    });
-  };
-
-  /**
-   * Render folder grid & bookmark rows
-   */
-  const renderContent = (animateSpring = false) => {
-    const container = document.getElementById("bookmarksContentArea");
-    const searchInput = document.getElementById("bookmarksSearchInput");
-    if (!container) return;
-
-    const query = searchInput ? searchInput.value.trim().toLowerCase() : "";
-    activeItems = [];
-
-    // 1. SEARCH MODE: Searching across all bookmarks
-    if (query) {
-      const matches = flatBookmarks.filter(bm =>
-        bm.title.toLowerCase().includes(query) ||
-        bm.url.toLowerCase().includes(query) ||
-        bm.folderPath.toLowerCase().includes(query)
-      ).slice(0, 30); // Top 30 matches
-
-      if (matches.length === 0) {
-        container.innerHTML = `
-          <div class="bm-empty-state">
-            <span class="bm-empty-icon">🔍</span>
-            <strong>No bookmarks found</strong>
-            <span>Try searching with a different keyword or check folder view.</span>
-          </div>
-        `;
-        return;
-      }
-
-      activeItems = matches.map(bm => ({ ...bm, isFolder: false }));
-
-      container.innerHTML = `
-        <div class="bm-links-section">
-          <div class="bm-section-title">SEARCH RESULTS (${matches.length})</div>
-          ${matches.map((bm, idx) => renderLinkItemHtml(bm, idx)).join("")}
-        </div>
-      `;
-
-      attachItemEvents(container);
-      updateSelectionHighlight();
-      return;
-    }
-
-    // 2. FOLDER EXPLORER MODE: Browsing current folder
-    const currentNode = findNodeById(bookmarkTree, currentFolderId);
-    if (!currentNode || !currentNode.children || currentNode.children.length === 0) {
-      container.innerHTML = `
-        <div class="bm-empty-state">
-          <span class="bm-empty-icon">📂</span>
-          <strong>This folder is empty</strong>
-          <span>No bookmarks or subfolders saved here.</span>
-        </div>
-      `;
-      return;
-    }
-
-    const subFolders = currentNode.children.filter(child => child.children && !child.url);
-    const links = currentNode.children.filter(child => Boolean(child.url));
-
-    let html = "";
-
-    // Render Sub-folders Grid with macOS spring cards
-    if (subFolders.length > 0) {
-      html += `
-        <div class="bm-folders-section">
-          <div class="bm-section-title">FOLDERS (${subFolders.length})</div>
-          <div class="bm-folder-grid">
-            ${subFolders.map(folder => {
-              const childCount = (folder.children || []).length;
-              return `
-                <div class="bm-folder-card ${animateSpring ? 'animate-spring' : ''}" data-folder-id="${folder.id}" data-folder-title="${escapeHtml(folder.title)}">
-                  <span class="bm-folder-icon">📁</span>
-                  <div class="bm-folder-info">
-                    <span class="bm-folder-name">${escapeHtml(folder.title || "Folder")}</span>
-                    <span class="bm-folder-count">${childCount} ${childCount === 1 ? "item" : "items"}</span>
-                  </div>
-                </div>
-              `;
-            }).join("")}
-          </div>
-        </div>
-      `;
-    }
-
-    // Render Links List
-    if (links.length > 0) {
-      html += `
-        <div class="bm-links-section">
-          <div class="bm-section-title">BOOKMARKS (${links.length})</div>
-          ${links.map((link, idx) => {
-            const bmObj = {
-              id: link.id,
-              title: link.title || link.url,
-              url: link.url,
-              folderName: currentNode.title || "Bookmarks"
-            };
-            return renderLinkItemHtml(bmObj, subFolders.length + idx);
-          }).join("")}
-        </div>
-      `;
-    }
-
-    activeItems = [
-      ...subFolders.map(f => ({ id: f.id, title: f.title, isFolder: true })),
-      ...links.map(l => ({ id: l.id, title: l.title, url: l.url, isFolder: false }))
-    ];
-
-    container.innerHTML = html;
-    attachItemEvents(container);
-    updateSelectionHighlight();
-  };
-
-  /**
-   * Helper to render link row item HTML
-   */
-  const renderLinkItemHtml = (bm, idx) => {
-    const faviconUrl = getFaviconUrl(bm.url);
-    const host = getHostName(bm.url);
-    const isSelected = idx === selectedIndex;
-
-    return `
-      <div class="bm-link-item ${isSelected ? "selected" : ""}" data-url="${escapeHtml(bm.url)}" data-index="${idx}">
-        <div class="bm-favicon-wrapper">
-          ${faviconUrl
-            ? `<img src="${faviconUrl}" class="bm-favicon-img" alt="" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';" />
-               <span class="bm-favicon-fallback" style="display:none;">🔗</span>`
-            : `<span class="bm-favicon-fallback">🔗</span>`
-          }
-        </div>
-        <div class="bm-link-details">
-          <span class="bm-link-title">${escapeHtml(bm.title)}</span>
-          <span class="bm-link-url">${escapeHtml(host || bm.url)}</span>
-        </div>
-        ${bm.folderName ? `<span class="bm-link-folder-tag">📁 ${escapeHtml(bm.folderName)}</span>` : ""}
-      </div>
-    `;
-  };
-
-  /**
-   * Attach click & hover events to rendered items
-   */
-  const attachItemEvents = (container) => {
-    // Folders click
-    container.querySelectorAll(".bm-folder-card").forEach(card => {
-      card.addEventListener("click", () => {
-        const fId = card.dataset.folderId;
-        const fTitle = card.dataset.folderTitle;
-        openFolder(fId, fTitle);
-      });
-    });
-
-    // Links click
-    container.querySelectorAll(".bm-link-item").forEach(item => {
-      item.addEventListener("click", (e) => {
-        e.preventDefault();
-        const url = item.dataset.url;
-        openUrl(url, e.ctrlKey || e.metaKey);
-      });
-
-      item.addEventListener("mouseenter", () => {
-        const idx = parseInt(item.dataset.index, 10);
-        if (!isNaN(idx)) {
-          selectedIndex = idx;
-          updateSelectionHighlight();
-        }
-      });
-    });
+  const countChildren = (node) => {
+    if (!node || !node.children) return 0;
+    return node.children.length;
   };
 
   const escapeHtml = (str) => {
     if (!str) return "";
     return String(str)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
   };
 
-  return {
-    init,
-    open,
-    close,
-    toggle,
-    loadBookmarks
-  };
+  return { init, open, close, toggle, loadBookmarks };
 })();

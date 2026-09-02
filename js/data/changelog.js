@@ -7,6 +7,26 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.17.2",
+    date: "2026-09-02",
+    items: [
+      { type: "change", text: "Dual-Pane Column Finder: Replaced the collapsible tree view with a two-panel column finder — a folder sidebar on the left and a live bookmark list on the right." },
+      { type: "change", text: "Keyboard Pane Switching: ArrowLeft / ArrowRight now switch focus between the folder pane and the bookmark pane." },
+      { type: "change", text: "Auto-Select First Folder: The first folder is automatically selected on open so the right pane is never empty." },
+      { type: "change", text: "Favicon Support: Bookmark links display a Google favicon thumbnail in browse and search modes." }
+    ]
+  },
+  {
+    version: "1.17.1",
+    date: "2026-09-02",
+    items: [
+      { type: "change", text: "Collapsible Tree View: Transformed bookmark folders into a collapsible tree view (collapsed by default) with spring transitions." },
+      { type: "change", text: "New Tab Opening: Clicking bookmarks or pressing Enter now reliably opens destination URLs in a new browser tab." },
+      { type: "change", text: "Subdued Resting Aesthetics: Green accent glow only activates on hover or explicit keyboard navigation." },
+      { type: "fix", text: "Keyboard Navigation: Fixed ArrowUp / ArrowDown across all visible tree folders and links." }
+    ]
+  },
+  {
     version: "1.17.0",
     date: "2026-09-02",
     items: [
@@ -152,19 +172,4 @@ const CHANGELOG_DATA = [
       { type: "change", text: "Timer & Calendar: Replaced blocking alert() calls with non-blocking showToast() notifications." }
     ]
   },
-  {
-    version: "1.14.2",
-    date: "2026-08-28",
-    items: [
-      { type: "change", text: "Prioritized Widget Order: Reordered Add Widget picker list to put Quick Links, Someday Box, and Daily Learning Log first." }
-    ]
-  },
-  {
-    version: "1.14.1",
-    date: "2026-08-28",
-    items: [
-      { type: "fix", text: "Tag Scroll Retention: Smooth in-place tag selection without resetting horizontal scroll position." },
-      { type: "change", text: "Subdued Copy Button: Styled the copy button with muted glass borders matching the central Todo List." }
-    ]
-  }
 ];

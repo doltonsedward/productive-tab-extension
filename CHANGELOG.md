@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.17.2] - 2026-09-02
+### Changed
+- **🗂️ Dual-Pane Column Finder**: Replaced the collapsible tree view with a two-panel column finder — a folder sidebar on the left and a live bookmark list on the right. Click a folder to browse its bookmarks instantly.
+- **⌨️ Pane Switching**: `←` / `→` arrow keys now switch keyboard focus between the left folder pane and the right bookmark pane.
+- **📂 Auto-Select First Folder**: The first bookmark folder is automatically selected when the modal opens so the right pane always shows content immediately.
+- **🌐 Favicon Thumbnails**: Bookmark link rows now display Google favicon thumbnails alongside the title and domain.
+
+---
+
+## [1.17.1] - 2026-09-02
+### Changed
+- **🌲 Collapsible Tree View**: Transformed bookmark folder explorer into a sleek, collapsible tree hierarchy (collapsed by default) with macOS spring accordion animations.
+- **🔗 Always Open in New Tab**: Clicking any bookmark or pressing `Enter` now reliably opens the destination URL in a new browser tab (`window.open`).
+- **🎯 Hover-Only Accent Glow**: Resting state is now calm and neutral; active glowing green border and elevation only trigger when hovering or actively navigating via keyboard.
+- **⌨️ Enhanced Arrow Navigation**: Fixed keyboard navigation so `↑`/`↓` navigate seamlessly across all visible folders and links, and `Enter`/`→`/`←` toggle folder accordions.
+
+---
+
 ## [1.17.0] - 2026-09-02
 ### Added
 - **🔖 Bookmark Spotlight & Command Palette (`Ctrl + B` / `Cmd + B`)**: Added a frosted crystal glass spotlight modal to search and open browser bookmarks with instant fuzzy search or via a floating `🔖` action button.
