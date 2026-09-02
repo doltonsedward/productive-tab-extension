@@ -258,7 +258,7 @@
     </div>
 
     <div class="settings-drawer-footer">
-      <span class="settings-version" id="settingsVersionText" data-version="1.16.10">Productive Tab · v1.16.10</span>
+      <span class="settings-version" id="settingsVersionText" data-version="1.17.0">Productive Tab · v1.17.0</span>
       <button type="button" id="openChangelogBtn" class="settings-changelog-btn" title="View Release Notes">What's
         New</button>
     </div>
@@ -269,6 +269,9 @@
 
   <!-- Focus Mode / Minimize Widgets FAB Button -->
   <button id="toggleFocusModeBtn" class="focus-mode-fab" title="Focus Mode: Minimize Widgets">👁️</button>
+
+  <!-- Bookmarks Spotlight FAB Button -->
+  <button id="toggleBookmarksBtn" class="bookmarks-fab" title="Bookmarks Spotlight (Ctrl+B)">🔖</button>
 
   <div class="container">
     <div class="time-section">
@@ -507,6 +510,37 @@
     <div class="dialog-card"></div>
   </div>
 
+  <!-- Bookmark Spotlight Modal (Ctrl+B / Cmd+B) -->
+  <div id="bookmarksModal" class="bookmarks-modal-overlay hidden">
+    <div class="bookmarks-spotlight-card">
+      <div class="bookmarks-search-bar">
+        <span class="bookmarks-search-icon">🔍</span>
+        <input type="text" id="bookmarksSearchInput" class="bookmarks-search-input" placeholder="Search bookmarks or browse folders..." autocomplete="off" spellcheck="false" />
+        <button type="button" id="bookmarksClearSearchBtn" class="bookmarks-clear-search-btn" style="display:none;" title="Clear search">✕</button>
+        <button type="button" id="bookmarksCloseBtn" class="bookmarks-close-btn" title="Close (Esc)">ESC</button>
+      </div>
+
+      <div id="bookmarksBreadcrumbBar" class="bookmarks-breadcrumb-bar">
+        <!-- Injected via bookmarks.js -->
+      </div>
+
+      <div id="bookmarksContentArea" class="bookmarks-content-area">
+        <!-- Injected via bookmarks.js -->
+      </div>
+
+      <div class="bookmarks-footer-bar">
+        <div class="bm-hints">
+          <span class="bm-hint-item"><kbd class="bm-kbd">↑</kbd><kbd class="bm-kbd">↓</kbd> Navigate</span>
+          <span class="bm-hint-item"><kbd class="bm-kbd">↵</kbd> Open</span>
+          <span class="bm-hint-item"><kbd class="bm-kbd">Esc</kbd> Back / Close</span>
+        </div>
+        <div>
+          <span class="bm-hint-item"><kbd class="bm-kbd">Ctrl+B</kbd> Toggle</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="js/data/icons.js"></script>
   <script src="js/data/changelog.js"></script>
   <script src="js/data/reflections.js"></script>
@@ -520,6 +554,7 @@
   <script src="js/updater.js"></script>
   <script src="js/settings.js"></script>
   <script src="js/timer.js"></script>
+  <script src="js/bookmarks.js"></script>
   <script src="js/app.js"></script>
 </body>
 

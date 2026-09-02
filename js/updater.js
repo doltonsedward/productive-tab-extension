@@ -89,7 +89,7 @@ function getLocalVersion() {
     const m = chrome.runtime.getManifest();
     if (m && m.version) return m.version;
   }
-  return "1.16.10";
+  return "1.17.0";
 }
 
 function renderVersionText() {

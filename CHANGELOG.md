@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.17.0] - 2026-09-02
+### Added
+- **🔖 Bookmark Spotlight & Command Palette (`Ctrl + B` / `Cmd + B`)**: Added a frosted crystal glass spotlight modal to search and open browser bookmarks with instant fuzzy search or via a floating `🔖` action button.
+- **✨ macOS-Inspired Spring Folder Animations**: Integrated tactile spring bounce transitions (`cubic-bezier(0.175, 0.885, 0.32, 1.275)`) when drilling into and navigating bookmark folders.
+- **⚡️ Native Chrome Bookmarks Sync**: Real-time integration with `chrome.bookmarks` API to automatically synchronize folders, items, and favicons from the browser.
+- **⌨️ Keyboard Navigation**: Full keyboard controls (`↑`/`↓` navigate, `Enter` open/enter, `Backspace` up a folder level, `Esc` dismiss).
+
+---
+
 ## [1.16.11] - 2026-09-02
 ### Changed
 - **🌫️ Subdued Add Widget Button**: Softened the resting state of the empty column `+` button and add widget buttons with subtle, low-contrast borders and dim opacity, smoothly highlighting on hover.
