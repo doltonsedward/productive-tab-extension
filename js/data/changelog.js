@@ -7,6 +7,13 @@
 
 const CHANGELOG_DATA = [
   {
+    version: "1.17.7",
+    date: "2026-09-08",
+    items: [
+      { type: "change", text: "Markdown Export Bullets: Incomplete tasks and subtasks now copy as standard bullet items rather than unchecked todo checkboxes." }
+    ]
+  },
+  {
     version: "1.17.6",
     date: "2026-09-02",
     items: [
@@ -156,13 +163,5 @@ const CHANGELOG_DATA = [
       { type: "feat", text: "25 Mindful Reflection Questions: Extracted questions into a dedicated data module with 10 new self-growth prompts." },
       { type: "change", text: "Reflection Preferences: Added in-modal opt-out and a Settings toggle to customize your check-in experience." }
     ]
-  },
-  {
-    version: "1.15.4",
-    date: "2026-08-31",
-    items: [
-      { type: "change", text: "Habit Integrity Protection: Removed streak manual edits and check-in unlocking to keep habit building authentic and uncheatable." },
-      { type: "change", text: "Pure Restart Flow: Milestone settings now offer a direct 'Reset & Start New Target' flow starting fresh from Day 0." }
-    ]
-  },
+  }
 ];

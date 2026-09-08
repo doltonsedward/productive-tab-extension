@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.17.7] - 2026-09-08
+### Changed
+- **📝 Clean Bullet List for Incomplete Tasks**: Updated Markdown export (Obsidian format) so incomplete tasks and subtasks are formatted as standard bullet points (`- `) instead of unchecked checkboxes (`- [ ]`).
+
+---
+
 ## [1.17.6] - 2026-09-02
 ### Changed
 - **📏 Global Minimalist Slim Scrollbars**: Standardized all scrollbars across the entire extension (Todo List, Settings Drawer, Changelog Modal, Bookmarks Spotlight, Widget Columns, and item lists) to a 4px slim, transparent-track glass design with soft translucent thumbs.

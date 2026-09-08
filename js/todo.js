@@ -439,10 +439,10 @@ function setupObsidianExport() {
       cancelledTodos.forEach((t) => {
         const duration = formatDuration(t.elapsedTime);
         const sched = t.scheduledDate ? ` [📅 ${t.scheduledDate.replace("T", " ")}]` : "";
-        markdownText += `- [ ] ${t.text}${sched}${duration}\n`;
+        markdownText += `- ${t.text}${sched}${duration}\n`;
         if (t.subtasks && t.subtasks.length > 0) {
           t.subtasks.forEach((st) => {
-            markdownText += `  - [${st.completed ? "x" : " "}] ${st.text}\n`;
+            markdownText += `  - ${st.text}\n`;
           });
         }
       });
