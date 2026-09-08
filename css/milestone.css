@@ -114,6 +114,230 @@
   font-weight: 600;
 }
 
+.milestone-capsules {
+  display: flex;
+  gap: 3px;
+  width: 100%;
+  height: 5px;
+  margin: 6px 0;
+  align-items: center;
+}
+
+.milestone-capsules.compact-gap {
+  gap: 2px;
+}
+
+.milestone-capsule {
+  flex: 1;
+  height: 100%;
+  border-radius: 2.5px;
+  background: rgba(255, 255, 255, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.milestone-capsule:hover {
+  transform: scaleY(1.4);
+  filter: brightness(1.25);
+}
+
+.milestone-capsule.filled {
+  background: rgba(0, 255, 135, 0.75);
+  background: color-mix(
+    in srgb,
+    rgba(0, 255, 135, 0.8) calc((1 - var(--c-ratio, 0)) * 100%),
+    rgba(0, 255, 255, 0.85) calc(var(--c-ratio, 0) * 100%)
+  );
+  box-shadow: 0 0 6px rgba(0, 255, 135, 0.25);
+}
+
+.milestone-card.warning .milestone-capsule.filled {
+  background: rgba(255, 193, 7, 0.75);
+  background: color-mix(
+    in srgb,
+    rgba(255, 193, 7, 0.8) calc((1 - var(--c-ratio, 0)) * 100%),
+    rgba(255, 152, 0, 0.85) calc(var(--c-ratio, 0) * 100%)
+  );
+  box-shadow: 0 0 6px rgba(255, 193, 7, 0.25);
+}
+
+.milestone-card.failed .milestone-capsule.filled {
+  background: rgba(244, 67, 54, 0.75);
+  background: color-mix(
+    in srgb,
+    rgba(244, 67, 54, 0.8) calc((1 - var(--c-ratio, 0)) * 100%),
+    rgba(255, 87, 34, 0.85) calc(var(--c-ratio, 0) * 100%)
+  );
+  box-shadow: 0 0 6px rgba(244, 67, 54, 0.25);
+}
+
+.milestone-card.completed .milestone-capsule.filled {
+  background: #ffd700;
+  background: color-mix(
+    in srgb,
+    #ffd700 calc((1 - var(--c-ratio, 0)) * 100%),
+    #00ff87 calc(var(--c-ratio, 0) * 100%)
+  );
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.35);
+}
+
+.milestone-capsule.today-pending {
+  background: rgba(0, 255, 135, 0.08);
+  border: 1px dashed rgba(0, 255, 135, 0.45);
+  animation: capsulePulse 2s infinite ease-in-out;
+}
+
+.milestone-card.warning .milestone-capsule.today-pending {
+  background: rgba(255, 193, 7, 0.08);
+  border-color: rgba(255, 193, 7, 0.45);
+}
+
+@keyframes capsulePulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+/* Individual Capsule Check-in Fill & Subtle Flash */
+.milestone-capsule.just-checked-in {
+  background: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: none !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.milestone-capsule.just-checked-in::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  transform-origin: left;
+  background: rgba(0, 255, 135, 0.75);
+  background: color-mix(
+    in srgb,
+    rgba(0, 255, 135, 0.8) calc((1 - var(--c-ratio, 0)) * 100%),
+    rgba(0, 255, 255, 0.85) calc(var(--c-ratio, 0) * 100%)
+  );
+  box-shadow: 0 0 6px rgba(0, 255, 135, 0.25);
+  animation:
+    capsuleFillIn 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards,
+    capsuleGlowFlash 0.4s ease-out 0.5s forwards;
+}
+
+.milestone-card.warning .milestone-capsule.just-checked-in::before {
+  background: rgba(255, 193, 7, 0.75);
+  background: color-mix(
+    in srgb,
+    rgba(255, 193, 7, 0.8) calc((1 - var(--c-ratio, 0)) * 100%),
+    rgba(255, 152, 0, 0.85) calc(var(--c-ratio, 0) * 100%)
+  );
+  box-shadow: 0 0 6px rgba(255, 193, 7, 0.25);
+  animation:
+    capsuleFillIn 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards,
+    capsuleGlowFlashWarning 0.4s ease-out 0.5s forwards;
+}
+
+.milestone-card.failed .milestone-capsule.just-checked-in::before {
+  background: rgba(244, 67, 54, 0.75);
+  background: color-mix(
+    in srgb,
+    rgba(244, 67, 54, 0.8) calc((1 - var(--c-ratio, 0)) * 100%),
+    rgba(255, 87, 34, 0.85) calc(var(--c-ratio, 0) * 100%)
+  );
+  box-shadow: 0 0 6px rgba(244, 67, 54, 0.25);
+  animation:
+    capsuleFillIn 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards,
+    capsuleGlowFlashFailed 0.4s ease-out 0.5s forwards;
+}
+
+.milestone-card.completed .milestone-capsule.just-checked-in::before {
+  background: #ffd700;
+  background: color-mix(
+    in srgb,
+    #ffd700 calc((1 - var(--c-ratio, 0)) * 100%),
+    #00ff87 calc(var(--c-ratio, 0) * 100%)
+  );
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.35);
+  animation:
+    capsuleFillIn 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards,
+    capsuleGlowFlashCompleted 0.4s ease-out 0.5s forwards;
+}
+
+@keyframes capsuleFillIn {
+  0% {
+    transform: scaleX(0);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes capsuleGlowFlash {
+  0% {
+    filter: brightness(1);
+    box-shadow: 0 0 6px rgba(0, 255, 135, 0.25);
+  }
+  35% {
+    filter: brightness(1.45);
+    box-shadow: 0 0 10px 1px rgba(0, 255, 135, 0.5);
+  }
+  100% {
+    filter: brightness(1);
+    box-shadow: 0 0 6px rgba(0, 255, 135, 0.25);
+  }
+}
+
+@keyframes capsuleGlowFlashWarning {
+  0% {
+    filter: brightness(1);
+    box-shadow: 0 0 6px rgba(255, 193, 7, 0.25);
+  }
+  35% {
+    filter: brightness(1.45);
+    box-shadow: 0 0 10px 1px rgba(255, 193, 7, 0.5);
+  }
+  100% {
+    filter: brightness(1);
+    box-shadow: 0 0 6px rgba(255, 193, 7, 0.25);
+  }
+}
+
+@keyframes capsuleGlowFlashFailed {
+  0% {
+    filter: brightness(1);
+    box-shadow: 0 0 6px rgba(244, 67, 54, 0.25);
+  }
+  35% {
+    filter: brightness(1.45);
+    box-shadow: 0 0 10px 1px rgba(244, 67, 54, 0.5);
+  }
+  100% {
+    filter: brightness(1);
+    box-shadow: 0 0 6px rgba(244, 67, 54, 0.25);
+  }
+}
+
+@keyframes capsuleGlowFlashCompleted {
+  0% {
+    filter: brightness(1);
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.35);
+  }
+  35% {
+    filter: brightness(1.5);
+    box-shadow: 0 0 12px 2px rgba(255, 215, 0, 0.6);
+  }
+  100% {
+    filter: brightness(1);
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.35);
+  }
+}
+
 .milestone-progress-bar {
   width: 100%;
   height: 5px;

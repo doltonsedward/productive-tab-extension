@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.17.10] - 2026-09-08
+### Added
+- **✨ Check-in Liquid Fill & Subtle Glow Animation**: Checking in a milestone habit now triggers a smooth left-to-right fill animation (`scaleX(0 -> 1)`) within today's individual capsule, followed by a gentle, calm single flash of light upon 100% completion before settling into resting state.
+
+---
+
+## [1.17.9] - 2026-09-08
+### Changed
+- **💊 Slim Capsule Sequence Progress Bar**: Upgraded the continuous milestone progress bar into a refined, slim capsule sequence (5px height) matching the existing color gradient palette. Each target day is represented as an individual pill that fills smoothly with progress, featuring a gentle pulsing outline for today's pending check-in and subtle hover elevation.
+
+---
+
 ## [1.17.8] - 2026-09-08
 ### Changed
 - **⚡ Unified Versioning & Dynamic Changelog**: Streamlined version architecture to a Single Source of Truth (`manifest.json`). The "What's New" modal now dynamically parses `CHANGELOG.md` locally, eliminating duplicate version numbers and redundant files.

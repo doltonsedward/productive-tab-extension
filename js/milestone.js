@@ -84,7 +84,7 @@ function checkAllTodosCompleted() {
   }
 }
 
-function renderMilestone() {
+function renderMilestone(justCheckedInDay = null) {
   const container = document.getElementById("milestoneContainer");
   if (!container) return;
 
@@ -136,6 +136,42 @@ function renderMilestone() {
     ? `<button id="resetMilestoneBtn" class="milestone-btn" title="Reset & Start New Target">↺</button>`
     : "";
 
+  const totalCapsules = milestone.targetDays <= 60 ? milestone.targetDays : 50;
+  const isScaled = milestone.targetDays > 60;
+  const filledCount = milestone.completed
+    ? totalCapsules
+    : (isScaled
+        ? Math.min(totalCapsules, Math.round((milestone.currentStreak / milestone.targetDays) * totalCapsules))
+        : Math.min(milestone.currentStreak, totalCapsules));
+
+  let capsulesHtml = "";
+  for (let i = 1; i <= totalCapsules; i++) {
+    const ratio = totalCapsules > 1 ? ((i - 1) / (totalCapsules - 1)).toFixed(2) : "1";
+    const isFilled = i <= filledCount;
+    const isTodayPending = !isCheckedToday && !milestone.completed && !milestone.failed && (i === filledCount + 1);
+    const isJustCheckedIn = justCheckedInDay !== null && i === filledCount;
+
+    let classes = "milestone-capsule";
+    let tooltip = isScaled
+      ? `Progress ~${Math.round((i / totalCapsules) * 100)}%`
+      : `Day ${i} of ${milestone.targetDays}`;
+
+    if (isFilled) {
+      classes += " filled";
+      if (isJustCheckedIn) {
+        classes += " just-checked-in";
+      }
+      tooltip += " · Completed";
+    } else if (isTodayPending) {
+      classes += " today-pending";
+      tooltip += " · Today (Pending Check-in)";
+    } else {
+      tooltip += " · Upcoming";
+    }
+
+    capsulesHtml += `<div class="${classes}" style="--c-ratio: ${ratio};" title="${escapeHtml(tooltip)}"></div>`;
+  }
+
   container.innerHTML = `
     <div class="${cardClass}">
       <div class="milestone-header">
@@ -148,8 +184,8 @@ function renderMilestone() {
         </div>
       </div>
 
-      <div class="milestone-progress-bar">
-        <div class="milestone-progress-fill" style="width: ${progressPercent}%;"></div>
+      <div class="milestone-capsules ${totalCapsules > 30 ? "compact-gap" : ""}">
+        ${capsulesHtml}
       </div>
 
       <div class="milestone-footer">
@@ -162,6 +198,15 @@ function renderMilestone() {
       </div>
     </div>
   `;
+
+  if (justCheckedInDay !== null) {
+    setTimeout(() => {
+      const animatingEl = container.querySelector(".milestone-capsule.just-checked-in");
+      if (animatingEl) {
+        animatingEl.classList.remove("just-checked-in");
+      }
+    }, 1100);
+  }
 
   const checkinBtn = document.getElementById("checkinMilestoneBtn");
   if (checkinBtn && !isCheckedToday && !milestone.failed && !milestone.completed) {
@@ -265,7 +310,7 @@ function checkInMilestone() {
   }
 
   saveMilestone();
-  renderMilestone();
+  renderMilestone(milestone.currentStreak);
 
   const showModal = localStorage.getItem("showReflectionModal") !== "false";
   const isEligibleForModal = milestone.currentStreak >= 3 || milestone.completed;
@@ -274,12 +319,14 @@ function checkInMilestone() {
     : "What habit today will your future self thank you for?";
 
   if (showModal && isEligibleForModal && typeof showReflectionModal === "function") {
-    showReflectionModal({
-      streak: milestone.currentStreak,
-      targetDays: milestone.targetDays,
-      title: milestone.title,
-      question: question,
-    });
+    setTimeout(() => {
+      showReflectionModal({
+        streak: milestone.currentStreak,
+        targetDays: milestone.targetDays,
+        title: milestone.title,
+        question: question,
+      });
+    }, 950);
   } else {
     const toastMsg = getDayCheckinQuote(milestone.currentStreak, milestone.targetDays, milestone.title);
     const toastType = milestone.completed ? "celebrate" : "success";
