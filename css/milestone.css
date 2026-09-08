@@ -429,6 +429,7 @@
   transform: none;
 }
 
+/* DEV-MODE: Remove on finalization */
 .milestone-btn.debug-btn {
   background: rgba(168, 85, 247, 0.12);
   border-color: rgba(168, 85, 247, 0.35);

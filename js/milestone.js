@@ -136,6 +136,7 @@ function renderMilestone(justCheckedInDay = null) {
     ? `<button id="resetMilestoneBtn" class="milestone-btn" title="Reset & Start New Target">↺</button>`
     : "";
 
+  // DEV-MODE: Remove or hide on finalization
   const debugBtnHtml = `<button id="debugStepMilestoneBtn" class="milestone-btn debug-btn" title="Debug Step: Left-click for +1 Day (animates fill) · Right-click to reset to Day 0">⚡ +1</button>`;
 
   const totalCapsules = milestone.targetDays <= 60 ? milestone.targetDays : 50;
@@ -216,6 +217,7 @@ function renderMilestone(justCheckedInDay = null) {
     checkinBtn.addEventListener("click", checkInMilestone);
   }
 
+  // DEV-MODE: Remove or hide on finalization
   const debugStepBtn = document.getElementById("debugStepMilestoneBtn");
   if (debugStepBtn) {
     debugStepBtn.addEventListener("click", () => checkInMilestone(true));
