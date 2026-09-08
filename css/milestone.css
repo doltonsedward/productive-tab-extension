@@ -429,6 +429,23 @@
   transform: none;
 }
 
+.milestone-btn.debug-btn {
+  background: rgba(168, 85, 247, 0.12);
+  border-color: rgba(168, 85, 247, 0.35);
+  color: #d8b4fe;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.milestone-btn.debug-btn:hover {
+  background: rgba(168, 85, 247, 0.25);
+  border-color: rgba(168, 85, 247, 0.55);
+  color: #f3e8ff;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+}
+
 .milestone-btn.delete-milestone-btn {
   border-color: rgba(244, 67, 54, 0.18);
   background: rgba(244, 67, 54, 0.06);

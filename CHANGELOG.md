@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.18.1] - 2026-09-08
+### Fixed
+- **🔄 Unified Authentic Check-in Pipeline for Debug Stepper**: Refactored `checkInMilestone()` to eliminate hardcoded debug divergence. The `⚡ +1` stepper now runs the exact native check-in logic — including Day 1-2 quote toasts, Day 3+ / Completed Spatial Zen reflection modals, streak celebrations, and visual animations — while cleanly bypassing the daily check-in lock.
+
+---
+
+## [1.18.0] - 2026-09-08
+### Added
+- **⚡ Milestone Debug Stepper Button (`⚡ +1`)**: Added a convenient debug action button in the milestone card footer. Left-clicking advances check-in by 1 day and immediately plays the capsule liquid fill animation without modal interruptions, enabling rapid UI review and testing up to target completion (and loops back to Day 0 upon clicking when completed). Right-clicking instantly resets streak progress to Day 0.
+
+---
+
 ## [1.17.10] - 2026-09-08
 ### Added
 - **✨ Check-in Liquid Fill & Subtle Glow Animation**: Checking in a milestone habit now triggers a smooth left-to-right fill animation (`scaleX(0 -> 1)`) within today's individual capsule, followed by a gentle, calm single flash of light upon 100% completion before settling into resting state.

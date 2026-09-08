@@ -136,6 +136,8 @@ function renderMilestone(justCheckedInDay = null) {
     ? `<button id="resetMilestoneBtn" class="milestone-btn" title="Reset & Start New Target">↺</button>`
     : "";
 
+  const debugBtnHtml = `<button id="debugStepMilestoneBtn" class="milestone-btn debug-btn" title="Debug Step: Left-click for +1 Day (animates fill) · Right-click to reset to Day 0">⚡ +1</button>`;
+
   const totalCapsules = milestone.targetDays <= 60 ? milestone.targetDays : 50;
   const isScaled = milestone.targetDays > 60;
   const filledCount = milestone.completed
@@ -192,6 +194,7 @@ function renderMilestone(justCheckedInDay = null) {
         <span>Day ${milestone.currentStreak}/${milestone.targetDays} (${progressPercent}%)</span>
         <div class="milestone-footer-actions">
           ${actionButtonsHtml}
+          ${debugBtnHtml}
           ${restartBtnHtml}
           <button id="deleteMilestoneBtn" class="milestone-btn delete-milestone-btn" title="Delete Milestone">✕</button>
         </div>
@@ -211,6 +214,23 @@ function renderMilestone(justCheckedInDay = null) {
   const checkinBtn = document.getElementById("checkinMilestoneBtn");
   if (checkinBtn && !isCheckedToday && !milestone.failed && !milestone.completed) {
     checkinBtn.addEventListener("click", checkInMilestone);
+  }
+
+  const debugStepBtn = document.getElementById("debugStepMilestoneBtn");
+  if (debugStepBtn) {
+    debugStepBtn.addEventListener("click", () => checkInMilestone(true));
+    debugStepBtn.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      if (!milestone) return;
+      milestone.currentStreak = 0;
+      milestone.lastCheckedDate = null;
+      milestone.completed = false;
+      milestone.failed = false;
+      milestone.strikes = 0;
+      saveMilestone();
+      renderMilestone();
+      showToast("⚡ Debug: Reset streak to Day 0", "info", 1500);
+    });
   }
 
   const startNextBtn = document.getElementById("startNextMilestoneBtn");
@@ -294,11 +314,26 @@ async function promptCreateMilestone(isRestart = false) {
   showToast(`🏆 Milestone "${milestone.title}" (${targetDays} days) started! Ready to build consistency?`, "success");
 }
 
-function checkInMilestone() {
-  if (!milestone || milestone.failed || milestone.completed) return;
+function checkInMilestone(isBypassLock = false) {
+  if (!milestone) return;
+
+  // If already completed or failed, clicking debug step (+1) restarts from Day 0 for seamless loop testing
+  if (isBypassLock && (milestone.completed || milestone.failed)) {
+    milestone.completed = false;
+    milestone.failed = false;
+    milestone.currentStreak = 0;
+    milestone.lastCheckedDate = null;
+    milestone.strikes = 0;
+    saveMilestone();
+    renderMilestone();
+    showToast("⚡ Reset to Day 0. Ready to test again!", "info", 2000);
+    return;
+  }
+
+  if (milestone.failed || milestone.completed) return;
 
   const todayStr = new Date().toISOString().split("T")[0];
-  if (milestone.lastCheckedDate === todayStr) return;
+  if (!isBypassLock && milestone.lastCheckedDate === todayStr) return;
 
   milestone.currentStreak += 1;
   milestone.lastCheckedDate = todayStr;
