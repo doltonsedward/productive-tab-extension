@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.17.8] - 2026-09-08
+### Changed
+- **⚡ Unified Versioning & Dynamic Changelog**: Streamlined version architecture to a Single Source of Truth (`manifest.json`). The "What's New" modal now dynamically parses `CHANGELOG.md` locally, eliminating duplicate version numbers and redundant files.
+
+---
+
 ## [1.17.7] - 2026-09-08
 ### Changed
 - **📝 Clean Bullet List for Incomplete Tasks**: Updated Markdown export (Obsidian format) so incomplete tasks and subtasks are formatted as standard bullet points (`- `) instead of unchecked checkboxes (`- [ ]`).

@@ -4,7 +4,7 @@
 
 **A calm, minimalist new tab dashboard designed to eliminate digital noise and keep you focused on what truly matters.**
 
-[![Version](https://img.shields.io/badge/version-1.17.7-blue.svg?style=flat-square)](manifest.json)
+[![Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdoltonsedward%2Fproductive-tab-extension%2Fmain%2Fmanifest.json&query=%24.version&label=version&color=blue&style=flat-square)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Chrome-Manifest%20V3-success.svg?style=flat-square)](manifest.json)
 [![Privacy](https://img.shields.io/badge/Privacy-100%25%20Local--First-green.svg?style=flat-square)](#-privacy--local-first)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)

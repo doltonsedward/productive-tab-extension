@@ -12,19 +12,19 @@ Whenever you (the AI Agent) make changes, add features, or fix bugs in this code
   - Breaking changes, major UI/UX redesigns, Manifest version upgrades, or breaking data schema migrations.
   - Reset minor and patch versions to `0`.
 
-## 2. Version Synchronization
-- **Single Source of Truth**: `manifest.json` is the authoritative source for the extension's version.
-- Ensure any hardcoded fallback version (such as `data-version` in `newtab.html` or default fallback in `js/updater.js`) is kept in sync with `manifest.json`.
-- The update checker (`js/updater.js`) fetches `manifest.json` from GitHub. Incrementing the version in `manifest.json` is required so that existing extension users receive the update badge/dot indicator when code is pushed.
+## 2. Single Source of Truth for Versioning
+- **`manifest.json` is the SOLE authoritative source for the extension's version.**
+- All UI and code modules (settings footer, update checker, changelog modal) read the version dynamically at runtime via `chrome.runtime.getManifest().version`.
+- **NEVER** hardcode version numbers in `newtab.html`, `js/updater.js`, `js/settings.js`, or `README.md` (which uses a dynamic Shields.io badge reading `manifest.json` from GitHub).
+- Updating `"version"` in `manifest.json` is the **ONLY** required file change for bumping the version.
 
-## 3. Automatic Changelog Maintenance
-Whenever you make changes or bump the version, you **MUST ALWAYS** keep both documentation sources up to date:
-1. **`CHANGELOG.md`**:
-   - The authoritative complete history of all releases.
-   - Add a new section at the top for the new version (e.g. `## [1.4.0] - YYYY-MM-DD`).
-   - Categorize entries cleanly under standard headers: `### Added`, `### Changed`, `### Fixed`, `### Refactored`, or `### Removed`.
-2. **`js/data/changelog.js`**:
-   - Keep the **20 most recent version releases** (counting both patch and minor releases). All earlier releases remain archived in the GitHub `CHANGELOG.md` document accessible via the in-app archive link card.
+## 3. Single Source of Truth for Changelog
+- **`CHANGELOG.md` is the SOLE authoritative complete history of all releases.**
+- The in-app "What's New" release notes modal dynamically parses `CHANGELOG.md` locally via `fetch(chrome.runtime.getURL("CHANGELOG.md"))`.
+- Whenever you make changes or bump the version, you **MUST record the release notes ONLY in `CHANGELOG.md`**:
+  - Add a new section at the top for the new version (e.g. `## [1.17.8] - YYYY-MM-DD`).
+  - Categorize entries cleanly under standard headers: `### Added`, `### Changed`, `### Fixed`, `### Refactored`, or `### Removed`.
+- **Do NOT create or maintain a separate `js/data/changelog.js` file.**
 
 ## 4. UI/UX Design System & Aesthetics (Muted Glassmorphism)
 All UI additions, tweaks, and widgets **MUST ALWAYS** follow these core design principles:

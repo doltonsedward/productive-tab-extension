@@ -540,7 +540,9 @@ function initChangelog() {
 
   if (!modal || !openBtn) return;
 
-  const currentVersion = (typeof getLocalVersion === "function") ? getLocalVersion() : "1.17.7";
+  const currentVersion = (typeof getLocalVersion === "function") 
+    ? getLocalVersion() 
+    : ((typeof chrome !== "undefined" && chrome.runtime?.getManifest) ? chrome.runtime.getManifest().version : "1.0.0");
   if (currentVerEl) currentVerEl.textContent = `v${currentVersion}`;
 
   // Check and display unread update indicator dot on button & settings FAB
@@ -569,17 +571,76 @@ function initChangelog() {
 
   checkUnreadChangelog();
 
-  const renderChangelog = () => {
+  let cachedChangelog = null;
+
+  const parseChangelogMarkdown = (md) => {
+    const versions = [];
+    if (!md) return versions;
+
+    const sections = md.split(/\r?\n(?=##\s*\[)/);
+    for (const sec of sections) {
+      const headerMatch = sec.match(/^##\s*\[([0-9.]+)\](?:\s*-\s*([0-9-]+))?/);
+      if (!headerMatch) continue;
+      const version = headerMatch[1];
+      const date = headerMatch[2] || "";
+      const items = [];
+      let currentType = "feat";
+
+      const lines = sec.split(/\r?\n/);
+      for (const line of lines) {
+        const subHeader = line.match(/^###\s+(Added|Changed|Fixed|Refactored|Removed)/i);
+        if (subHeader) {
+          const h = subHeader[1].toLowerCase();
+          if (h === "added") currentType = "feat";
+          else if (h === "changed") currentType = "change";
+          else if (h === "fixed") currentType = "fix";
+          else if (h === "refactored") currentType = "refactor";
+          else currentType = "change";
+          continue;
+        }
+        const bulletMatch = line.match(/^\s*[-*]\s+(.*)$/);
+        if (bulletMatch) {
+          let text = bulletMatch[1].trim();
+          text = text.replace(/\*\*(.*?)\*\*/g, (match, p1) => p1);
+          items.push({ type: currentType, text });
+        }
+      }
+      if (items.length > 0) {
+        versions.push({ version, date, items });
+      }
+    }
+    return versions;
+  };
+
+  const fetchChangelogEntries = async () => {
+    if (cachedChangelog) return cachedChangelog;
+    try {
+      const url = (typeof chrome !== "undefined" && chrome.runtime?.getURL)
+        ? chrome.runtime.getURL("CHANGELOG.md")
+        : "CHANGELOG.md";
+      const res = await fetch(url);
+      if (res.ok) {
+        const text = await res.text();
+        cachedChangelog = parseChangelogMarkdown(text);
+        return cachedChangelog;
+      }
+    } catch (err) {
+      console.warn("Could not load local CHANGELOG.md:", err);
+    }
+    return [];
+  };
+
+  const renderChangelog = async () => {
     if (!listEl) return;
-    const allEntries = (typeof CHANGELOG_DATA !== "undefined" && Array.isArray(CHANGELOG_DATA)) ? CHANGELOG_DATA : [];
-    if (allEntries.length === 0) {
+    const entries = await fetchChangelogEntries();
+    if (entries.length === 0) {
       listEl.innerHTML = '<div style="color: rgba(255,255,255,0.4); text-align:center; padding: 20px;">No changelog records found.</div>';
       return;
     }
 
-    const entries = allEntries.slice(0, 20);
+    const recentEntries = entries.slice(0, 20);
 
-    const cardsHtml = entries.map((ver, idx) => {
+    const cardsHtml = recentEntries.map((ver, idx) => {
       const isLatest = idx === 0;
       const itemsHtml = (ver.items || []).map(item => `
         <li class="changelog-item">
@@ -620,11 +681,11 @@ function initChangelog() {
     listEl.innerHTML = cardsHtml + archiveCardHtml;
   };
 
-  openBtn.addEventListener("click", (e) => {
+  openBtn.addEventListener("click", async (e) => {
     e.stopPropagation();
     markChangelogAsRead();
-    renderChangelog();
     modal.classList.remove("hidden");
+    await renderChangelog();
   });
 
   modal.addEventListener("click", (e) => {

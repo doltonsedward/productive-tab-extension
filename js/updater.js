@@ -79,17 +79,13 @@ async function checkForUpdates(force = false) {
 }
 
 function getLocalVersion() {
-  // Check changelog dataset or DOM attribute for immediate sync
-  if (typeof CHANGELOG_DATA !== "undefined" && Array.isArray(CHANGELOG_DATA) && CHANGELOG_DATA.length > 0 && CHANGELOG_DATA[0].version) {
-    return CHANGELOG_DATA[0].version;
-  }
-  const el = document.getElementById("settingsVersionText");
-  if (el && el.dataset.version) return el.dataset.version;
   if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.getManifest) {
     const m = chrome.runtime.getManifest();
     if (m && m.version) return m.version;
   }
-  return "1.17.7";
+  const el = document.getElementById("settingsVersionText");
+  if (el && el.dataset.version) return el.dataset.version;
+  return "1.0.0";
 }
 
 function renderVersionText() {
