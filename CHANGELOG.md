@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.24.2] - 2026-09-09
+
+### Removed
+- **🛠️ Milestone Dev/Debug Buttons**: Removed temporary developer mode buttons (`⚡ +1` debug stepper and `🚨 Break` streak failure trigger) from the habit card footer and purged their corresponding CSS rules.
+
+### Changed
+- **💭 Rotating Dynamic Reflection Placeholder**: The personal reflection textarea in the celebration modal is now clean and empty by default, allowing the rotating inspirational quotes to appear gracefully as placeholder suggestions. If submitted empty, the rotating quote is still automatically preserved and engraved.
+
+---
+
+## [1.24.1] - 2026-09-09
+
+### Changed
+- **🎉 Milestone Celebration Modal Polish**: Removed the redundant "Target Conquered!" badge and incorporated the 🎉 icon directly into the "Congratulations!" title. Subdued the reflection question prompt to standard crisp white (`rgba(255, 255, 255, 0.9)`) and styled reflection input text in subtle italic with reduced intensity (`rgba(255, 255, 255, 0.72)`).
+- **🧘 Non-Intrusive Archive Flow**: Archiving a completed milestone to the Trophy Shelf no longer forcibly and immediately pops open the "Create New Milestone" dialog, giving users breathing room to celebrate their victory and start a new target at their own pace.
+- **🏷️ Days Conquered Badge Formatting**: Cleaned up the Consistency Hub profile badge to show the pure number (e.g. `4` instead of `4d`) above the "DAYS CONQUERED" label for cleaner visual typography.
+
+### Added
+- **🌱 Challenges Section Empty State**: Removed dummy community sprints and added a calm, minimalist empty state informing users that community challenges and seasonal sprints are coming soon.
+
+---
+
 ## [1.24.0] - 2026-09-09
 
 ### Added

@@ -146,14 +146,6 @@ function renderMilestone(justCheckedInDay = null) {
     ? `<button id="resetMilestoneBtn" class="milestone-btn" title="Reset & Start New Target">↺</button>`
     : "";
 
-
-  // DEV-MODE: Remove or hide on finalization
-  const debugBtnHtml = `<button id="debugStepMilestoneBtn" class="milestone-btn debug-btn" title="Debug Step: Left-click for +1 Day (animates fill) · Right-click to reset to Day 0">⚡ +1</button>`;
-
-  // DEV-MODE: Remove or hide on finalization
-  const debugBreakBtnHtml = `<button id="debugBreakStreakBtn" class="milestone-btn debug-break-btn" title="Debug: Simulate 3-day miss → show recovery modal">🚨 Break</button>`;
-
-
   const totalCapsules = milestone.targetDays <= 60 ? milestone.targetDays : 50;
   const isScaled = milestone.targetDays > 60;
   const filledCount = milestone.completed
@@ -210,8 +202,6 @@ function renderMilestone(justCheckedInDay = null) {
         <span>Day ${milestone.currentStreak}/${milestone.targetDays} (${progressPercent}%)</span>
         <div class="milestone-footer-actions">
           ${actionButtonsHtml}
-          ${debugBtnHtml}
-          ${debugBreakBtnHtml}
           ${restartBtnHtml}
           <button id="deleteMilestoneBtn" class="milestone-btn delete-milestone-btn" title="Delete Milestone">✕</button>
         </div>
@@ -233,38 +223,7 @@ function renderMilestone(justCheckedInDay = null) {
     checkinBtn.addEventListener("click", checkInMilestone);
   }
 
-  // DEV-MODE: Remove or hide on finalization
-  const debugStepBtn = document.getElementById("debugStepMilestoneBtn");
-  if (debugStepBtn) {
-    debugStepBtn.addEventListener("click", () => checkInMilestone(true));
-    debugStepBtn.addEventListener("contextmenu", (e) => {
-      e.preventDefault();
-      if (!milestone) return;
-      milestone.currentStreak = 0;
-      milestone.lastCheckedDate = null;
-      milestone.completed = false;
-      milestone.failed = false;
-      milestone.strikes = 0;
-      saveMilestone();
-      renderMilestone();
-      showToast("⚡ Debug: Reset streak to Day 0", "info", 1500);
-    });
-  }
 
-  // DEV-MODE: Remove or hide on finalization
-  const debugBreakBtn = document.getElementById("debugBreakStreakBtn");
-  if (debugBreakBtn) {
-    debugBreakBtn.addEventListener("click", () => {
-      if (!milestone) return;
-      const threeDaysAgo = new Date();
-      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-      milestone.lastCheckedDate = threeDaysAgo.toISOString().split("T")[0];
-      milestone.streakBroken = true;
-      milestone.daysMissed = 3;
-      saveMilestone();
-      renderMilestone();
-    });
-  }
 
   const keepStreakBtn = document.getElementById("keepStreakBtn");
   if (keepStreakBtn) {
@@ -732,10 +691,7 @@ function showCongratulationsModal() {
   card.classList.remove("dialog-danger");
 
   card.innerHTML = `
-    <span class="dialog-badge" style="background: rgba(255,215,0,0.12); color: #ffe082; border-color: rgba(255,215,0,0.3);">
-      🎉 Target Conquered!
-    </span>
-    <h3 class="dialog-title" style="margin-bottom: 2px;">Congratulations!</h3>
+    <h3 class="dialog-title" style="margin-bottom: 2px;">🎉 Congratulations!</h3>
     <p class="congrats-hero-text">
       You successfully finished all <strong>${targetDays} days</strong> of <span class="congrats-habit-name">"${habitTitle}"</span>!
     </p>
@@ -744,7 +700,7 @@ function showCongratulationsModal() {
       <label class="congrats-question-label" for="congratsReflectionInput">
         💭 ${escapeHtml(selectedQuestion)}
       </label>
-      <textarea id="congratsReflectionInput" class="congrats-textarea" rows="3" placeholder="Write your personal reflection or keep the quote...">${escapeHtml(defaultQuote)}</textarea>
+      <textarea id="congratsReflectionInput" class="congrats-textarea" rows="3" placeholder="${escapeHtml(defaultQuote)}"></textarea>
       <div class="congrats-hint">✨ This personal note will be permanently engraved onto your Trophy Timeline.</div>
     </div>
 
@@ -841,8 +797,7 @@ async function archiveMilestone(reflectionText = null) {
   const fab = document.getElementById("trophyHubFabBtn");
   if (fab) fab.classList.add("has-unread");
 
-  showToast(`🏆 "${archivedTitle}" engraved into Trophy Shelf! Ready for your next challenge?`, "celebrate", 5000);
-  await promptCreateMilestone(false);
+  showToast(`🏆 "${archivedTitle}" engraved into Trophy Shelf!`, "celebrate", 4500);
 }
 
 function showTrophyHubModal() {
@@ -893,23 +848,8 @@ function showTrophyHubModal() {
   ];
   const unlockedAchievementsCount = ACHIEVEMENTS.filter(a => a.unlocked).length;
 
-  // Community Quests Database
-  const COMMUNITY_QUESTS = [
-    {
-      title: "September 21-Day Consistency Sprint",
-      tag: "Active Sprint",
-      participants: "3,420 builders",
-      goal: "Keep any habit target active for 21 consecutive days without a streak break.",
-      progress: 74
-    },
-    {
-      title: "Morning Focus Initiative",
-      tag: "Weekly Challenge",
-      participants: "1,890 builders",
-      goal: "Check in before 09:00 AM for 7 consecutive days to build morning momentum.",
-      progress: 52
-    }
-  ];
+  // Community Quests Database (empty state until community sync system is active)
+  const COMMUNITY_QUESTS = [];
 
   card.className = "dialog-card trophy-hub-card";
   card.classList.remove("dialog-danger");
@@ -1067,9 +1007,9 @@ function showTrophyHubModal() {
   const communityCanvasHtml = `
     <div class="v4-section-header">
       <div class="v4-section-title">Global Community Challenges</div>
-      <div class="v4-section-desc">Stay accountable and motivated alongside thousands of focused builders worldwide.</div>
+      <div class="v4-section-desc">Stay accountable and motivated alongside focused builders worldwide.</div>
     </div>
-    ${COMMUNITY_QUESTS.map(q => `
+    ${COMMUNITY_QUESTS.length > 0 ? COMMUNITY_QUESTS.map(q => `
       <div class="community-quest-card">
         <div class="cqc-header">
           <span class="cqc-title">🌱 ${escapeHtml(q.title)}</span>
@@ -1079,7 +1019,13 @@ function showTrophyHubModal() {
         <div class="cqc-bar-track"><div class="cqc-bar-fill" style="width: ${q.progress}%;"></div></div>
         <div class="cqc-meta"><span>${escapeHtml(q.participants)}</span><span>${q.progress}% on track</span></div>
       </div>
-    `).join("")}
+    `).join("") : `
+      <div class="tv3-empty-state" style="margin-top: 10px;">
+        <div class="tv3-empty-icon">🌱</div>
+        <div class="tv3-empty-title">No Active Challenges</div>
+        <div class="tv3-empty-desc">Community challenges and seasonal sprints are coming soon. Focus on conquering your personal milestones in the meantime!</div>
+      </div>
+    `}
   `;
 
   const followThroughRate = (totalMastered + failedHabits.length) > 0
@@ -1128,7 +1074,7 @@ function showTrophyHubModal() {
     <div class="trophy-v4-split">
       <div class="tv4-sidebar">
         <div class="tv4-profile-badge">
-          <div class="tv4-profile-num">${totalDays}d</div>
+          <div class="tv4-profile-num">${totalDays}</div>
           <div class="tv4-profile-lbl">Days Conquered</div>
           <div class="tv4-profile-sub">${totalMastered} habit${totalMastered === 1 ? "" : "s"} mastered</div>
         </div>
@@ -1142,7 +1088,7 @@ function showTrophyHubModal() {
         </button>
         <button type="button" class="tv4-menu-btn" data-sec="community">
           <span>🌱 Challenges</span>
-          <span class="tv4-menu-chip">2</span>
+          <span class="tv4-menu-chip">${COMMUNITY_QUESTS.length}</span>
         </button>
         <button type="button" class="tv4-menu-btn" data-sec="stats">
           <span>📊 Insights</span>

@@ -429,41 +429,7 @@
   transform: none;
 }
 
-/* DEV-MODE: Remove on finalization */
-.milestone-btn.debug-btn {
-  background: rgba(168, 85, 247, 0.12);
-  border-color: rgba(168, 85, 247, 0.35);
-  color: #d8b4fe;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-}
 
-.milestone-btn.debug-btn:hover {
-  background: rgba(168, 85, 247, 0.25);
-  border-color: rgba(168, 85, 247, 0.55);
-  color: #f3e8ff;
-  box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
-}
-
-/* DEV-MODE: Remove on finalization */
-.milestone-btn.debug-break-btn {
-  background: rgba(244, 67, 54, 0.10);
-  border-color: rgba(244, 67, 54, 0.30);
-  color: #ef9a9a;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.milestone-btn.debug-break-btn:hover {
-  background: rgba(244, 67, 54, 0.22);
-  border-color: rgba(244, 67, 54, 0.50);
-  color: #ff8a80;
-  box-shadow: 0 0 10px rgba(244, 67, 54, 0.2);
-}
 
 /* ===== Graceful Recovery Modal ===== */
 .milestone-recovery-card {
@@ -920,7 +886,7 @@
   display: block;
   font-size: 0.78rem;
   font-weight: 600;
-  color: #ffe082;
+  color: rgba(255, 255, 255, 0.9);
   margin-bottom: 8px;
   line-height: 1.35;
 }
@@ -932,7 +898,8 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   padding: 9px 11px;
-  color: rgba(255, 255, 255, 0.95);
+  color: rgba(255, 255, 255, 0.72);
+  font-style: italic;
   font-family: inherit;
   font-size: 0.76rem;
   line-height: 1.42;
@@ -940,6 +907,11 @@
   min-height: 64px;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.congrats-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.38);
+  font-style: italic;
 }
 
 .congrats-textarea:focus {
