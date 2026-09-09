@@ -38,7 +38,7 @@
 }
 
 .milestone-card.completed::before {
-  background: linear-gradient(90deg, #ffd700, #ff9800, #00ff87, #ffd700);
+  background: linear-gradient(90deg, rgba(220, 195, 130, 0.45), rgba(140, 205, 170, 0.4), rgba(255, 255, 255, 0.1));
 }
 
 .milestone-card.warning {
@@ -52,9 +52,9 @@
 }
 
 .milestone-card.completed {
-  border-color: rgba(255, 215, 0, 0.45);
-  background: rgba(255, 215, 0, 0.07);
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.15);
+  border-color: rgba(220, 195, 130, 0.25);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .milestone-header {
@@ -108,10 +108,10 @@
 }
 
 .milestone-badge.completed-badge {
-  background: rgba(255, 215, 0, 0.2);
-  color: #ffe082;
-  border-color: rgba(255, 215, 0, 0.4);
-  font-weight: 600;
+  background: rgba(220, 195, 130, 0.12);
+  color: rgba(240, 220, 160, 0.9);
+  border-color: rgba(220, 195, 130, 0.25);
+  font-weight: 500;
 }
 
 .milestone-capsules {
@@ -172,13 +172,13 @@
 }
 
 .milestone-card.completed .milestone-capsule.filled {
-  background: #ffd700;
+  background: rgba(220, 200, 150, 0.85);
   background: color-mix(
     in srgb,
-    #ffd700 calc((1 - var(--c-ratio, 0)) * 100%),
-    #00ff87 calc(var(--c-ratio, 0) * 100%)
+    rgba(220, 200, 150, 0.85) calc((1 - var(--c-ratio, 0)) * 100%),
+    rgba(140, 215, 175, 0.9) calc(var(--c-ratio, 0) * 100%)
   );
-  box-shadow: 0 0 8px rgba(255, 215, 0, 0.35);
+  box-shadow: none;
 }
 
 .milestone-capsule.today-pending {
@@ -255,13 +255,13 @@
 }
 
 .milestone-card.completed .milestone-capsule.just-checked-in::before {
-  background: #ffd700;
+  background: rgba(220, 200, 150, 0.85);
   background: color-mix(
     in srgb,
-    #ffd700 calc((1 - var(--c-ratio, 0)) * 100%),
-    #00ff87 calc(var(--c-ratio, 0) * 100%)
+    rgba(220, 200, 150, 0.85) calc((1 - var(--c-ratio, 0)) * 100%),
+    rgba(140, 215, 175, 0.9) calc(var(--c-ratio, 0) * 100%)
   );
-  box-shadow: 0 0 8px rgba(255, 215, 0, 0.35);
+  box-shadow: none;
   animation:
     capsuleFillIn 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards,
     capsuleGlowFlashCompleted 0.4s ease-out 0.5s forwards;
@@ -366,8 +366,8 @@
 }
 
 .milestone-card.completed .milestone-progress-fill {
-  background: linear-gradient(90deg, #ffd700, #ff9800, #00ff87);
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+  background: linear-gradient(90deg, rgba(220, 195, 130, 0.7), rgba(140, 205, 170, 0.75));
+  box-shadow: none;
 }
 
 .milestone-footer {
@@ -1020,15 +1020,14 @@
 }
 
 .tv4-sidebar {
-  width: 195px;
+  width: 200px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 4px 14px 4px 6px;
-  overflow-y: auto;
-  scrollbar-width: none;
+  padding: 8px 14px 8px 8px;
+  overflow: visible;
   box-sizing: border-box;
 }
 
@@ -1037,26 +1036,27 @@
 }
 
 .tv4-profile-badge {
-  background: rgba(255, 215, 0, 0.05);
-  border: 1px solid rgba(255, 215, 0, 0.16);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   padding: 12px 10px;
   text-align: center;
-  margin-bottom: 5px;
+  margin: 0 0 5px 0;
   box-sizing: border-box;
+  width: 100%;
 }
 
 .tv4-profile-num {
-  font-size: 1.28rem;
+  font-size: 1.25rem;
   font-weight: 700;
-  color: #ffe082;
+  color: rgba(255, 255, 255, 0.95);
   line-height: 1.1;
   letter-spacing: -0.2px;
 }
 
 .tv4-profile-lbl {
-  font-size: 0.67rem;
-  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.48);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-top: 3px;
@@ -1065,7 +1065,7 @@
 
 .tv4-profile-sub {
   font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.32);
   margin-top: 2px;
 }
 
@@ -1078,7 +1078,7 @@
   border-radius: 9px;
   border: 1px solid transparent;
   background: transparent;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.65);
   font-family: inherit;
   font-size: 0.74rem;
   font-weight: 500;
@@ -1094,9 +1094,9 @@
 }
 
 .tv4-menu-btn.active {
-  background: rgba(255, 215, 0, 0.12);
-  border-color: rgba(255, 215, 0, 0.25);
-  color: #ffe082;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
   font-weight: 600;
 }
 
@@ -1109,8 +1109,8 @@
 }
 
 .tv4-menu-btn.active .tv4-menu-chip {
-  background: rgba(255, 215, 0, 0.22);
-  color: #ffe082;
+  background: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.95);
 }
 
 /* ── Canvas (Scrollable Right Side) ── */
@@ -1140,7 +1140,7 @@
 .v4-section-title {
   font-size: 0.82rem;
   font-weight: 600;
-  color: #ffe082;
+  color: rgba(255, 255, 255, 0.9);
   margin-bottom: 2px;
 }
 
@@ -1148,6 +1148,65 @@
   font-size: 0.70rem;
   color: rgba(255, 255, 255, 0.42);
   line-height: 1.35;
+}
+
+/* ── Empty State ── */
+.tv3-empty-state {
+  text-align: center;
+  padding: 28px 20px 24px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  margin-bottom: 14px;
+}
+
+.tv3-empty-icon {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+  opacity: 0.75;
+}
+
+.tv3-empty-title {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 4px;
+}
+
+.tv3-empty-desc {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.48);
+  max-width: 320px;
+  margin: 0 auto 14px;
+  line-height: 1.4;
+}
+
+.tv3-start-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.74rem;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.tv3-start-btn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.tv3-empty-hint {
+  font-size: 0.70rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-style: italic;
 }
 
 /* ── Timeline Styles ── */
@@ -1164,7 +1223,7 @@
   top: 10px;
   bottom: 10px;
   width: 2px;
-  background: linear-gradient(180deg, rgba(255, 215, 0, 0.4) 0%, rgba(0, 255, 135, 0.35) 60%, rgba(255, 255, 255, 0.08) 100%);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 1px;
 }
 
@@ -1180,26 +1239,80 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #181c24;
-  border: 2px solid rgba(255, 215, 0, 0.6);
+  background: #12151c;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.65rem;
-  box-shadow: 0 0 8px rgba(255, 215, 0, 0.25);
+  color: rgba(255, 255, 255, 0.7);
+  box-shadow: none;
+}
+
+.tv3-node.completed .tv3-node-dot {
+  border-color: rgba(140, 210, 170, 0.5);
+  color: rgba(160, 225, 185, 0.9);
+  background: #12171c;
+}
+
+.tv3-node.failed .tv3-node-dot {
+  border-color: rgba(240, 120, 120, 0.45);
+  color: rgba(245, 140, 140, 0.9);
+  background: #191416;
+}
+
+.tv3-node.active-node .tv3-node-dot {
+  border: 1.5px dashed rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.85);
+  background: #141720;
+}
+
+.tv3-node.create-node .tv3-node-dot {
+  border: 1.5px dashed rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.6);
+  background: #12141a;
 }
 
 .tv3-card {
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 10px;
   padding: 10px 12px;
   transition: all 0.2s ease;
 }
 
 .tv3-card:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 215, 0, 0.25);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.tv3-card.failed {
+  background: rgba(244, 67, 54, 0.02);
+  border-color: rgba(244, 67, 54, 0.12);
+}
+
+.tv3-card.failed:hover {
+  background: rgba(244, 67, 54, 0.035);
+  border-color: rgba(244, 67, 54, 0.2);
+}
+
+.tv3-card.active-card {
+  border-style: dashed;
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.tv3-card.create-card {
+  border-style: dashed;
+  background: rgba(255, 255, 255, 0.015);
+  border-color: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+}
+
+.tv3-card.create-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.22);
+  transform: translateY(-1px);
 }
 
 .tv3-header {
@@ -1216,6 +1329,20 @@
   color: rgba(255, 255, 255, 0.92);
 }
 
+.tv3-title.active {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.tv3-title.failed {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.tv3-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .tv3-date {
   font-size: 0.68rem;
   color: rgba(255, 255, 255, 0.4);
@@ -1225,9 +1352,43 @@
 .tv3-quote {
   font-size: 0.72rem;
   font-style: italic;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.58);
   margin: 5px 0 6px;
   line-height: 1.35;
+}
+
+.tv3-quote.failed {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.tv3-active-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 7px 0 8px;
+}
+
+.tv3-active-bar-track {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.tv3-active-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(200, 180, 140, 0.65), rgba(130, 190, 160, 0.7));
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.tv3-active-pct {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.75);
+  min-width: 28px;
+  text-align: right;
 }
 
 .tv3-footer {
@@ -1240,11 +1401,63 @@
 .tv3-tag {
   font-size: 0.67rem;
   font-weight: 500;
-  color: #a7f3d0;
-  background: rgba(0, 255, 135, 0.08);
-  border: 1px solid rgba(0, 255, 135, 0.2);
   padding: 2px 7px;
   border-radius: 8px;
+}
+
+.tv3-tag.completed {
+  color: rgba(160, 220, 180, 0.9);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(160, 220, 180, 0.2);
+}
+
+.tv3-tag.failed {
+  color: rgba(240, 140, 140, 0.85);
+  background: rgba(244, 67, 54, 0.06);
+  border: 1px solid rgba(244, 67, 54, 0.18);
+}
+
+.tv3-tag.active {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.tv3-tag.create-tag {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tv3-delete-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 0.68rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.tv3-delete-btn:hover {
+  background: rgba(244, 67, 54, 0.2);
+  border-color: rgba(244, 67, 54, 0.35);
+  transform: scale(1.05);
+}
+
+.tv3-redeemed-tag {
+  font-size: 0.65rem;
+  color: rgba(140, 210, 170, 0.85);
+  background: rgba(140, 210, 170, 0.08);
+  border: 1px solid rgba(140, 210, 170, 0.2);
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.tv3-locked-tag {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.38);
 }
 
 .tv3-cumul {
@@ -1258,7 +1471,7 @@
   align-items: center;
   gap: 10px;
   padding: 9px 12px;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.025);
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 10px;
   margin-bottom: 7px;
@@ -1266,12 +1479,12 @@
 }
 
 .achievement-card.unlocked {
-  background: rgba(255, 215, 0, 0.04);
-  border-color: rgba(255, 215, 0, 0.16);
+  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .achievement-card.locked {
-  opacity: 0.5;
+  opacity: 0.45;
   filter: grayscale(0.7);
 }
 
@@ -1309,20 +1522,20 @@
 }
 
 .achievement-badge.unlocked {
-  background: rgba(0, 255, 135, 0.12);
-  border: 1px solid rgba(0, 255, 135, 0.25);
-  color: #a7f3d0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(140, 210, 170, 0.25);
+  color: rgba(160, 225, 185, 0.9);
 }
 
 .achievement-badge.locked {
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.32);
 }
 
 /* ── Community Quest Cards ── */
 .community-quest-card {
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 10px;
   padding: 11px 13px;
   margin-bottom: 9px;
@@ -1338,21 +1551,21 @@
 .cqc-title {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #ffe082;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .cqc-tag {
   font-size: 0.65rem;
-  padding: 1px 7px;
-  border-radius: 8px;
-  background: rgba(255, 215, 0, 0.1);
-  color: #ffe082;
-  border: 1px solid rgba(255, 215, 0, 0.2);
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .cqc-desc {
   font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.62);
+  color: rgba(255, 255, 255, 0.55);
   margin-bottom: 8px;
   line-height: 1.35;
 }
@@ -1368,7 +1581,7 @@
 
 .cqc-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, #ffd700, #00ff87);
+  background: linear-gradient(90deg, rgba(200, 180, 140, 0.65), rgba(130, 190, 160, 0.7));
   border-radius: 2px;
 }
 

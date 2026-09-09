@@ -537,13 +537,38 @@ async function deleteMilestone() {
   const confirmed = await showConfirmModal({
     badge: "🏆 Milestone Habit",
     title: `Delete "${milestone.title}"?`,
-    message: `Your current streak of ${milestone.currentStreak}/${milestone.targetDays} days will be permanently lost. This cannot be undone.`,
+    message: `Your current streak of ${milestone.currentStreak}/${milestone.targetDays} days will be ended and archived to your timeline.`,
     confirmText: "Delete Target",
     cancelText: "Keep Target",
     isDanger: true,
   });
   if (!confirmed) return;
   const oldTitle = milestone.title;
+  const todayStr = new Date().toISOString().split("T")[0];
+
+  // If there was any streak progress, archive it to the timeline as an ended milestone
+  if (milestone.currentStreak > 0) {
+    let completedHabits = [];
+    try {
+      completedHabits = JSON.parse(localStorage.getItem("completedHabits") || "[]");
+    } catch (e) { completedHabits = []; }
+
+    completedHabits.unshift({
+      id: "h_failed_" + Date.now() + "_" + Math.random().toString(36).substr(2, 4),
+      title: milestone.title,
+      targetDays: milestone.targetDays,
+      currentStreak: milestone.currentStreak,
+      failedDate: todayStr,
+      archivedAt: todayStr,
+      status: "failed",
+      quote: `Streak ended on Day ${milestone.currentStreak} of ${milestone.targetDays}. Every setback is a setup for a stronger comeback.`
+    });
+
+    try {
+      localStorage.setItem("completedHabits", JSON.stringify(completedHabits));
+    } catch (e) { }
+  }
+
   milestone = null;
   saveMilestone();
   renderMilestone();
@@ -625,10 +650,33 @@ function showRecoveryModal() {
     setTimeout(() => { card.innerHTML = ""; }, 280);
 
     const oldTitle = milestone.title;
+    const todayStr = new Date().toISOString().split("T")[0];
+
+    // Archive failed milestone to completedHabits
+    let completedHabits = [];
+    try {
+      completedHabits = JSON.parse(localStorage.getItem("completedHabits") || "[]");
+    } catch (e) { completedHabits = []; }
+
+    completedHabits.unshift({
+      id: "h_failed_" + Date.now() + "_" + Math.random().toString(36).substr(2, 4),
+      title: milestone.title,
+      targetDays: milestone.targetDays,
+      currentStreak: milestone.currentStreak,
+      failedDate: todayStr,
+      archivedAt: todayStr,
+      status: "failed",
+      quote: `Streak ended on Day ${milestone.currentStreak} of ${milestone.targetDays}. Every setback is feedback to start stronger.`
+    });
+
+    try {
+      localStorage.setItem("completedHabits", JSON.stringify(completedHabits));
+    } catch (e) { }
+
     milestone = null;
     saveMilestone();
     renderMilestone();
-    showToast(`🗑️ "${oldTitle}" has been discarded. Ready when you are.`, "warning", 4000);
+    showToast(`⚠️ "${oldTitle}" archived as streak ended. Ready when you are.`, "warning", 4000);
   }
 
   if (restartBtn) restartBtn.addEventListener("click", doRestart);
@@ -769,11 +817,13 @@ async function archiveMilestone(reflectionText = null) {
   const habitQuote = reflectionText || "Small daily disciplines quietly compound into massive personal transformation.";
 
   completedHabits.unshift({
+    id: "h_comp_" + Date.now() + "_" + Math.random().toString(36).substr(2, 4),
     title: milestone.title,
     targetDays: milestone.targetDays,
     currentStreak: milestone.currentStreak,
     completedDate: milestone.completedDate || todayStr,
     archivedAt: todayStr,
+    status: "completed",
     quote: habitQuote,
   });
 
@@ -805,55 +855,40 @@ function showTrophyHubModal() {
   const fab = document.getElementById("trophyHubFabBtn");
   if (fab) fab.classList.remove("has-unread");
 
-  // Load user completed habits
+  const todayStr = new Date().toISOString().split("T")[0];
+
+  // Load user completed & failed habits
   let userHabits = [];
   try {
     userHabits = JSON.parse(localStorage.getItem("completedHabits") || "[]");
   } catch (e) { userHabits = []; }
 
-  const isDemo = userHabits.length === 0;
-  const displayHabits = isDemo ? [
-    {
-      title: "Morning 20-min Reading",
-      targetDays: 30,
-      currentStreak: 30,
-      completedDate: "2026-09-07",
-      archivedAt: "2026-09-07",
-      isSample: true,
-      quote: "Reading clarifies thoughts and unlocks compounding insights."
-    },
-    {
-      title: "Daily Deep Work Practice",
-      targetDays: 21,
-      currentStreak: 21,
-      completedDate: "2026-08-30",
-      archivedAt: "2026-08-30",
-      isSample: true,
-      quote: "Focus is a mental muscle strengthened by continuous consistency."
-    },
-    {
-      title: "Evening Digital Detox",
-      targetDays: 14,
-      currentStreak: 14,
-      completedDate: "2026-08-15",
-      archivedAt: "2026-08-15",
-      isSample: true,
-      quote: "Restoring stillness before sleep fuels daytime energy."
+  // Ensure every item has a unique ID for deletion identification
+  userHabits.forEach((h, idx) => {
+    if (!h.id) {
+      h.id = "h_" + (h.failedDate || h.completedDate || h.archivedAt || "rec") + "_" + idx;
     }
-  ] : userHabits;
+  });
+
+  const completedHabits = userHabits.filter(h => h.status !== "failed");
+  const failedHabits = userHabits.filter(h => h.status === "failed");
 
   // Aggregate Consistency Stats
-  const totalMastered = displayHabits.length;
-  const totalDays = displayHabits.reduce((acc, h) => acc + (h.targetDays || h.currentStreak || 0), 0);
-  const longestStreak = displayHabits.length ? Math.max(...displayHabits.map(h => h.targetDays || h.currentStreak || 0)) : 0;
+  const totalMastered = completedHabits.length;
+  const totalDays = completedHabits.reduce((acc, h) => acc + (h.targetDays || h.currentStreak || 0), 0);
+  const longestStreak = completedHabits.length
+    ? Math.max(...completedHabits.map(h => h.targetDays || h.currentStreak || 0))
+    : (milestone ? milestone.currentStreak : 0);
+
+  const hasActiveMilestone = Boolean(milestone && !milestone.completed && !milestone.failed);
 
   // Achievements Database
   const ACHIEVEMENTS = [
-    { id: "first_spark", icon: "🌱", title: "Day One Spark", desc: "Took the first step and logged your initial check-in", unlocked: true },
-    { id: "streak_3", icon: "🔥", title: "3-Day Ignition", desc: "Built initial momentum with a 3-day consecutive streak", unlocked: true },
-    { id: "streak_7", icon: "⚡", title: "7-Day Unbroken Week", desc: "Completed one full week of consistency without a single strike", unlocked: true },
+    { id: "first_spark", icon: "🌱", title: "Day One Spark", desc: "Took the first step and logged your initial check-in", unlocked: Boolean((milestone && milestone.currentStreak > 0) || totalMastered > 0 || userHabits.length > 0) },
+    { id: "streak_3", icon: "🔥", title: "3-Day Ignition", desc: "Built initial momentum with a 3-day consecutive streak", unlocked: Boolean((milestone && milestone.currentStreak >= 3) || longestStreak >= 3) },
+    { id: "streak_7", icon: "⚡", title: "7-Day Unbroken Week", desc: "Completed one full week of consistency without a single strike", unlocked: Boolean((milestone && milestone.currentStreak >= 7) || longestStreak >= 7) },
     { id: "habit_master", icon: "🏆", title: "First Trophy", desc: "Conquered your first full habit target and archived the victory", unlocked: totalMastered > 0 },
-    { id: "streak_21", icon: "🧠", title: "21-Day Neural Lock", desc: "Reached the psychological threshold of automatic habit formation", unlocked: longestStreak >= 21 },
+    { id: "streak_21", icon: "🧠", title: "21-Day Neural Lock", desc: "Reached the psychological threshold of automatic habit formation", unlocked: Boolean(longestStreak >= 21 || (milestone && milestone.currentStreak >= 21)) },
     { id: "century_master", icon: "👑", title: "100-Day Centurion", desc: "Accumulated 100 total days of dedicated consistency", unlocked: totalDays >= 100 }
   ];
   const unlockedAchievementsCount = ACHIEVEMENTS.filter(a => a.unlocked).length;
@@ -879,61 +914,143 @@ function showTrophyHubModal() {
   card.className = "dialog-card trophy-hub-card";
   card.classList.remove("dialog-danger");
 
-  const sampleBadgeHtml = isDemo
-    ? `<span class="trophy-sample-badge" title="Sample preview — real data populates once you complete and archive habit targets.">Sample Preview</span>`
-    : "";
+  // ── Timeline Empty State (When no habits achieved/attempted yet) ─────────
+  const emptyStateHtml = `
+    <div class="tv3-empty-state">
+      <div class="tv3-empty-icon">🌱</div>
+      <div class="tv3-empty-title">Your Consistency Journey Starts Here</div>
+      <div class="tv3-empty-desc">Conquer your first habit milestone to start building your permanent timeline of victories.</div>
+      ${!hasActiveMilestone ? `
+        <button type="button" class="tv3-start-btn" id="hubStartMilestoneBtn">
+          🎯 Start Your First Milestone
+        </button>
+      ` : `
+        <div class="tv3-empty-hint">Your active milestone is in progress below. Check in daily to reach the finish line!</div>
+      `}
+    </div>
+  `;
 
-  // ── Timeline-style trophy nodes for the Trophies canvas ─────────────────
-  let runningTotal = 0;
-  const reversedHabits = [...displayHabits].reverse();
-  const timelineNodesHtml = reversedHabits.map((h) => {
-    runningTotal += (h.targetDays || h.currentStreak || 0);
-    const quote = h.quote || "Discipline is choosing what you want most over what you want now.";
+  // ── Timeline Nodes for Recorded Habits ──────────────────────────────────
+  const timelineNodesHtml = userHabits.map((h) => {
+    const isFailed = h.status === "failed";
+    const habitDays = h.targetDays || h.currentStreak || 0;
+
+    if (isFailed) {
+      // Redemption logic: Failed milestone can ONLY be deleted if the user
+      // has completed a new milestone of at least 14 days on or after the failure date
+      const failedTs = new Date(h.failedDate || h.archivedAt || 0).getTime();
+      const isRedeemed = userHabits.some(h2 => {
+        if (h2.status === "failed") return false;
+        if ((h2.targetDays || 0) < 14) return false;
+        const compTs = new Date(h2.completedDate || h2.archivedAt || 0).getTime();
+        return compTs >= failedTs;
+      });
+
+      const quote = h.quote || `Streak ended on Day ${h.currentStreak || 0} of ${h.targetDays}. Every setback is feedback to start stronger.`;
+
+      return `
+        <div class="tv3-node failed" data-id="${escapeHtml(h.id)}">
+          <div class="tv3-node-dot failed">✕</div>
+          <div class="tv3-card failed">
+            <div class="tv3-header">
+              <span class="tv3-title failed">${escapeHtml(h.title)}</span>
+              <div class="tv3-header-right">
+                <span class="tv3-date">Ended ${escapeHtml(h.failedDate || h.archivedAt || "")}</span>
+                ${isRedeemed ? `
+                  <button type="button" class="tv3-delete-btn" data-id="${escapeHtml(h.id)}" title="Redeemed by 14+ day milestone! Click to clear this record">
+                    🗑️
+                  </button>
+                ` : ""}
+              </div>
+            </div>
+            <p class="tv3-quote failed">"${escapeHtml(quote)}"</p>
+            <div class="tv3-footer">
+              <span class="tv3-tag failed">⚠️ Incomplete · Day ${h.currentStreak || 0}/${h.targetDays}</span>
+              ${isRedeemed ? `
+                <span class="tv3-redeemed-tag">✓ 14d Redeemed</span>
+              ` : `
+                <span class="tv3-locked-tag" title="Complete a new milestone of at least 14 days to unlock deletion">🔒 14d target needed to clear</span>
+              `}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Completed node
+    const quote = h.quote || "Small daily disciplines quietly compound into massive personal transformation.";
     return `
-      <div class="tv3-node">
-        <div class="tv3-node-dot">✓</div>
-        <div class="tv3-card">
+      <div class="tv3-node completed" data-id="${escapeHtml(h.id)}">
+        <div class="tv3-node-dot completed">✓</div>
+        <div class="tv3-card completed">
           <div class="tv3-header">
             <span class="tv3-title">${escapeHtml(h.title)}</span>
-            <span class="tv3-date">Conquered ${h.completedDate || h.archivedAt}</span>
+            <span class="tv3-date">Conquered ${escapeHtml(h.completedDate || h.archivedAt || "")}</span>
           </div>
           <p class="tv3-quote">"${escapeHtml(quote)}"</p>
           <div class="tv3-footer">
-            <span class="tv3-tag">🎯 ${h.targetDays}-Day Target Finished</span>
-            <span class="tv3-cumul">${runningTotal} days banked all-time</span>
+            <span class="tv3-tag completed">🎯 ${h.targetDays}-Day Target Finished</span>
+            <span class="tv3-cumul">${habitDays} days banked</span>
           </div>
         </div>
       </div>
     `;
-  }).reverse().join("");
+  }).join("");
 
-  const trophiesCanvasHtml = `
-    <div class="v4-section-header">
-      <div class="v4-section-title">Conquered Habit Timeline</div>
-      <div class="v4-section-desc">A chronological record of every habit target successfully brought across the finish line.</div>
+  // ── Active Milestone or Action Card at bottom of timeline ───────────────
+  const activeOrActionNodeHtml = hasActiveMilestone ? `
+    <div class="tv3-node active-node" style="margin-bottom: 0;">
+      <div class="tv3-node-dot active">⚡</div>
+      <div class="tv3-card active-card">
+        <div class="tv3-header">
+          <span class="tv3-title active">${escapeHtml(milestone.title)}</span>
+          <span class="tv3-date">Active · Day ${milestone.currentStreak} of ${milestone.targetDays}</span>
+        </div>
+        <div class="tv3-active-progress-wrap">
+          <div class="tv3-active-bar-track">
+            <div class="tv3-active-bar-fill" style="width: ${Math.round((milestone.currentStreak / milestone.targetDays) * 100)}%;"></div>
+          </div>
+          <span class="tv3-active-pct">${Math.round((milestone.currentStreak / milestone.targetDays) * 100)}%</span>
+        </div>
+        <div class="tv3-footer">
+          <span class="tv3-tag active">
+            ${milestone.lastCheckedDate === todayStr ? "✓ Checked in today" : "⏳ Pending check-in today"}
+          </span>
+          <span class="tv3-cumul">${milestone.targetDays - milestone.currentStreak} days remaining</span>
+        </div>
+      </div>
     </div>
-    <div class="trophy-v3-timeline">
-      ${timelineNodesHtml}
-      <div class="tv3-node" style="margin-bottom: 0;">
-        <div class="tv3-node-dot" style="border-color: rgba(0,255,135,0.5); color: #a7f3d0;">⚡</div>
-        <div class="tv3-card" style="border-style: dashed; background: rgba(0,255,135,0.02);">
-          <div class="tv3-header">
-            <span class="tv3-title" style="color: #a7f3d0;">Active Habit in Progress</span>
-            <span class="tv3-date">Ongoing</span>
-          </div>
-          <p class="tv3-quote">"Every daily check-in is a vote for the person you are becoming."</p>
-          <div class="tv3-footer">
-            <span class="tv3-tag" style="background: rgba(0,255,135,0.06); color: #6ee7b7; border-color: rgba(0,255,135,0.18);">⚡ Building Next Milestone</span>
-          </div>
+  ` : `
+    <div class="tv3-node create-node" style="margin-bottom: 0;">
+      <div class="tv3-node-dot create">＋</div>
+      <div class="tv3-card create-card" id="hubCreateMilestoneCard" role="button" tabindex="0" title="Click to setup a new habit milestone">
+        <div class="tv3-header">
+          <span class="tv3-title" style="color: rgba(255,255,255,0.85);">+ Start New Milestone</span>
+          <span class="tv3-date">Available</span>
+        </div>
+        <p class="tv3-quote">"The secret of getting ahead is getting started."</p>
+        <div class="tv3-footer">
+          <span class="tv3-tag create-tag">🎯 Setup Habit Target (14–100 days)</span>
         </div>
       </div>
     </div>
   `;
 
+  const trophiesCanvasHtml = `
+    <div class="v4-section-header">
+      <div class="v4-section-title">Consistency Timeline</div>
+      <div class="v4-section-desc">A chronological record of every habit milestone conquered and attempted.</div>
+    </div>
+    <div class="trophy-v3-timeline">
+      ${userHabits.length === 0 ? emptyStateHtml : timelineNodesHtml}
+      ${activeOrActionNodeHtml}
+    </div>
+  `;
+
   const badgesCanvasHtml = `
     <div class="v4-section-header">
-      <div class="v4-section-title">Consistency Milestones</div>
-      <div class="v4-section-desc">Milestone badges earned as your daily discipline and follow-through compound.</div>
+      <div class="v4-section-title">Consistency Achievements</div>
+      <div class="v4-section-desc">Earn badges as your daily discipline and habit follow-through compound over time.</div>
     </div>
     ${ACHIEVEMENTS.map(a => `
       <div class="achievement-card ${a.unlocked ? "unlocked" : "locked"}">
@@ -965,6 +1082,10 @@ function showTrophyHubModal() {
     `).join("")}
   `;
 
+  const followThroughRate = (totalMastered + failedHabits.length) > 0
+    ? Math.round((totalMastered / (totalMastered + failedHabits.length)) * 100)
+    : 100;
+
   const metricsCanvasHtml = `
     <div class="v4-section-header">
       <div class="v4-section-title">Consistency Analytics</div>
@@ -972,22 +1093,22 @@ function showTrophyHubModal() {
     </div>
     <div style="display: flex; flex-direction: column; gap: 8px;">
       <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 12px 14px;">
-        <div style="font-size: 0.76rem; font-weight: 600; color: #ffe082; margin-bottom: 9px; letter-spacing: 0.2px;">Performance Metrics</div>
+        <div style="font-size: 0.76rem; font-weight: 600; color: rgba(255,255,255,0.9); margin-bottom: 9px; letter-spacing: 0.2px;">Performance Metrics</div>
         <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: rgba(255,255,255,0.7); margin-bottom: 6px;">
           <span>Target Follow-Through</span>
-          <span style="color: #a7f3d0; font-weight: 600;">100% Completed</span>
+          <span style="color: rgba(160,225,185,0.9); font-weight: 600;">${followThroughRate}% Completed</span>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: rgba(255,255,255,0.7); margin-bottom: 6px;">
           <span>Habits Conquered</span>
-          <span style="font-weight: 600; color: #ffe082;">${totalMastered} Targets</span>
+          <span style="font-weight: 600; color: rgba(255,255,255,0.85);">${totalMastered} Targets</span>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: rgba(255,255,255,0.7);">
           <span>Total Days Banked</span>
-          <span style="font-weight: 600; color: #a7f3d0;">${totalDays} Days</span>
+          <span style="font-weight: 600; color: rgba(160,225,185,0.9);">${totalDays} Days</span>
         </div>
       </div>
       <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 12px 14px;">
-        <div style="font-size: 0.76rem; font-weight: 600; color: #ffe082; margin-bottom: 6px;">Longest Single Streak</div>
+        <div style="font-size: 0.76rem; font-weight: 600; color: rgba(255,255,255,0.9); margin-bottom: 6px;">Longest Single Streak</div>
         <div style="font-size: 0.72rem; color: rgba(255,255,255,0.65);">Personal Best: <strong>${longestStreak} Consecutive Days</strong></div>
       </div>
       <div style="background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.08); border-radius: 10px; padding: 10px 12px;">
@@ -1000,23 +1121,23 @@ function showTrophyHubModal() {
 
   card.innerHTML = `
     <div class="trophy-header-row" style="margin-bottom: 2px;">
-      <h3 class="dialog-title" style="margin-bottom: 0;">Consistency Hub ${sampleBadgeHtml}</h3>
+      <h3 class="dialog-title" style="margin-bottom: 0;">Consistency Hub</h3>
     </div>
-    <p class="trophy-hub-subtitle">Review your conquered streaks, unlocked milestone badges, and consistency growth.</p>
+    <p class="trophy-hub-subtitle">Review your conquered streaks, unlocked achievements, and consistency growth.</p>
 
     <div class="trophy-v4-split">
       <div class="tv4-sidebar">
         <div class="tv4-profile-badge">
           <div class="tv4-profile-num">${totalDays}d</div>
           <div class="tv4-profile-lbl">Days Conquered</div>
-          <div class="tv4-profile-sub">${totalMastered} habits mastered</div>
+          <div class="tv4-profile-sub">${totalMastered} habit${totalMastered === 1 ? "" : "s"} mastered</div>
         </div>
         <button type="button" class="tv4-menu-btn active" data-sec="shelf">
           <span>🏆 Timeline</span>
-          <span class="tv4-menu-chip">${displayHabits.length}</span>
+          <span class="tv4-menu-chip">${userHabits.length}</span>
         </button>
         <button type="button" class="tv4-menu-btn" data-sec="badges">
-          <span>🏅 Milestones</span>
+          <span>🏅 Achievements</span>
           <span class="tv4-menu-chip">${unlockedAchievementsCount}</span>
         </button>
         <button type="button" class="tv4-menu-btn" data-sec="community">
@@ -1063,6 +1184,55 @@ function showTrophyHubModal() {
       canvasSections.forEach(s => {
         s.style.display = s.dataset.sec === target ? "" : "none";
       });
+    });
+  });
+
+  // Wire create milestone action cards
+  const startBtn = card.querySelector("#hubStartMilestoneBtn");
+  if (startBtn) {
+    startBtn.addEventListener("click", () => {
+      finish();
+      promptCreateMilestone(false);
+    });
+  }
+
+  const createCard = card.querySelector("#hubCreateMilestoneCard");
+  if (createCard) {
+    createCard.addEventListener("click", () => {
+      finish();
+      promptCreateMilestone(false);
+    });
+  }
+
+  // Wire delete buttons for redeemed failed milestones
+  const deleteBtns = card.querySelectorAll(".tv3-delete-btn");
+  deleteBtns.forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const targetId = btn.dataset.id;
+      if (!targetId) return;
+
+      let currentList = [];
+      try {
+        currentList = JSON.parse(localStorage.getItem("completedHabits") || "[]");
+      } catch (err) { currentList = []; }
+
+      const idx = currentList.findIndex((item, i) =>
+        (item.id && item.id === targetId) ||
+        ("h_" + (item.failedDate || item.completedDate || item.archivedAt || "rec") + "_" + i === targetId)
+      );
+
+      if (idx !== -1) {
+        currentList.splice(idx, 1);
+        try {
+          localStorage.setItem("completedHabits", JSON.stringify(currentList));
+        } catch (err) { }
+        showToast("🗑️ Streak record cleared.", "info", 2500);
+        finish();
+        setTimeout(() => {
+          showTrophyHubModal();
+        }, 150);
+      }
     });
   });
 

@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.24.0] - 2026-09-09
+
+### Added
+- **⚠️ Failed Milestones Tracking & Timeline Record**: When a milestone streak ends (via recovery discard or manual deletion with progress), it is now recorded on the Consistency Hub timeline as an ended attempt, preserving full authenticity of the user's consistency journey.
+- **🔓 14-Day Milestone Redemption Deletion**: Failed milestone records on the timeline can now only be cleared/deleted after the user successfully completes a new habit milestone of at least 14 days, turning setbacks into motivating comeback targets.
+- **⚡ Dynamic Active Habit Card**: The bottom of the Consistency Hub timeline now displays the real-time active milestone in progress with progress percentage, remaining days, and today's check-in status.
+- **🎯 Empty State & Milestone Creation Actions**: When no habits have been conquered yet, a clean, inviting empty state card is displayed instead of sample dummy data. If no milestone is currently running, an actionable "+ Start New Milestone" card allows immediate setup with a single click.
+
+### Changed
+- **🏅 Achievements Tab Rename**: Renamed the sidebar navigation item from "Milestones" to "Achievements" to avoid terminology confusion with active habit targets.
+- **🎨 Muted Glassmorphism & Toned-down Neon**: Completely redesigned the Consistency Hub, Challenges progress bar, and dashboard completed milestone card with dim translucent glass styling, removing harsh neon gradients and glowing box shadows in strict adherence to design guidelines.
+- **📐 Sidebar Container Clearance & No-clipping Fix**: Completely eliminated sidebar border clipping on the profile badge and navigation buttons by eliminating overflow clipping and applying balanced container padding.
+
+---
+
 ## [1.23.1] - 2026-09-09
 ### Fixed
 - **🖱️ Milestone Completion Button Responsiveness**: Fixed an issue where archiving a completed habit without immediately confirming a new target could leave stale completed cards with non-responsive buttons. `renderMilestone()` is now invoked immediately upon archiving so the dashboard state updates reliably.
