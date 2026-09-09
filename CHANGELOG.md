@@ -7,6 +7,80 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.23.1] - 2026-09-09
+### Fixed
+- **🖱️ Milestone Completion Button Responsiveness**: Fixed an issue where archiving a completed habit without immediately confirming a new target could leave stale completed cards with non-responsive buttons. `renderMilestone()` is now invoked immediately upon archiving so the dashboard state updates reliably.
+- **🔄 Modal Fadeout Collision Guard**: Added a clean 300ms transition delay when transitioning from the Congratulations Modal to the new habit setup dialog, preventing overlapping dialog cleanup timers from wiping the subsequent modal.
+- **📐 Consistency Hub Sidebar Left Padding & Clipping**: Fixed left border clipping on `.tv4-sidebar` and profile badges by adding explicit left padding (`padding: 4px 14px 4px 6px`) and `box-sizing: border-box`, ensuring smooth rounded corners on all items.
+
+### Changed
+- **✨ Cleaner Consistency Hub Header**: Removed the redundant `"🏛️ Habit Legacy & Trophy Shelf"` badge from the top of the Consistency Hub modal, letting the clean `Consistency Hub` title take full prominence.
+- **🧹 Removed Duplicate 🏛️ Milestone Button**: Removed the redundant `🏛️` Trophy Hub button from the milestone card, keeping the global quick-access FAB button at the bottom-right toolbar as the sole, unified hub trigger.
+
+---
+
+## [1.23.0] - 2026-09-09
+### Added
+- **🎉 Congratulations Modal & Gratification Reflection**: When completing the final day of a milestone target upon check-in, a celebratory Congratulations modal now appears immediately instead of the standard daily reflection modal.
+  - **💭 Rotating Gratification Prompts**: Presents thoughtful, warm reflection questions (e.g. *"Not as hard as you thought, right? What did you learn about yourself along the way?"*).
+  - **✍️ Personalized Trophy Engraving**: The reflection input is pre-filled with an inspiring default discipline quote that users can keep or customize.
+  - **🏛️ Permanent Trophy Timeline Integration**: Saving and archiving automatically commits the personal reflection onto the user's permanent Trophy Timeline entry, preserving their authentic victory note forever.
+  - **♾️ Dual Completion Paths**: Offers seamless choices directly in the modal to either `🏆 Archive to Trophy Shelf` or `♾️ Keep Streak (+30d)` to continue momentum.
+
+---
+
+## [1.22.2] - 2026-09-09
+### Changed
+- **✍️ Copywriting & Content Overhaul for Consistency Hub**: Comprehensive refinement of all text, badges, titles, descriptions, and quotes across all four sections of the Hub. Renamed sections to clear, motivating concepts: `🏆 Timeline` (Conquered Habit Timeline), `🏅 Milestones` (Consistency Milestones), `🌱 Challenges` (Global Community Challenges), and `📊 Insights` (Consistency Analytics). Added grounded, meaningful quotes on discipline and clear milestone requirements.
+- **📐 Rock-Solid Fixed Modal Dimensions**: Expanded the modal width to a spacious, fixed `700px` (`max-width: calc(100vw - 36px)`) and a fixed height of `530px` with `box-sizing: border-box`. The right-hand content canvas is strictly contained with an independent vertical scrollbar, completely eliminating any horizontal jumping or vertical height shifts between tabs.
+
+---
+
+## [1.22.1] - 2026-09-09
+### Changed
+- **🏛️ Trophy & Hub — Merged Final Design**: Consolidated the four experimental design variations into one definitive layout — the Command Hub frame (sidebar navigation + canvas split) with the Timeline's visual style applied to the Trophies section. The Trophies canvas now renders a chronological vertical rail with glowing milestone nodes, reflection quotes, and cumulative day counters, while the sidebar gives instant access to Badges, Community Quests, and Performance Metrics.
+- **📐 Fixed Modal Width**: The Trophy & Hub modal is now a fixed `640px` width across all views — no more layout jumping when switching between sidebar sections.
+
+---
+
+## [1.22.0] - 2026-09-09
+### Added
+- **🏛️ 4 UX-First Design Variations for Trophy & Hub**: Built four distinct, purpose-driven layouts for the Trophy & Hub modal, complete with an in-modal live variant switcher (`1 · Studio`, `2 · Showcase`, `3 · Timeline`, `4 · Command`):
+  - **Variation 1 (Tabbed Studio)**: Clean, modular workspace with an overview consistency stats ribbon (`Mastered`, `Total Days`, `Top Streak`) and segmented tabs for Trophies, Badges, and Community.
+  - **Variation 2 (Showcase Shelf / Hall of Fame)**: Celebratory 2-column physical cabinet with glass trophy plaques, radial gold medal emblems, streak capsules, and completion timestamps.
+  - **Variation 3 (Chronicle Timeline)**: Storytelling consistency journey with a glowing vertical rail connecting chronological milestone nodes, personal reflection quotes, and cumulative day markers.
+  - **Variation 4 (Command Hub)**: Dual-pane master-detail split console featuring an identity summary sidebar, category navigation, and rich interactive canvas with rerun capabilities.
+- **👁️ Sample Data Preview**: When zero completed habits exist in storage, realistic sample data is seamlessly provided with a subtle `Sample Preview` tag so every design variation can be reviewed and interacted with immediately.
+- **🔕 Smart Notification Dot**: The `🏛️` quick-access toolbar button now remains calm and unadorned by default. The subtle gold notification dot only lights up when an unread event occurs (e.g. freshly archived habit or newly unlocked achievement), and immediately dismisses once opened.
+
+---
+
+## [1.21.1] - 2026-09-09
+### Added
+- **🏛️ Trophy Hub Global FAB Button**: The Trophy Shelf & Hub modal is now always accessible via a new `🏛️` icon in the bottom-right quick-access toolbar (positioned alongside ⏱️ Timer, 🔖 Bookmarks, and 👁️ Focus Mode). Clicking opens the same tabbed hub panel regardless of milestone state. The button shows a subtle gold badge dot when at least one completed habit has been archived to the Trophy Shelf.
+
+---
+
+## [1.21.0] - 2026-09-08
+### Added
+- **🏆 Victory Ending Card — Dual Exit Paths**: When a milestone habit is completed, the card now shows two action buttons: `♾️ Keep Streak` (silently extends target by +30 days and continues the streak) and `🏆 Archive & Next` (archives the completed habit and opens the Create Habit Target modal for the next challenge).
+- **🏛️ Trophy Shelf & Hub Panel**: New `🏛️` hub button appears on the completed milestone card, opening a tabbed modal panel with three sections: **Trophy Shelf** (scrollable list of all archived completed habits with name, days, and completion date), **Achievements** (placeholder with coming-soon state), and **Community** (placeholder with coming-soon state). Completed habits are persisted in `completedHabits` localStorage key as an archive.
+
+---
+
+## [1.20.0] - 2026-09-08
+### Added
+- **🚨 Graceful Recovery Modal (Streak Broken)**: Replaced silent auto-delete behavior when 2+ consecutive days are missed with a blocking center-screen modal. The modal shows the habit name, days missed, and a frozen progress bar showing the lost streak. Users must choose between `↺ Restart from Day 1` (resets streak to Day 0 and resumes the habit) or `✕ Discard Habit` (permanently removes the habit). Modal cannot be dismissed via backdrop click or Escape key — an intentional design forcing a deliberate decision.
+- **🚨 Break Streak Debug Button (DEV-MODE)**: Added a red `🚨 Break` button in the milestone footer to simulate a 3-day miss and trigger the recovery modal. Tagged for removal before publish.
+
+---
+
+## [1.19.0] - 2026-09-08
+### Added
+- **🏆 Create Habit Target Modal Redesign — Smart Presets**: Replaced the plain number input in the Create Habit Target modal with a visual preset pill row (`14d · 21d · 30d · 66d`). Clicking a pill sets the target duration and highlights the selection. The custom number input syncs bidirectionally with the preset pills — changing the input deselects or re-selects the matching pill automatically. Max target days reduced from 365 to **100** days to keep habits actionable. Default preset set to 21 days.
+
+---
+
 ## [1.18.1] - 2026-09-08
 ### Fixed
 - **🔄 Unified Authentic Check-in Pipeline for Debug Stepper**: Refactored `checkInMilestone()` to eliminate hardcoded debug divergence. The `⚡ +1` stepper now runs the exact native check-in logic — including Day 1-2 quote toasts, Day 3+ / Completed Spatial Zen reflection modals, streak celebrations, and visual animations — while cleanly bypassing the daily check-in lock.

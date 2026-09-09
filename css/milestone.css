@@ -447,6 +447,72 @@
   box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
 }
 
+/* DEV-MODE: Remove on finalization */
+.milestone-btn.debug-break-btn {
+  background: rgba(244, 67, 54, 0.10);
+  border-color: rgba(244, 67, 54, 0.30);
+  color: #ef9a9a;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.milestone-btn.debug-break-btn:hover {
+  background: rgba(244, 67, 54, 0.22);
+  border-color: rgba(244, 67, 54, 0.50);
+  color: #ff8a80;
+  box-shadow: 0 0 10px rgba(244, 67, 54, 0.2);
+}
+
+/* ===== Graceful Recovery Modal ===== */
+.milestone-recovery-card {
+  border-color: rgba(255, 152, 0, 0.2) !important;
+}
+
+.milestone-recovery-habit-name {
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.75) !important;
+  font-size: 0.9rem !important;
+  margin-bottom: 2px !important;
+}
+
+.milestone-recovery-progress {
+  margin: 14px 0 4px;
+}
+
+.milestone-recovery-progress-label {
+  font-size: 0.73rem;
+  color: rgba(255, 255, 255, 0.4);
+  display: block;
+  margin-bottom: 5px;
+}
+
+.milestone-recovery-bar-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.milestone-recovery-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255, 152, 0, 0.65), rgba(244, 67, 54, 0.5));
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.milestone-recovery-discard {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.milestone-recovery-discard:hover {
+  color: #ff8a80 !important;
+  border-color: rgba(244, 67, 54, 0.35) !important;
+  background: rgba(244, 67, 54, 0.08) !important;
+}
+
 .milestone-btn.delete-milestone-btn {
   border-color: rgba(244, 67, 54, 0.18);
   background: rgba(244, 67, 54, 0.06);
@@ -491,3 +557,826 @@
   border-color: rgba(255, 255, 255, 0.3);
   background: rgba(255, 255, 255, 0.04);
 }
+
+/* ===== Create Habit Target Modal — Preset Pills ===== */
+.mcp-preset-pills {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.mcp-preset-pill {
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  font-family: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  outline: none;
+  line-height: 1;
+}
+
+.mcp-preset-pill:hover {
+  background: rgba(0, 255, 135, 0.08);
+  border-color: rgba(0, 255, 135, 0.3);
+  color: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+}
+
+.mcp-preset-pill.active {
+  background: rgba(0, 255, 135, 0.14);
+  border-color: rgba(0, 255, 135, 0.45);
+  color: #b9f6ca;
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(0, 255, 135, 0.12);
+}
+
+.mcp-custom-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mcp-custom-label {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.45);
+  white-space: nowrap;
+}
+
+.mcp-custom-row input[type="number"] {
+  width: 68px;
+  text-align: center;
+  padding: 5px 8px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.9);
+  outline: none;
+  transition: border-color 0.18s ease;
+  -moz-appearance: textfield;
+}
+
+.mcp-custom-row input[type="number"]::-webkit-outer-spin-button,
+.mcp-custom-row input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.mcp-custom-row input[type="number"]:focus {
+  border-color: rgba(0, 255, 135, 0.4);
+}
+
+.mcp-days-unit {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ===== Victory Ending Card Buttons ===== */
+.milestone-btn.milestone-btn-keep-streak {
+  background: rgba(0, 255, 135, 0.10);
+  border-color: rgba(0, 255, 135, 0.30);
+  color: #b9f6ca;
+  font-weight: 600;
+}
+
+.milestone-btn.milestone-btn-keep-streak:hover {
+  background: rgba(0, 255, 135, 0.20);
+  border-color: rgba(0, 255, 135, 0.50);
+  box-shadow: 0 0 10px rgba(0, 255, 135, 0.18);
+}
+
+.milestone-btn.milestone-btn-archive {
+  background: rgba(255, 215, 0, 0.12);
+  border-color: rgba(255, 215, 0, 0.35);
+  color: #ffe082;
+  font-weight: 600;
+}
+
+.milestone-btn.milestone-btn-archive:hover {
+  background: rgba(255, 215, 0, 0.22);
+  border-color: rgba(255, 215, 0, 0.55);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.18);
+}
+
+.milestone-btn.milestone-btn-hub {
+  background: rgba(255, 215, 0, 0.08);
+  border-color: rgba(255, 215, 0, 0.22);
+  color: rgba(255, 215, 0, 0.7);
+  padding: 4px 8px;
+}
+
+.milestone-btn.milestone-btn-hub:hover {
+  background: rgba(255, 215, 0, 0.16);
+  border-color: rgba(255, 215, 0, 0.40);
+  color: #ffe082;
+}
+
+/* ===== Trophy Hub Modal ===== */
+.trophy-hub-tabs {
+  display: flex;
+  gap: 4px;
+  margin: 12px 0 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  padding-bottom: 8px;
+}
+
+.trophy-hub-tab {
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: inherit;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  outline: none;
+}
+
+.trophy-hub-tab:hover {
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.trophy-hub-tab.active {
+  background: rgba(255, 215, 0, 0.10);
+  border-color: rgba(255, 215, 0, 0.25);
+  color: #ffe082;
+}
+
+.trophy-hub-panel {
+  max-height: 220px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+}
+
+.trophy-hub-panel::-webkit-scrollbar {
+  width: 4px;
+}
+.trophy-hub-panel::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.trophy-shelf-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.trophy-shelf-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: rgba(255, 215, 0, 0.04);
+  border: 1px solid rgba(255, 215, 0, 0.10);
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.trophy-shelf-item:hover {
+  background: rgba(255, 215, 0, 0.08);
+}
+
+.trophy-shelf-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.trophy-shelf-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.trophy-shelf-title {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trophy-shelf-meta {
+  font-size: 0.70rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.trophy-shelf-streak {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #ffe082;
+  background: rgba(255, 215, 0, 0.10);
+  border: 1px solid rgba(255, 215, 0, 0.20);
+  border-radius: 10px;
+  padding: 2px 7px;
+  flex-shrink: 0;
+}
+
+.trophy-shelf-empty {
+  font-size: 0.80rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+  padding: 20px 0;
+  font-style: italic;
+}
+
+.trophy-coming-soon {
+  text-align: center;
+  padding: 24px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.trophy-coming-soon-icon {
+  font-size: 2rem;
+  opacity: 0.4;
+}
+
+.trophy-coming-soon p {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+}
+
+.trophy-coming-soon-sub {
+  font-size: 0.73rem !important;
+  color: rgba(255, 255, 255, 0.30) !important;
+  max-width: 260px;
+}
+
+/* ===== Trophy Hub FAB (Quick Access) ===== */
+.trophy-hub-fab {
+  position: fixed;
+  bottom: 25px;
+  right: 184px;
+  z-index: 100;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 1.15rem;
+  cursor: pointer;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  overflow: visible;
+}
+
+.trophy-hub-fab:hover {
+  background: rgba(255, 215, 0, 0.12);
+  border-color: rgba(255, 215, 0, 0.35);
+  color: #ffe082;
+  transform: scale(1.08);
+  box-shadow:
+    0 10px 36px rgba(0, 0, 0, 0.4),
+    0 0 18px rgba(255, 215, 0, 0.12);
+}
+
+.trophy-hub-fab:active {
+  transform: scale(0.95);
+}
+
+/* Gold glow ONLY when there is an unread notification / freshly archived trophy */
+.trophy-hub-fab.has-unread {
+  border-color: rgba(255, 215, 0, 0.35);
+  color: #ffe082;
+}
+
+.trophy-hub-fab.has-unread::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ffd700;
+  border: 1.5px solid rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
+  animation: unreadPulse 2s infinite ease-in-out;
+}
+
+@keyframes unreadPulse {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.25); opacity: 1; }
+}
+
+/* ==========================================================================
+   CONGRATULATIONS MODAL (Milestone Completion Gratification)
+   ========================================================================== */
+
+.dialog-card.congrats-modal-card {
+  width: 500px !important;
+  max-width: calc(100vw - 36px) !important;
+  box-sizing: border-box;
+}
+
+.congrats-hero-text {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.88);
+  margin: 4px 0 14px;
+  line-height: 1.45;
+}
+
+.congrats-habit-name {
+  color: #ffe082;
+  font-weight: 600;
+}
+
+.congrats-reflection-box {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 13px 15px;
+  margin-bottom: 16px;
+}
+
+.congrats-question-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #ffe082;
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+
+.congrats-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 9px 11px;
+  color: rgba(255, 255, 255, 0.95);
+  font-family: inherit;
+  font-size: 0.76rem;
+  line-height: 1.42;
+  resize: vertical;
+  min-height: 64px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.congrats-textarea:focus {
+  border-color: rgba(255, 215, 0, 0.45);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.12);
+}
+
+.congrats-hint {
+  font-size: 0.67rem;
+  color: rgba(255, 255, 255, 0.42);
+  margin-top: 6px;
+  font-style: italic;
+}
+
+.dialog-btn-confirm.congrats-archive-btn {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.22) 0%, rgba(255, 180, 0, 0.3) 100%);
+  border-color: rgba(255, 215, 0, 0.4);
+  color: #ffe082;
+  font-weight: 600;
+}
+
+.dialog-btn-confirm.congrats-archive-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.32) 0%, rgba(255, 180, 0, 0.42) 100%);
+  border-color: rgba(255, 215, 0, 0.6);
+  color: #fff2b2;
+}
+
+/* ==========================================================================
+   TROPHY & HUB — COMMAND HUB + TIMELINE DESIGN
+   ========================================================================== */
+
+
+.dialog-card.trophy-hub-card {
+  width: 700px !important;
+  max-width: calc(100vw - 36px) !important;
+  height: 530px !important;
+  max-height: 88vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 24px 26px 18px !important;
+  box-sizing: border-box !important;
+}
+
+.trophy-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.trophy-sample-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 8px;
+  background: rgba(255, 215, 0, 0.12);
+  color: #ffe082;
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.trophy-hub-subtitle {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.48);
+  margin: 0 0 14px;
+  line-height: 1.4;
+}
+
+/* ── Split Layout (Fixed Height & Scrollable Canvas) ── */
+.trophy-v4-split {
+  display: flex;
+  gap: 16px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.tv4-sidebar {
+  width: 195px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 4px 14px 4px 6px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  box-sizing: border-box;
+}
+
+.tv4-sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+.tv4-profile-badge {
+  background: rgba(255, 215, 0, 0.05);
+  border: 1px solid rgba(255, 215, 0, 0.16);
+  border-radius: 12px;
+  padding: 12px 10px;
+  text-align: center;
+  margin-bottom: 5px;
+  box-sizing: border-box;
+}
+
+.tv4-profile-num {
+  font-size: 1.28rem;
+  font-weight: 700;
+  color: #ffe082;
+  line-height: 1.1;
+  letter-spacing: -0.2px;
+}
+
+.tv4-profile-lbl {
+  font-size: 0.67rem;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 3px;
+  font-weight: 600;
+}
+
+.tv4-profile-sub {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.35);
+  margin-top: 2px;
+}
+
+.tv4-menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 11px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: inherit;
+  font-size: 0.74rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+.tv4-menu-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.tv4-menu-btn.active {
+  background: rgba(255, 215, 0, 0.12);
+  border-color: rgba(255, 215, 0, 0.25);
+  color: #ffe082;
+  font-weight: 600;
+}
+
+.tv4-menu-chip {
+  font-size: 0.65rem;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.tv4-menu-btn.active .tv4-menu-chip {
+  background: rgba(255, 215, 0, 0.22);
+  color: #ffe082;
+}
+
+/* ── Canvas (Scrollable Right Side) ── */
+.tv4-canvas {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+}
+
+.tv4-canvas::-webkit-scrollbar {
+  width: 4px;
+}
+.tv4-canvas::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 2px;
+}
+
+.v4-section-header {
+  margin-bottom: 12px;
+}
+
+.v4-section-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #ffe082;
+  margin-bottom: 2px;
+}
+
+.v4-section-desc {
+  font-size: 0.70rem;
+  color: rgba(255, 255, 255, 0.42);
+  line-height: 1.35;
+}
+
+/* ── Timeline Styles ── */
+.trophy-v3-timeline {
+  position: relative;
+  padding-left: 24px;
+  margin: 4px 0 10px;
+}
+
+.trophy-v3-timeline::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  background: linear-gradient(180deg, rgba(255, 215, 0, 0.4) 0%, rgba(0, 255, 135, 0.35) 60%, rgba(255, 255, 255, 0.08) 100%);
+  border-radius: 1px;
+}
+
+.tv3-node {
+  position: relative;
+  margin-bottom: 14px;
+}
+
+.tv3-node-dot {
+  position: absolute;
+  left: -24px;
+  top: 10px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #181c24;
+  border: 2px solid rgba(255, 215, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.25);
+}
+
+.tv3-card {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 10px 12px;
+  transition: all 0.2s ease;
+}
+
+.tv3-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 215, 0, 0.25);
+}
+
+.tv3-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  gap: 8px;
+}
+
+.tv3-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.tv3-date {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.4);
+  white-space: nowrap;
+}
+
+.tv3-quote {
+  font-size: 0.72rem;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 5px 0 6px;
+  line-height: 1.35;
+}
+
+.tv3-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.tv3-tag {
+  font-size: 0.67rem;
+  font-weight: 500;
+  color: #a7f3d0;
+  background: rgba(0, 255, 135, 0.08);
+  border: 1px solid rgba(0, 255, 135, 0.2);
+  padding: 2px 7px;
+  border-radius: 8px;
+}
+
+.tv3-cumul {
+  font-size: 0.67rem;
+  color: rgba(255, 255, 255, 0.38);
+}
+
+/* ── Badges / Achievements Cards ── */
+.achievement-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  margin-bottom: 7px;
+  transition: all 0.2s ease;
+}
+
+.achievement-card.unlocked {
+  background: rgba(255, 215, 0, 0.04);
+  border-color: rgba(255, 215, 0, 0.16);
+}
+
+.achievement-card.locked {
+  opacity: 0.5;
+  filter: grayscale(0.7);
+}
+
+.achievement-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.achievement-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.achievement-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.achievement-desc {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.48);
+  margin-top: 1px;
+}
+
+.achievement-badge {
+  font-size: 0.67rem;
+  padding: 2px 7px;
+  border-radius: 8px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.achievement-badge.unlocked {
+  background: rgba(0, 255, 135, 0.12);
+  border: 1px solid rgba(0, 255, 135, 0.25);
+  color: #a7f3d0;
+}
+
+.achievement-badge.locked {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* ── Community Quest Cards ── */
+.community-quest-card {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 11px 13px;
+  margin-bottom: 9px;
+}
+
+.cqc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.cqc-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #ffe082;
+}
+
+.cqc-tag {
+  font-size: 0.65rem;
+  padding: 1px 7px;
+  border-radius: 8px;
+  background: rgba(255, 215, 0, 0.1);
+  color: #ffe082;
+  border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.cqc-desc {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.62);
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+
+.cqc-bar-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  margin: 6px 0 5px;
+  overflow: hidden;
+}
+
+.cqc-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ffd700, #00ff87);
+  border-radius: 2px;
+}
+
+.cqc-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.67rem;
+  color: rgba(255, 255, 255, 0.42);
+}
+
